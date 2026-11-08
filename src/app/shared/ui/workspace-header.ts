@@ -37,7 +37,7 @@ import { Component, input } from '@angular/core';
       border-radius: 24px;
       padding: 7px 13px;
       font-size: 12px;
-      color: var(--color-muted);
+      color: var(--color-text-muted);
     }
     @media (max-width: 800px) {
       header {

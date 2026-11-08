@@ -1,25 +1,11 @@
+@use './styles/tokens';
 :root {
-  --color-sidebar: #182e2a;
-  --color-sidebar-text: #e6eee8;
-  --color-brand: #d6e6ba;
-  --color-nav-text: #c7d6ce;
-  --color-nav-hover: #26413a;
-  --color-nav-active: #345047;
-  --color-text: #243c32;
-  --color-background: #f6f7f1;
-  --color-accent: #365e43;
-  --color-focus: #b27a36;
-  --color-muted: #6b776d;
-  --color-border: #dfe4d8;
-  --color-surface: #fff;
-  --color-error: #9b3f36;
-  --radius-control: 8px;
-
   color-scheme: light;
-  font-family: Inter, 'Segoe UI', sans-serif;
+  font-family: var(--font-body);
   color: var(--color-text);
   background: var(--color-background);
   font-synthesis: none;
+  line-height: var(--leading-body);
 }
 * {
   box-sizing: border-box;
@@ -28,7 +14,13 @@ body {
   margin: 0;
 }
 a {
-  color: var(--color-accent);
+  color: var(--color-accent-text);
+}
+button,
+input,
+select,
+textarea {
+  font: inherit;
 }
 button,
 a {
@@ -38,36 +30,143 @@ a {
   outline: 3px solid var(--color-focus);
   outline-offset: 4px;
 }
+h1,
+h2,
+h3 {
+  line-height: var(--leading-heading);
+  overflow-wrap: anywhere;
+}
 h1 {
-  font-family: Georgia, serif;
-  font-weight: 400;
-  font-size: clamp(32px, 4vw, 46px);
-  letter-spacing: -1.5px;
-  margin: 12px 0 16px;
+  font-family: var(--font-heading);
+  font-weight: var(--weight-regular);
+  font-size: var(--text-title);
+  letter-spacing: -0.03em;
+  margin: var(--space-3) 0 var(--space-4);
 }
 h2 {
-  font-size: 18px;
-  font-weight: 600;
+  font-size: var(--text-lg);
+  font-weight: var(--weight-medium);
   margin-top: 0;
 }
 p {
-  line-height: 1.7;
+  line-height: var(--leading-body);
 }
 .eyebrow {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 2px;
+  font-size: var(--text-xs);
+  font-weight: var(--weight-bold);
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: #637961;
+  color: var(--color-accent-text);
 }
 .intro {
-  color: var(--color-muted);
+  color: var(--color-text-muted);
   max-width: 600px;
-  font-size: 14px;
+  font-size: var(--text-sm);
 }
 .panel {
-  padding: 28px;
+  padding: var(--space-6);
   border: 1px solid var(--color-border);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+}
+.button,
+button {
+  min-height: var(--control-height);
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius-sm);
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  padding: var(--space-2) var(--space-4);
+  cursor: pointer;
+}
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+.button:hover,
+button:hover {
+  background: var(--color-nav-hover);
+}
+button:disabled,
+.button[aria-disabled='true'] {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+button[aria-busy='true'] {
+  cursor: progress;
+}
+label {
+  display: block;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  margin-bottom: var(--space-2);
+}
+input,
+select,
+textarea {
+  min-height: var(--control-height);
+  width: 100%;
+  min-width: 0;
+  border: 1px solid var(--color-control-border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+input:disabled,
+select:disabled,
+textarea:disabled {
+  background: var(--color-surface-muted);
+  cursor: not-allowed;
+}
+[aria-invalid='true'] {
+  border-color: var(--color-error);
+}
+.field-error {
+  color: var(--color-error);
+  font-size: var(--text-sm);
+}
+.table-scroll {
+  overflow-x: auto;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--color-surface);
+  font-size: var(--text-sm);
+}
+th,
+td {
+  text-align: start;
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+}
+th {
+  background: var(--color-surface-muted);
+  font-weight: var(--weight-medium);
+}
+dialog {
+  max-width: min(36rem, calc(100% - 2rem));
+  max-height: calc(100dvh - 2rem);
+  padding: var(--space-6);
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-dialog);
+}
+dialog::backdrop {
+  background: rgb(53 39 31 / 50%);
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
 }

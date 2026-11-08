@@ -4,13 +4,13 @@
 }
 .shell {
   display: grid;
-  grid-template-columns: 248px minmax(0, 1fr);
+  grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
   min-height: 100dvh;
 }
 .sidebar {
   padding: 32px 22px;
-  background: var(--color-sidebar);
-  color: var(--color-sidebar-text);
+  background: var(--color-primary);
+  color: var(--color-on-primary);
   display: flex;
   flex-direction: column;
 }
@@ -21,7 +21,7 @@
   color: inherit;
   text-decoration: none;
   font-size: 25px;
-  font-weight: 650;
+  font-weight: var(--weight-medium);
   letter-spacing: -0.8px;
 }
 .brand-mark {
@@ -30,9 +30,9 @@
   width: 40px;
   height: 40px;
   border-radius: 12px;
-  background: var(--color-brand);
-  color: var(--color-sidebar);
-  font-family: Georgia, serif;
+  background: var(--color-accent);
+  color: var(--color-primary);
+  font-family: var(--font-heading);
   font-size: 32px;
 }
 nav {
@@ -42,15 +42,15 @@ nav {
 }
 .nav-label {
   font-size: 10px;
-  font-weight: 650;
+  font-weight: var(--weight-medium);
   letter-spacing: 2px;
-  color: #aabdb6;
+  color: var(--color-nav-muted);
   padding: 0 14px 12px;
 }
 .sidebar-note {
   margin-top: auto;
   padding: 60px 14px 0;
-  color: #adbfad;
+  color: var(--color-nav-muted);
   font-size: 12px;
   line-height: 1.8;
 }
@@ -62,7 +62,7 @@ nav {
 main {
   flex: 1;
   padding: 48px;
-  max-width: 1400px;
+  max-width: var(--content-width);
   width: 100%;
   margin: 0 auto;
 }
@@ -71,9 +71,9 @@ footer {
   justify-content: space-between;
   margin: 0 48px;
   padding: 24px 0;
-  border-top: 1px solid #e1e4db;
+  border-top: 1px solid var(--color-border);
   font-size: 11px;
-  color: #6a756c;
+  color: var(--color-text-muted);
 }
 .menu-toggle {
   display: none;
@@ -83,7 +83,7 @@ footer {
   top: -100px;
   left: 16px;
   padding: 12px;
-  background: white;
+  background: var(--color-surface);
   z-index: 10;
 }
 .skip-link:focus {
@@ -102,8 +102,8 @@ footer {
   .menu-toggle {
     display: block;
     background: transparent;
-    color: var(--color-surface);
-    border: 1px solid #789185;
+    color: var(--color-on-primary);
+    border: 1px solid var(--color-accent);
     border-radius: 6px;
     padding: 9px 14px;
     font: inherit;
@@ -125,4 +125,19 @@ footer {
   footer {
     margin: 0 24px;
   }
+}
+
+.brand {
+  font-family: var(--font-heading);
+  font-weight: var(--weight-regular);
+  font-size: 30px;
+}
+.brand-mark {
+  border-radius: var(--radius-sm);
+}
+.sidebar :focus-visible {
+  outline-color: var(--color-accent);
+}
+main:focus {
+  outline: none;
 }

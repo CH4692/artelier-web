@@ -19,9 +19,9 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
     }
     a {
       padding: 13px 14px;
-      border-radius: var(--radius-control);
+      border-radius: var(--radius-sm);
       text-decoration: none;
-      color: var(--color-nav-text);
+      color: var(--color-nav-muted);
       display: flex;
       align-items: center;
       gap: 13px;
@@ -35,8 +35,9 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
       background: var(--color-nav-hover);
     }
     a.active {
-      color: var(--color-surface);
-      background: var(--color-nav-active);
+      box-shadow: inset 3px 0 var(--color-accent);
+      color: var(--color-on-primary);
+      background: var(--color-nav-hover);
     }
   `,
 })
