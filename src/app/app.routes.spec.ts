@@ -23,7 +23,10 @@ describe('Workspace routes', () => {
         { provide: CustomersService, useValue: { list: () => of({ customers: [], total: 0 }) } },
         {
           provide: DashboardService,
-          useValue: { readyForPickupCount: () => of({ status: 'unavailable' }) },
+          useValue: {
+            pickup: () => of({ entries: [], total: 0, relationsPending: false }),
+            readyForPickupCount: () => of({ status: 'unavailable' }),
+          },
         },
         provideHttpClient(),
         provideRouter(routes),
@@ -63,7 +66,10 @@ describe('Protected navigation integration', () => {
         { provide: CustomersService, useValue: { list: () => of({ customers: [], total: 0 }) } },
         {
           provide: DashboardService,
-          useValue: { readyForPickupCount: () => of({ status: 'unavailable' }) },
+          useValue: {
+            pickup: () => of({ entries: [], total: 0, relationsPending: false }),
+            readyForPickupCount: () => of({ status: 'unavailable' }),
+          },
         },
         provideHttpClient(),
         provideRouter(routes),
@@ -85,5 +91,13 @@ describe('Protected navigation integration', () => {
     const harness = await RouterTestingHarness.create('/repairs');
     expect(TestBed.inject(Router).url).toBe('/access-denied');
     expect(harness.routeNativeElement?.textContent).toContain('does not have permission');
+  });
+  it('protects dashboard data from signed-out and customer users', async () => {
+    TestBed.inject(SessionState).clear();
+    const harness = await RouterTestingHarness.create('/dashboard');
+    expect(TestBed.inject(Router).url).toBe('/login?returnUrl=%2Fdashboard');
+    TestBed.inject(SessionState).authenticate({ ...testUser, role: 'customer' });
+    await harness.navigateByUrl('/dashboard');
+    expect(TestBed.inject(Router).url).toBe('/access-denied');
   });
 });

@@ -25,7 +25,10 @@ describe('App navigation', () => {
         { provide: CustomersService, useValue: { list: () => of({ customers: [], total: 0 }) } },
         {
           provide: DashboardService,
-          useValue: { readyForPickupCount: () => of({ status: 'unavailable' }) },
+          useValue: {
+            pickup: () => of({ entries: [], total: 0, relationsPending: false }),
+            readyForPickupCount: () => of({ status: 'unavailable' }),
+          },
         },
         provideHttpClient(),
         provideRouter(routes),

@@ -41,7 +41,7 @@ export const UI_DE = {
       title: 'Abholbereit',
       label: 'Zur Abholung',
       hint: 'Aufträge zur Abholung bereit.',
-      empty: 'Keine Instrumente abholbereit.',
+      empty: 'Keine Aufträge abholbereit.',
     },
     overdue: {
       title: 'Überfällige Aufträge',
@@ -50,7 +50,7 @@ export const UI_DE = {
       empty: 'Keine überfälligen Aufträge.',
     },
     upcoming: {
-      title: 'Anstehende Termine',
+      title: 'Bevorstehende Fristen',
       label: 'Fristen im Blick',
       hint: 'Aufträge mit bevorstehendem Termin.',
       empty: 'Keine anstehenden Termine.',
