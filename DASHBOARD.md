@@ -14,7 +14,7 @@ The primary creation action is explicitly disabled with an associated explanatio
 
 The request is bounded to one returned record. The count-only consumer deliberately treats the response body as opaque; it does not hydrate or retain unused repair records. No client-side workflow aggregation is introduced. Repeated refreshes are blocked while loading; leaving the dashboard cancels the request.
 
-Zero is rendered as a real numeric value with the explicit empty message. Missing, malformed or unsafe count headers produce an unavailable state. Transport failures produce a safe error message and retry action; backend details are never rendered. A transient failure never becomes a zero.
+Zero is rendered as a real numeric value with the explicit empty message. Missing, malformed or unsafe count headers produce an unavailable state. Transport failures produce a safe error message and retry action; backend details are never rendered. During refresh, errors or invalid count headers, the last confirmed value is retained and explicitly labeled “Letzter Stand”. A stale zero never uses the current-empty message. The first failed request shows no numeric value. A transient failure never becomes a zero.
 
 ## Missing dependencies
 
@@ -27,7 +27,7 @@ The checked backend contains a paginated repair list with a single-status filter
 
 No backend endpoints, schemas or authorization policies were changed. This change does not invent a future endpoint contract. The unavailable urgent state explicitly avoids suggesting that the workshop has no urgent work.
 
-## Changed files
+## Initial implementation files
 
 - `src/app/features/dashboard/dashboard.ts` — signal state and bounded refresh lifecycle.
 - `src/app/features/dashboard/dashboard.html` — compact operational layout.
@@ -60,8 +60,30 @@ No backend endpoints, schemas or authorization policies were changed. This chang
 - `src/index.html` — German document language.
 - `DASHBOARD.md` — implementation and dependency notes.
 
+## Focused UI/UX polish
+
+KPI cards now have smaller padding and shorter state copy, inline number/unit/status treatment and equal responsive grid rows. A zero uses its accurate empty message without a pickup badge. The refresh button lives inside the pickup card, has the accessible name “Abholzahl aktualisieren”, announces busy state and is disabled while loading. Error states offer one scoped retry action. Projected action content keeps the presentation component independent of the transport and leaves room for a future unified refresh without introducing polling.
+
+The unavailable creation button uses a subdued outline and the associated “In Vorbereitung” label. It remains natively disabled and has no invented route. The urgent section drops decorative numbering, reduces padding and explicitly states that urgency cannot currently be determined. The sidebar section label increases from 10px to the existing 12px typography token. Existing navigation, branding, authentication, routes and API behavior remain intact.
+
+Files changed in this polish:
+
+- `src/app/features/dashboard/dashboard.html`, `dashboard.scss`, `dashboard.ts` — compact layout, scoped refresh and preservation of previous values.
+- `src/app/features/dashboard/dashboard.service.ts` — typed last-known value support; existing endpoint unchanged.
+- `src/app/features/dashboard/dashboard.spec.ts` — refresh errors, retained zeros, invalid responses and unavailable actions.
+- `src/app/features/dashboard/metric-card.html`, `metric-card.scss`, `metric-card.ts`, `metric-card.spec.ts` — concise accessible rendering and previous-value states.
+- `src/app/shared/i18n/ui.de.ts` — concise German copy and singular count unit.
+- `src/app/app.scss` — readable sidebar section label.
+- `DASHBOARD.md` — behavior, missing capabilities and verification evidence.
+
+Missing backend capabilities remain those documented above: authoritative open totals, overdue/upcoming aggregates and server-ranked urgent repair projections. The current frontend creation/detail/filter routes remain unavailable. No backend contract, fake repair records or client urgency rules were introduced.
+
 ## Verification
 
 Run `npm run lint`, `npm run test:ci` and `npm run build`. Dashboard tests mock HTTP only in test files. Production code contains no operational fixtures. Existing authentication, route protection, session expiration, CSRF and logout tests remain in the suite.
 
-Verification passed: ESLint, all 87 tests and the production build. Safari visual checks used the production bundle on a desktop viewport and at 768×1024 and 1024×768. The temporary loopback-only preview server returned a test identity and a zero-count HTTP fixture; it is separate from production code and was stopped after verification. Menu expansion and responsive card layouts were inspected without visible horizontal overflow. Live FastAPI/CORS verification and GitHub Actions execution remain outstanding. The CSS defines explicit one/two/four-column layouts and no fixed minimum card width. The existing production bundle budgets remain unchanged.
+Verification passed: ESLint, all 94 tests and the production build. Safari visual checks used the production bundle on a desktop viewport and at 768×1024 and 1024×768. The temporary loopback-only preview server returned a test identity and a zero-count HTTP fixture; it is separate from production code and was stopped after verification. Menu expansion and responsive card layouts were inspected without visible horizontal overflow. Live FastAPI/CORS verification and GitHub Actions execution remain outstanding. The CSS defines explicit one/two/four-column layouts and no fixed minimum card width. The existing production bundle budgets remain unchanged.
+
+The polish was checked in Safari on desktop, at 1366×768 (laptop), 1024×768 and 768×1024 (tablet). The separate temporary HTTP preview verified a successful count, a failed refresh retaining that count, and a successful retry. It was stopped afterward. No operational fixtures are shipped in the production app. The final tests passed (94 tests across 14 files); ESLint and the production build also passed.
+
+Calculated contrast checks: primary text/surface 14.14:1, muted text/surface 5.72:1, muted text/background 5.12:1, muted text/muted surface 4.70:1, sidebar text/primary 8.52:1, sidebar text/active surface 6.41:1, control border/surface 4.02:1, focus/surface 6.43:1 and sidebar accent/active surface 3.47:1. Native refresh/retry controls retain the existing 44px minimum height and visible focus styles. Live-region and keyboard-navigation regressions remain covered by the tests; this is not a complete WCAG conformance audit. GitHub Actions execution has not been verified for these uncommitted changes.

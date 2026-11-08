@@ -11,31 +11,50 @@
     [attr.aria-busy]="state().status === 'loading'"
   >
     @let current = state();
+    @let value = displayValue();
+    @if (value !== undefined) {
+      <p class="value">
+        {{ value.toLocaleString('de-DE') }}
+        <span>{{ value === 1 ? copy.countSingular : copy.countUnit }}</span>
+        @if (current.status === 'available' && value > 0) {
+          <app-status-badge [tone]="metric().tone">{{ metric().label }}</app-status-badge>
+        }
+      </p>
+      @if (current.status !== 'available') {
+        <p class="last-known">{{ copy.lastKnown }}</p>
+      }
+    }
     @switch (current.status) {
       @case ('loading') {
-        <span class="skeleton" aria-hidden="true"></span>
+        @if (value === undefined) {
+          <span class="skeleton" aria-hidden="true"></span>
+        }
         <p class="state-label">{{ copy.loading }}</p>
       }
       @case ('available') {
-        <p class="value">
-          {{ current.value.toLocaleString('de-DE') }} <span>{{ copy.countUnit }}</span>
-        </p>
-        <p class="description">{{ current.value === 0 ? metric().empty : metric().hint }}</p>
+        @if (current.value === 0) {
+          <p class="description">{{ metric().empty }}</p>
+        }
       }
       @case ('error') {
-        <p class="state-label error">{{ copy.error }}</p>
-        <p class="description">{{ copy.errorHint }}</p>
+        <p class="state-label error">{{ copy.errorHint }}</p>
       }
       @case ('unavailable') {
         <p class="state-label">{{ copy.unavailable }}</p>
-        <p class="description">{{ copy.unavailableHint }}</p>
       }
     }
   </div>
-  @if (state().status === 'available') {
-    <app-status-badge [tone]="metric().tone">{{ metric().label }}</app-status-badge>
-  }
-  @if (state().status === 'error') {
-    <button class="retry" type="button" (click)="retry.emit()">{{ copy.retry }}</button>
-  }
+  <div class="metric-actions">
+    @if (state().status === 'error') {
+      <button
+        class="retry"
+        type="button"
+        (click)="retry.emit()"
+        [attr.aria-label]="metric().title + ': ' + copy.retry"
+      >
+        {{ copy.retry }}
+      </button>
+    }
+    <ng-content select="[metric-actions]" />
+  </div>
 </article>

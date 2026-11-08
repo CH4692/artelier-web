@@ -1,4 +1,4 @@
-import { Component, input, output } from '@angular/core';
+import { Component, computed, input, output } from '@angular/core';
 import { StatusBadge, StatusTone } from '../../shared/ui/status-badge';
 import { UI_DE } from '../../shared/i18n/ui.de';
 import { MetricState } from './dashboard.service';
@@ -22,5 +22,9 @@ export class MetricCard {
   readonly metric = input.required<MetricDefinition>();
   readonly state = input.required<MetricState>();
   readonly retry = output<void>();
+  protected readonly displayValue = computed(() => {
+    const state = this.state();
+    return state.status === 'available' ? state.value : state.previousValue;
+  });
   protected readonly copy = UI_DE.dashboard;
 }

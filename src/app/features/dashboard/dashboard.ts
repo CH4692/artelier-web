@@ -25,6 +25,8 @@ export class Dashboard {
     { key: 'upcoming', ...this.copy.upcoming, tone: 'warning' },
   ];
 
+  private inFlight = false;
+
   constructor() {
     this.loadReady();
   }
@@ -33,20 +35,21 @@ export class Dashboard {
     // Prevent duplicate refreshes; the constructor starts the first request.
     if (this.inFlight) return;
     this.inFlight = true;
-    this.ready.set({ status: 'loading' });
+    const current = this.ready();
+    const previousValue = current.status === 'available' ? current.value : current.previousValue;
+    this.ready.set({ status: 'loading', previousValue });
     this.service
       .readyForPickupCount()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (state) => {
           this.inFlight = false;
-          this.ready.set(state);
+          this.ready.set(state.status === 'available' ? state : { ...state, previousValue });
         },
         error: () => {
           this.inFlight = false;
-          this.ready.set({ status: 'error' });
+          this.ready.set({ status: 'error', previousValue });
         },
       });
   }
-  private inFlight = false;
 }

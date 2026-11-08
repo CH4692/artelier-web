@@ -33,9 +33,14 @@ describe('Workshop dashboard', () => {
     expect(create.disabled).toBe(true);
     expect(
       element.querySelector('#' + create.getAttribute('aria-describedby'))?.textContent,
-    ).toContain('noch nicht verfügbar');
+    ).toContain('In Vorbereitung');
     expect(element.querySelectorAll('a[href]')).toHaveLength(0);
     expect(element.querySelector('.welcome')).toBeNull();
+    expect(element.querySelector('.section-number')).toBeNull();
+    expect(element.querySelectorAll('.refresh')).toHaveLength(1);
+    expect(
+      element.querySelector('.refresh')?.closest('article')?.getAttribute('aria-labelledby'),
+    ).toBe('ready-title');
     request().flush([], { headers: { 'X-Total-Count': '0' } });
   });
 
@@ -44,11 +49,11 @@ describe('Workshop dashboard', () => {
     request().flush([], { headers: { 'X-Total-Count': '0' } });
     await fixture.whenStable();
     const element: HTMLElement = fixture.nativeElement;
-    expect(element.textContent).toContain('Aktuell sind keine Instrumente abholbereit.');
+    expect(element.textContent).toContain('Keine Instrumente abholbereit.');
     expect(element.querySelectorAll('.value')).toHaveLength(1);
     expect(element.querySelectorAll('.state-label').length).toBe(3);
     expect(element.querySelector('.urgent')?.textContent).toContain(
-      'Dies bedeutet nicht, dass keine dringenden Reparaturen vorliegen.',
+      'Dringende Aufträge können dennoch bestehen.',
     );
     expect(element.querySelector('.urgent a')).toBeNull();
   });
@@ -64,9 +69,7 @@ describe('Workshop dashboard', () => {
     expect(fixture.nativeElement.querySelector('.refresh').disabled).toBe(true);
     request().flush([], { headers: { 'X-Total-Count': '0' } });
     await fixture.whenStable();
-    expect(fixture.nativeElement.textContent).toContain(
-      'Aktuell sind keine Instrumente abholbereit.',
-    );
+    expect(fixture.nativeElement.textContent).toContain('Keine Instrumente abholbereit.');
   });
 
   it('handles API failure with safe copy, then retries successfully', async () => {
@@ -76,12 +79,67 @@ describe('Workshop dashboard', () => {
       { status: 503, statusText: 'Unavailable' },
     );
     await fixture.whenStable();
-    expect(fixture.nativeElement.textContent).toContain('Nicht geladen');
+    expect(fixture.nativeElement.textContent).toContain('Daten konnten nicht geladen werden.');
     expect(fixture.nativeElement.textContent).not.toContain('sensitive');
     fixture.nativeElement.querySelector('.retry').click();
     request().flush([], { headers: { 'X-Total-Count': '2' } });
     await fixture.whenStable();
     expect(fixture.nativeElement.querySelector('.value').textContent).toContain('2');
+  });
+
+  it('keeps the last real count visible while refreshing and after a failed refresh', async () => {
+    const fixture = TestBed.createComponent(Dashboard);
+    request().flush([], { headers: { 'X-Total-Count': '7' } });
+    await fixture.whenStable();
+    fixture.componentInstance.loadReady();
+    fixture.componentInstance.loadReady();
+    await fixture.whenStable();
+    const element: HTMLElement = fixture.nativeElement;
+    expect(element.querySelector('.value')?.textContent).toContain('7');
+    expect(element.textContent).toContain('Letzter Stand');
+    expect(element.querySelector('.refresh')?.getAttribute('aria-busy')).toBe('true');
+    request().flush({}, { status: 503, statusText: 'Unavailable' });
+    await fixture.whenStable();
+    expect(element.querySelector('.value')?.textContent).toContain('7');
+    expect(element.textContent).toContain('Letzter Stand');
+    expect(element.textContent).toContain('Daten konnten nicht geladen werden.');
+    expect(element.querySelector('.refresh')).toBeNull();
+    element.querySelector<HTMLButtonElement>('.retry')!.click();
+    request().flush([], { headers: { 'X-Total-Count': '3' } });
+    await fixture.whenStable();
+    expect(element.querySelector('.value')?.textContent).toContain('3');
+    expect(element.textContent).not.toContain('Letzter Stand');
+  });
+
+  it('retains a previously confirmed zero without presenting a failed refresh as currently empty', async () => {
+    const fixture = TestBed.createComponent(Dashboard);
+    request().flush([], { headers: { 'X-Total-Count': '0' } });
+    fixture.componentInstance.loadReady();
+    request().flush({}, { status: 503, statusText: 'Unavailable' });
+    await fixture.whenStable();
+    const element: HTMLElement = fixture.nativeElement;
+    expect(element.querySelector('.value')?.textContent).toContain('0');
+    expect(element.textContent).toContain('Letzter Stand');
+    expect(element.textContent).not.toContain('Keine Instrumente abholbereit.');
+    element.querySelector<HTMLButtonElement>('.retry')!.click();
+    await fixture.whenStable();
+    expect(element.querySelector('.value')?.textContent).toContain('0');
+    request().flush([], { headers: { 'X-Total-Count': '0' } });
+    await fixture.whenStable();
+    expect(element.textContent).toContain('Keine Instrumente abholbereit.');
+    expect(element.textContent).not.toContain('Letzter Stand');
+  });
+
+  it('preserves the last count when a refresh response lacks a reliable total', async () => {
+    const fixture = TestBed.createComponent(Dashboard);
+    request().flush([], { headers: { 'X-Total-Count': '4' } });
+    fixture.componentInstance.loadReady();
+    request().flush([]);
+    await fixture.whenStable();
+    const element: HTMLElement = fixture.nativeElement;
+    expect(element.querySelector('.value')?.textContent).toContain('4');
+    expect(element.textContent).toContain('Letzter Stand');
+    expect(fixture.componentInstance.ready()).toEqual({ status: 'unavailable', previousValue: 4 });
   });
 
   it('cancels an outstanding request when leaving the dashboard', () => {
