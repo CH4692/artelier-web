@@ -1,0 +1,49 @@
+:host {
+  display: block;
+  margin-top: var(--space-5);
+}
+.hint,
+dt {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+ol {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+li {
+  border-top: 1px solid var(--color-border);
+  padding-top: var(--space-4);
+  margin-top: var(--space-4);
+}
+.repair-heading,
+.pagination {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+h3 {
+  margin: 0;
+  font-size: var(--text-base);
+}
+.description {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+dl {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr));
+  gap: var(--space-3);
+}
+dd {
+  margin: var(--space-1) 0 0;
+}
+.pagination {
+  justify-content: flex-end;
+  margin-top: var(--space-5);
+}
+app-error-message button {
+  margin-top: var(--space-3);
+}

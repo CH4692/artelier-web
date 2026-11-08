@@ -1,0 +1,59 @@
+.back,
+.actions a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--control-height);
+}
+.back {
+  margin-bottom: var(--space-3);
+}
+.editor {
+  margin-top: var(--space-5);
+  max-width: 52rem;
+}
+.fields {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-5);
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-5);
+  margin-top: var(--space-5);
+}
+.notes,
+app-customer-select {
+  display: block;
+  margin-top: var(--space-5);
+}
+.field-error {
+  margin: var(--space-2) 0 0;
+}
+.hint {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  margin-bottom: 0;
+}
+app-error-message {
+  display: block;
+  margin-top: var(--space-5);
+}
+@media (min-width: 600px) {
+  .fields {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.editor-fields {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+.editor-fields > legend {
+  font-size: var(--text-lg);
+  font-weight: var(--weight-medium);
+  margin-bottom: var(--space-5);
+}

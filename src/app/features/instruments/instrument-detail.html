@@ -1,0 +1,108 @@
+<a class="back" routerLink="/instruments">← {{ copy.back }}</a>
+@if (confirmation()) {
+  <p class="confirmation" role="status">{{ confirmation() }}</p>
+}
+@let current = state();
+@if (current.status === 'loading') {
+  <app-loading-indicator [label]="copy.loading" />
+}
+@if (current.status === 'error') {
+  <h1>{{ current.notFound ? 'Instrument nicht gefunden' : 'Instrumentendetails' }}</h1>
+  <app-error-message heading="Instrumentendaten nicht verfügbar" [message]="current.message">
+    @if (!current.notFound) {
+      <button type="button" (click)="retry()">{{ copy.retry }}</button>
+    }
+  </app-error-message>
+}
+@if (current.status === 'loaded') {
+  @let instrument = current.data;
+  <div class="page-heading">
+    <app-page-header
+      [compact]="true"
+      [heading]="
+        copy.types[instrument.type] +
+        ' · ' +
+        (instrument.identification_number || '#' + instrument.id)
+      "
+      [description]="'Instrumentennummer ' + instrument.id"
+    /><app-status-badge [tone]="instrument.is_archived ? 'warning' : 'success'">{{
+      instrument.is_archived ? 'Archiviert' : 'Aktiv'
+    }}</app-status-badge>
+  </div>
+  <section class="panel" aria-labelledby="instrument-data-title">
+    <h2 id="instrument-data-title">Instrumentendaten</h2>
+    <dl class="data-grid">
+      <div>
+        <dt>Hersteller</dt>
+        <dd>{{ instrument.maker || copy.missing }}</dd>
+      </div>
+      <div>
+        <dt>Baujahr</dt>
+        <dd>{{ instrument.year_of_manufacture || copy.missing }}</dd>
+      </div>
+      <div>
+        <dt>Kennnummer</dt>
+        <dd>{{ instrument.identification_number || copy.missing }}</dd>
+      </div>
+      <div>
+        <dt>Eigentum</dt>
+        <dd>{{ copy.ownerships[instrument.ownership] }}</dd>
+      </div>
+      @if (instrument.body_length_mm !== null) {
+        <div>
+          <dt>Korpuslänge</dt>
+          <dd>{{ instrument.body_length_mm }} mm</dd>
+        </div>
+      }
+      @if (instrument.bow_weight_g !== null) {
+        <div>
+          <dt>Bogengewicht</dt>
+          <dd>{{ instrument.bow_weight_g }} g</dd>
+        </div>
+      }
+      <div>
+        <dt>Kunde</dt>
+        <dd>
+          @let owner = customer();
+          @if (instrument.customer_id === null) {
+            {{
+              instrument.ownership === 'customer'
+                ? 'Eigentümer noch nicht bekannt'
+                : 'Keine Kundenzuordnung'
+            }}
+          } @else if (owner.status === 'loaded' && owner.data) {
+            <a [routerLink]="['/customers', owner.data.id]"
+              >{{ owner.data.first_name }} {{ owner.data.last_name }} · #{{ owner.data.id }}</a
+            >{{ owner.data.is_archived ? ' · Archiviert' : '' }}
+          } @else if (owner.status === 'loading') {
+            Kundendaten werden geladen…
+          } @else {
+            <a [routerLink]="['/customers', instrument.customer_id]"
+              >Kunde #{{ instrument.customer_id }}</a
+            >
+            <p class="field-error" role="status">Kundendaten sind nicht verfügbar.</p>
+          }
+        </dd>
+      </div>
+    </dl>
+    @if (instrument.notes) {
+      <h3>Notizen</h3>
+      <p class="notes">{{ instrument.notes }}</p>
+    }
+    <div class="actions">
+      <a class="button" [routerLink]="['/instruments', instrument.id, 'edit']">Bearbeiten</a
+      ><button
+        type="button"
+        (click)="downloadQr()"
+        [disabled]="qrPending()"
+        [attr.aria-busy]="qrPending()"
+      >
+        {{ qrPending() ? 'QR-Code wird geladen…' : 'QR-Code herunterladen' }}
+      </button>
+    </div>
+    @if (qrError()) {
+      <p class="field-error" role="alert">{{ qrError() }}</p>
+    }
+  </section>
+  <app-instrument-history [instrumentId]="instrument.id" />
+}

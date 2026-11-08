@@ -55,6 +55,30 @@ export const routes: Routes = [
     loadComponent: () => import('./features/customers/customers').then((m) => m.Customers),
   },
   {
+    path: 'instruments/new',
+    canActivate: [authGuard],
+    data: { roles: ['admin', 'employee'] },
+    title: 'Instrument anlegen | Artelier',
+    loadComponent: () =>
+      import('./features/instruments/instrument-editor').then((m) => m.InstrumentEditor),
+  },
+  {
+    path: 'instruments/:id/edit',
+    canActivate: [authGuard],
+    data: { roles: ['admin', 'employee'], edit: true },
+    title: 'Instrument bearbeiten | Artelier',
+    loadComponent: () =>
+      import('./features/instruments/instrument-editor').then((m) => m.InstrumentEditor),
+  },
+  {
+    path: 'instruments/:id',
+    canActivate: [authGuard],
+    data: { roles: ['admin', 'employee'] },
+    title: 'Instrumentendetails | Artelier',
+    loadComponent: () =>
+      import('./features/instruments/instrument-detail').then((m) => m.InstrumentDetail),
+  },
+  {
     path: 'instruments',
     canActivate: [authGuard],
     data: { roles: ['admin', 'employee'] },

@@ -1,0 +1,75 @@
+<section class="panel history" aria-labelledby="repair-history-title">
+  <h2 id="repair-history-title">Reparaturhistorie</h2>
+  <p class="hint">
+    Chronologisch nach Ausführungsdatum und Auftragsnummer, einschließlich archivierter Aufträge.
+  </p>
+  @let current = state();
+  @if (current.status === 'loading') {
+    <app-loading-indicator label="Reparaturhistorie wird geladen…" />
+  }
+  @if (current.status === 'error') {
+    <app-error-message heading="Historie nicht verfügbar" [message]="current.message"
+      ><button type="button" (click)="retry()">{{ copy.retry }}</button></app-error-message
+    >
+  }
+  @if (current.status === 'loaded') {
+    @if (current.data.history.repair_orders.length === 0) {
+      <p role="status">
+        {{
+          offset() === 0
+            ? 'Noch keine Reparaturen für dieses Instrument erfasst.'
+            : 'Auf dieser Seite sind keine Reparaturen vorhanden.'
+        }}
+      </p>
+    }
+    <ol>
+      @for (repair of current.data.history.repair_orders; track repair.id) {
+        <li>
+          <div class="repair-heading">
+            <h3>Auftrag #{{ repair.id }}</h3>
+            <app-status-badge [tone]="tone(repair.status)">{{
+              copy.statuses[repair.status]
+            }}</app-status-badge>
+            @if (repair.is_archived) {
+              <app-status-badge tone="warning">Archiviert</app-status-badge>
+            }
+          </div>
+          <p class="description">{{ repair.work_description }}</p>
+          <dl>
+            <div>
+              <dt>Ausgeführt</dt>
+              <dd>
+                {{
+                  repair.performed_at
+                    ? (repair.performed_at | date: 'dd.MM.yyyy HH:mm')
+                    : copy.missing
+                }}
+              </dd>
+            </div>
+            @if (repair.accepted_at) {
+              <div>
+                <dt>Angenommen</dt>
+                <dd>{{ repair.accepted_at | date: 'dd.MM.yyyy HH:mm' }}</dd>
+              </div>
+            }
+            @if (repair.expected_completion_date) {
+              <div>
+                <dt>Geplanter Abschluss</dt>
+                <dd>{{ repair.expected_completion_date | date: 'dd.MM.yyyy' }}</dd>
+              </div>
+            }
+            <div>
+              <dt>Erfasst</dt>
+              <dd>{{ repair.created_at | date: 'dd.MM.yyyy HH:mm' }}</dd>
+            </div>
+          </dl>
+        </li>
+      }
+    </ol>
+    <nav class="pagination" aria-label="Seiten der Reparaturhistorie">
+      <button type="button" (click)="page(-1)" [disabled]="offset() === 0">Zurück</button
+      ><span>Seite {{ pageNumber() }}</span
+      ><button type="button" (click)="page(1)" [disabled]="!nextPage(current.data)">Weiter</button>
+    </nav>
+  }
+</section>
