@@ -1,0 +1,58 @@
+@use 'sass:color';
+:root {
+  color-scheme: light;
+  font-family: Inter, 'Segoe UI', sans-serif;
+  color: #243c32;
+  background: #f6f7f1;
+  font-synthesis: none;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+}
+a {
+  color: #365e43;
+}
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+:focus-visible {
+  outline: 3px solid #b27a36;
+  outline-offset: 4px;
+}
+h1 {
+  font-family: Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(32px, 4vw, 46px);
+  letter-spacing: -1.5px;
+  margin: 12px 0 16px;
+}
+h2 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-top: 0;
+}
+p {
+  line-height: 1.7;
+}
+.eyebrow {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #637961;
+}
+.intro {
+  color: #6b776d;
+  max-width: 600px;
+  font-size: 14px;
+}
+.panel {
+  padding: 28px;
+  border: 1px solid #dfe4d8;
+  border-radius: 12px;
+  background: #fff;
+}

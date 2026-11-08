@@ -1,0 +1,44 @@
+<a class="skip-link" href="#main-content">Skip to content</a>
+<div class="shell">
+  <aside class="sidebar">
+    <a
+      class="brand"
+      routerLink="/dashboard"
+      (click)="menuOpen.set(false)"
+      aria-label="Artelier home"
+    >
+      <span class="brand-mark" aria-hidden="true">a.</span> Artelier
+    </a>
+    <button
+      class="menu-toggle"
+      type="button"
+      (click)="toggleMenu()"
+      [attr.aria-expanded]="menuOpen()"
+      aria-controls="main-navigation"
+    >
+      Menu
+    </button>
+    <nav id="main-navigation" aria-label="Main navigation" [class.is-open]="menuOpen()">
+      <span class="nav-label">WORKSPACE</span>
+      @for (item of navigation; track item.path) {
+        <a
+          [routerLink]="item.path"
+          routerLinkActive="active"
+          ariaCurrentWhenActive="page"
+          (click)="menuOpen.set(false)"
+        >
+          <span aria-hidden="true">{{ item.symbol }}</span
+          >{{ item.label }}
+        </a>
+      }
+    </nav>
+    <p class="sidebar-note">A little more harmony.<br />Every day in your workshop.</p>
+  </aside>
+  <div class="workspace">
+    <header class="topbar">
+      <span>Workshop workspace</span><span class="workspace-tag">Artelier</span>
+    </header>
+    <main id="main-content" tabindex="-1"><router-outlet /></main>
+    <footer>Artelier <span>Made for the craft.</span></footer>
+  </div>
+</div>
