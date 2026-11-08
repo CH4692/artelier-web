@@ -9,7 +9,13 @@
     "test": "ng test",
     "lint": "ng lint",
     "test:ci": "ng test --watch=false",
-    "default": "git switch main && git pull"
+    "default": "git switch main && git pull",
+    "e2e": "npm run e2e:integration",
+    "e2e:integration": "python3 e2e/run-integration.py",
+    "e2e:ui": "node e2e/run-ui.mjs",
+    "e2e:smoke": "python3 e2e/run-integration.py --project=chromium --grep=@smoke",
+    "e2e:typecheck": "tsc -p e2e/tsconfig.json",
+    "e2e:lint": "eslint e2e/**/*.ts playwright.config.ts"
   },
   "private": true,
   "packageManager": "npm@11.12.1",
@@ -28,6 +34,8 @@
     "@angular/cli": "^22.2.6",
     "@angular/compiler-cli": "^22.2.0",
     "@eslint/js": "^10.0.1",
+    "@playwright/test": "1.65.0",
+    "@types/node": "^26.6.6",
     "angular-eslint": "22.6.0",
     "eslint": "^10.12.0",
     "jsdom": "^30.0.0",
