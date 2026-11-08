@@ -22,6 +22,7 @@ export class MetricCard {
   readonly metric = input.required<MetricDefinition>();
   readonly state = input.required<MetricState>();
   readonly retry = output<void>();
+  readonly showRetry = input(true);
   protected readonly displayValue = computed(() => {
     const state = this.state();
     return state.status === 'available' ? state.value : state.previousValue;
