@@ -1,0 +1,76 @@
+<fieldset [disabled]="disabled()">
+  <legend>Kundenzuordnung</legend>
+  @let current = selected();
+  <div class="selection" aria-live="polite">
+    @if (selectedId() === null) {
+      <p>Kein Kunde zugeordnet. Der Eigentümer ist noch nicht bekannt.</p>
+    } @else if (current.status === 'loading') {
+      <p>Kunde #{{ selectedId() }} wird geladen…</p>
+    } @else if (current.status === 'error') {
+      <p role="alert">
+        Kunde #{{ selectedId() }}: {{ current.message }} Die Zuordnung bleibt erhalten.
+      </p>
+      <button type="button" (click)="retrySelected()">Kundendaten erneut laden</button>
+    } @else if (current.data) {
+      <p>
+        Ausgewählt: {{ current.data.first_name }} {{ current.data.last_name }} · #{{
+          current.data.id
+        }}{{ current.data.is_archived ? ' · Archiviert' : '' }}
+      </p>
+    }
+  </div>
+  <div class="actions">
+    <button
+      type="button"
+      #trigger
+      (click)="show()"
+      [attr.aria-expanded]="open()"
+      [attr.aria-controls]="inputId() + '-results'"
+    >
+      Kunden suchen
+    </button>
+    @if (selectedId() !== null) {
+      <button type="button" (click)="choose(null)">Zuordnung entfernen</button>
+    }
+  </div>
+  @if (open()) {
+    <div class="search-panel" [id]="inputId() + '-results'">
+      <label [for]="inputId()">Name, E-Mail oder Telefon suchen</label
+      ><input [id]="inputId()" type="search" [formControl]="search" maxlength="200" />
+      @let found = results();
+      @if (found.status === 'loading') {
+        <p role="status">Kunden werden gesucht…</p>
+      }
+      @if (found.status === 'error') {
+        <p role="alert">{{ found.message }}</p>
+        <button type="button" (click)="retry()">Erneut versuchen</button>
+      }
+      @if (found.status === 'loaded') {
+        @if (found.data.customers.length === 0) {
+          <p role="status">Keine passenden Kunden gefunden.</p>
+        }
+        <ul>
+          @for (customer of found.data.customers; track customer.id) {
+            <li>
+              <button class="result" type="button" (click)="choose(customer.id)">
+                {{ customer.first_name }} {{ customer.last_name }} · #{{ customer.id
+                }}<span
+                  >{{ customer.email || 'Keine E-Mail hinterlegt'
+                  }}{{ customer.is_archived ? ' · Archiviert' : '' }}</span
+                >
+              </button>
+            </li>
+          }
+        </ul>
+        <div class="actions">
+          <button type="button" (click)="page(-1)" [disabled]="offset() === 0">
+            Vorherige Kunden</button
+          ><button type="button" (click)="page(1)" [disabled]="!hasNext(found.data)">
+            Weitere Kunden
+          </button>
+        </div>
+      }
+      <button type="button" (click)="open.set(false)">Suche schließen</button>
+    </div>
+  }
+</fieldset>

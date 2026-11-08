@@ -1,0 +1,156 @@
+<a class="back" routerLink="/instruments">← {{ copy.back }}</a>
+<app-page-header
+  [compact]="true"
+  [heading]="editing ? 'Instrument bearbeiten' : copy.create"
+  description="Der Instrumententyp ist ein Pflichtfeld. Weitere Angaben können ergänzt werden."
+/>
+@let current = state();
+@if (current.status === 'loading') {
+  <app-loading-indicator [label]="copy.loading" />
+}
+@if (current.status === 'error') {
+  <app-error-message
+    [heading]="current.notFound ? 'Instrument nicht gefunden' : 'Instrumentendaten nicht verfügbar'"
+    [message]="current.message"
+  >
+    @if (!current.notFound) {
+      <button type="button" (click)="retry()">{{ copy.retry }}</button>
+    }
+  </app-error-message>
+}
+@if (current.status === 'loaded') {
+  <form
+    class="panel editor"
+    [formGroup]="form"
+    (ngSubmit)="submit()"
+    novalidate
+    [attr.aria-busy]="pending()"
+  >
+    @if (current.data?.is_archived) {
+      <p>Dieses Instrument ist archiviert. Seine Daten können weiterhin gepflegt werden.</p>
+    }
+    <fieldset class="editor-fields" [disabled]="pending()">
+      <legend>Instrument und Zuordnung</legend>
+      <div class="fields">
+        <div>
+          <label for="type">Instrumententyp *</label
+          ><select
+            id="type"
+            formControlName="type"
+            required
+            [attr.aria-disabled]="pending()"
+            [attr.aria-invalid]="!!fieldError('type')"
+            [attr.aria-describedby]="fieldError('type') ? 'type-error' : null"
+          >
+            <option value="">Bitte wählen</option>
+            @for (entry of types; track entry[0]) {
+              <option [value]="entry[0]">{{ entry[1] }}</option>
+            }
+          </select>
+          @if (fieldError('type')) {
+            <p class="field-error" id="type-error">{{ fieldError('type') }}</p>
+          }
+        </div>
+        <div>
+          <label for="ownership">Eigentum</label
+          ><select
+            id="ownership"
+            formControlName="ownership"
+            [attr.aria-invalid]="!!fieldError('ownership')"
+            aria-describedby="ownership-hint ownership-error"
+          >
+            @for (entry of ownerships; track entry[0]) {
+              <option [value]="entry[0]">{{ entry[1] }}</option>
+            }
+          </select>
+          <p class="hint" id="ownership-hint">
+            Werkstattbestand und ungeklärtes Eigentum haben keine Kundenzuordnung.
+          </p>
+          <p class="field-error" id="ownership-error">{{ fieldError('ownership') }}</p>
+        </div>
+        @for (field of textFields; track field) {
+          <div>
+            <label [for]="field">{{ copy.fields[field] }} (optional)</label
+            ><input
+              [id]="field"
+              [formControlName]="field"
+              [readOnly]="pending()"
+              [attr.aria-invalid]="!!fieldError(field)"
+              [attr.aria-describedby]="fieldError(field) ? field + '-error' : null"
+            />
+            @if (fieldError(field)) {
+              <p class="field-error" [id]="field + '-error'">{{ fieldError(field) }}</p>
+            }
+          </div>
+        }
+        <div>
+          <label for="year_of_manufacture">Baujahr (optional)</label
+          ><input
+            id="year_of_manufacture"
+            type="number"
+            formControlName="year_of_manufacture"
+            min="1"
+            max="9999"
+            step="1"
+            [readOnly]="pending()"
+            [attr.aria-invalid]="!!fieldError('year_of_manufacture')"
+            aria-describedby="year-error"
+          />
+          <p class="field-error" id="year-error">{{ fieldError('year_of_manufacture') }}</p>
+        </div>
+        @if (type()) {
+          @let field = type() === 'bow' ? 'bow_weight_g' : 'body_length_mm';
+          <div>
+            <label [for]="field">{{ copy.fields[field] }} (optional)</label
+            ><input
+              [id]="field"
+              type="number"
+              [formControlName]="field"
+              step="any"
+              [readOnly]="pending()"
+              [attr.aria-invalid]="!!fieldError(field)"
+              aria-describedby="measurement-hint measurement-error"
+            />
+            <p class="hint" id="measurement-hint">
+              Beim Typwechsel wird das nicht passende Maß entfernt.
+            </p>
+            <p class="field-error" id="measurement-error">{{ fieldError(field) }}</p>
+          </div>
+        }
+      </div>
+      @if (ownership() === 'customer') {
+        <app-customer-select
+          [selectedId]="form.controls.customer_id.value"
+          [disabled]="pending()"
+          (selectionChange)="form.controls.customer_id.setValue($event)"
+        />
+        <p class="field-error" role="status">{{ fieldError('customer_id') }}</p>
+      }
+      <div class="notes">
+        <label for="notes">Notizen (optional)</label
+        ><textarea
+          id="notes"
+          formControlName="notes"
+          rows="4"
+          [readOnly]="pending()"
+          [attr.aria-invalid]="!!fieldError('notes')"
+          aria-describedby="notes-error"
+        ></textarea>
+        <p class="field-error" id="notes-error">{{ fieldError('notes') }}</p>
+      </div>
+      @if (error()) {
+        <p class="field-error" role="alert">{{ error() }}</p>
+      }
+    </fieldset>
+    <div class="actions">
+      <button type="submit" [disabled]="pending()" [attr.aria-busy]="pending()">
+        {{ pending() ? copy.saving : copy.save }}
+      </button>
+      @if (!pending()) {
+        <a [routerLink]="current.data ? ['/instruments', current.data.id] : ['/instruments']">{{
+          copy.cancel
+        }}</a>
+      }
+    </div>
+  </form>
+}

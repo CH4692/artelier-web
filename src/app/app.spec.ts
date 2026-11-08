@@ -1,3 +1,4 @@
+import { InstrumentsService } from './features/instruments/instruments.service';
 import { CustomersService } from './features/customers/customers.service';
 import { of } from 'rxjs';
 import { DashboardService } from './features/dashboard/dashboard.service';
@@ -17,6 +18,10 @@ describe('App navigation', () => {
     TestBed.configureTestingModule({
       imports: [App],
       providers: [
+        {
+          provide: InstrumentsService,
+          useValue: { list: () => of({ instruments: [], total: 0 }) },
+        },
         { provide: CustomersService, useValue: { list: () => of({ customers: [], total: 0 }) } },
         {
           provide: DashboardService,

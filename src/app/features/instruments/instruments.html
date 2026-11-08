@@ -1,0 +1,168 @@
+<div class="page-heading">
+  <app-page-header [compact]="true" [heading]="copy.title" [description]="copy.subtitle" /><a
+    class="button"
+    routerLink="/instruments/new"
+    >+ {{ copy.create }}</a
+  >
+</div>
+<section class="panel filters" aria-label="Instrumente filtern">
+  <div class="search">
+    <label for="instrument-search">Nach Kennnummer suchen</label
+    ><input
+      id="instrument-search"
+      type="search"
+      [formControl]="search"
+      maxlength="200"
+      aria-describedby="instrument-search-hint"
+    />
+    <p id="instrument-search-hint" class="hint">
+      Die Suche erfasst Kennnummern. Typ und Eigentum lassen sich separat filtern.
+    </p>
+  </div>
+  <div>
+    <label for="type-filter">Typ</label
+    ><select
+      id="type-filter"
+      #typeFilter
+      [value]="filters().type"
+      (change)="changeFilter('type', typeFilter.value)"
+    >
+      <option value="">Alle Typen</option>
+      @for (type of types; track type[0]) {
+        <option [value]="type[0]">{{ type[1] }}</option>
+      }
+    </select>
+  </div>
+  <div>
+    <label for="ownership-filter">Eigentum</label
+    ><select
+      id="ownership-filter"
+      #ownerFilter
+      [value]="filters().ownership"
+      (change)="changeFilter('ownership', ownerFilter.value)"
+    >
+      <option value="">Alle Kategorien</option>
+      @for (owner of ownerships; track owner[0]) {
+        <option [value]="owner[0]">{{ owner[1] }}</option>
+      }
+    </select>
+  </div>
+  <div>
+    <label for="sort-filter">Sortieren nach</label
+    ><select
+      id="sort-filter"
+      #sortFilter
+      [value]="filters().sort_by"
+      (change)="changeFilter('sort_by', sortFilter.value)"
+    >
+      @for (sort of sorts; track sort[0]) {
+        <option [value]="sort[0]">{{ sort[1] }}</option>
+      }
+    </select>
+  </div>
+  <div>
+    <label for="sort-direction">Reihenfolge</label
+    ><select
+      id="sort-direction"
+      #direction
+      [value]="filters().sort_order"
+      (change)="changeFilter('sort_order', direction.value)"
+    >
+      <option value="asc">Aufsteigend</option>
+      <option value="desc">Absteigend</option>
+    </select>
+  </div>
+  <label class="check"
+    ><input
+      type="checkbox"
+      #archived
+      [checked]="filters().include_archived"
+      (change)="changeFilter('include_archived', archived.checked)"
+    />Archivierte einschließen</label
+  >
+</section>
+@let current = state();
+@if (current.status === 'loading') {
+  <app-loading-indicator [label]="copy.loading" />
+}
+@if (current.status === 'error') {
+  <app-error-message heading="Instrumente nicht verfügbar" [message]="current.message"
+    ><div class="actions">
+      <button type="button" (click)="retry()">{{ copy.retry }}</button
+      ><button type="button" (click)="reset()">Filter zurücksetzen</button>
+    </div></app-error-message
+  >
+}
+@if (current.status === 'loaded') {
+  <p class="hint" role="status">
+    {{
+      current.data.total === null
+        ? 'Gesamtzahl nicht verfügbar'
+        : current.data.total +
+          (current.data.total === 1 ? ' Instrument gefunden' : ' Instrumente gefunden')
+    }}
+  </p>
+  @if (current.data.instruments.length === 0) {
+    <app-empty-state
+      heading="Keine Instrumente gefunden"
+      description="Ändern Sie die Filter oder legen Sie ein Instrument an."
+      ><button type="button" (click)="reset()">Filter zurücksetzen</button></app-empty-state
+    >
+  } @else {
+    <div
+      class="table-scroll panel instrument-table"
+      role="region"
+      aria-label="Instrumentenliste"
+      tabindex="0"
+    >
+      <table>
+        <caption>
+          Registrierte Instrumente
+        </caption>
+        <thead>
+          <tr>
+            <th scope="col">Instrument</th>
+            <th scope="col">Hersteller / Baujahr</th>
+            <th scope="col">Eigentum / Kunde</th>
+            <th scope="col">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (instrument of current.data.instruments; track instrument.id) {
+            <tr>
+              <th scope="row">
+                <a [routerLink]="['/instruments', instrument.id]"
+                  >{{ copy.types[instrument.type] }} ·
+                  {{ instrument.identification_number || '#' + instrument.id }}</a
+                >
+              </th>
+              <td>
+                {{ instrument.maker || copy.missing }}<br />{{
+                  instrument.year_of_manufacture || 'Baujahr unbekannt'
+                }}
+              </td>
+              <td>
+                {{ copy.ownerships[instrument.ownership] }}
+                @if (instrument.customer_id !== null) {
+                  <br /><a [routerLink]="['/customers', instrument.customer_id]"
+                    >Kunde #{{ instrument.customer_id }}</a
+                  >
+                }
+              </td>
+              <td>
+                <app-status-badge [tone]="instrument.is_archived ? 'warning' : 'success'">{{
+                  instrument.is_archived ? 'Archiviert' : 'Aktiv'
+                }}</app-status-badge>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+  <nav class="pagination" aria-label="Instrumentenseiten">
+    <button type="button" (click)="page(-1)" [disabled]="filters().offset === 0">Zurück</button
+    ><span>Seite {{ pageNumber() }}</span
+    ><button type="button" (click)="page(1)" [disabled]="!nextPage(current.data)">Weiter</button>
+  </nav>
+}

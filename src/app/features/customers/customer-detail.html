@@ -55,8 +55,10 @@
         <li>
           <div class="instrument-heading">
             <h3>
-              {{ copy.types[instrument.type] }} ·
-              {{ instrument.identification_number || '#' + instrument.id }}
+              <a [routerLink]="['/instruments', instrument.id]"
+                >{{ copy.types[instrument.type] }} ·
+                {{ instrument.identification_number || '#' + instrument.id }}</a
+              >
             </h3>
             @if (instrument.is_archived) {
               <app-status-badge tone="warning">{{ copy.archived }}</app-status-badge>
