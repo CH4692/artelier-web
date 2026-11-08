@@ -1,3 +1,4 @@
+import { UI_DE } from '../i18n/ui.de';
 import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
@@ -10,7 +11,7 @@ import { AuthService } from '../../core/auth/auth.service';
     <div class="account">
       <span class="identity">{{ auth.session.user()?.email }}</span>
       <button type="button" (click)="logout()" [disabled]="pending()" [attr.aria-busy]="pending()">
-        {{ pending() ? 'Signing out…' : 'Sign out' }}
+        {{ pending() ? copy.loggingOut : copy.logout }}
       </button>
     </div>
     @if (error()) {
@@ -42,6 +43,7 @@ import { AuthService } from '../../core/auth/auth.service';
   `,
 })
 export class AccountControls {
+  protected readonly copy = UI_DE.account;
   protected readonly auth = inject(AuthService);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
@@ -62,10 +64,7 @@ export class AccountControls {
         next: () => {
           void this.router.navigate(['/login'], { replaceUrl: true });
         },
-        error: () =>
-          this.error.set(
-            'Sign-out could not be confirmed. Your session may still be active. Please try again.',
-          ),
+        error: () => this.error.set(this.copy.logoutError),
       });
   }
 }

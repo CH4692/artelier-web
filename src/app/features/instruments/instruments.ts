@@ -1,3 +1,4 @@
+import { UI_DE } from '../../shared/i18n/ui.de';
 import { Component } from '@angular/core';
 import { FeaturePlaceholder } from '../../shared/ui/feature-placeholder';
 
@@ -5,8 +6,10 @@ import { FeaturePlaceholder } from '../../shared/ui/feature-placeholder';
   selector: 'app-instruments',
   imports: [FeaturePlaceholder],
   template: `<app-feature-placeholder
-    heading="Instruments"
-    description="Every instrument has a story. Keep yours close at hand."
+    [heading]="copy.navigation.instruments"
+    description="Ein Platz für jedes Instrument und seine Geschichte."
   />`,
 })
-export class Instruments {}
+export class Instruments {
+  protected readonly copy = UI_DE;
+}

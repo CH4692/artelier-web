@@ -4,6 +4,7 @@ import { RouterLink } from '@angular/router';
 import { PageHeader } from './page-header';
 
 @Component({
+  host: { lang: 'en' },
   selector: 'app-not-found',
   imports: [RouterLink, PageHeader],
   template: `<app-page-header

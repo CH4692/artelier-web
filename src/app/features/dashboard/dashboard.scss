@@ -1,0 +1,121 @@
+:host {
+  display: block;
+}
+.dashboard-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-5);
+  margin-bottom: var(--space-6);
+}
+app-page-header {
+  flex: 1 1 20rem;
+}
+.create-action {
+  flex: 0 1 18rem;
+  max-width: 100%;
+}
+.create-action button {
+  width: 100%;
+}
+.create-action p {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  margin: var(--space-2) 0 0;
+}
+.metrics {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-4);
+}
+.metrics-context {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin: var(--space-4) 0 var(--space-6);
+}
+.metrics-context p {
+  flex: 1 1 24rem;
+  margin: 0;
+  max-width: 48rem;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+.refresh {
+  background: var(--color-surface);
+  color: var(--color-text);
+  border-color: var(--color-control-border);
+  font-size: var(--text-sm);
+}
+.refresh:hover {
+  background: var(--color-surface-muted);
+}
+.refresh span {
+  margin-right: var(--space-2);
+}
+.urgent {
+  padding: 0;
+  overflow: hidden;
+}
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  border-bottom: 1px solid var(--color-border);
+}
+.section-header h2 {
+  margin: 0;
+  font-size: var(--text-lg);
+}
+.section-header p {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  margin: var(--space-2) 0 0;
+}
+.section-number {
+  color: var(--color-accent-text);
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+}
+.unavailable-state {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-4);
+  padding: var(--space-6) var(--space-5);
+}
+.state-icon {
+  flex: 0 0 2.75rem;
+  display: grid;
+  place-items: center;
+  min-height: 2.75rem;
+  background: var(--color-surface-muted);
+  border-radius: var(--radius-md);
+  color: var(--color-accent-text);
+  font-size: 1.5rem;
+}
+h3 {
+  margin: 0;
+  font-size: var(--text-base);
+  font-weight: var(--weight-medium);
+}
+.unavailable-state p {
+  color: var(--color-text-muted);
+  max-width: 46rem;
+  font-size: var(--text-sm);
+  margin: var(--space-2) 0 0;
+}
+@media (min-width: 560px) {
+  .metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (min-width: 1200px) {
+  .metrics {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}

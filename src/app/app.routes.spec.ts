@@ -1,3 +1,5 @@
+import { of } from 'rxjs';
+import { DashboardService } from './features/dashboard/dashboard.service';
 import { provideHttpClient } from '@angular/common/http';
 import { SessionState } from './core/auth/session-state';
 import { testUser } from '../testing/auth';
@@ -8,20 +10,29 @@ import { routes } from './app.routes';
 
 describe('Workspace routes', () => {
   beforeEach(() => {
-    TestBed.configureTestingModule({ providers: [provideHttpClient(), provideRouter(routes)] });
+    TestBed.configureTestingModule({
+      providers: [
+        {
+          provide: DashboardService,
+          useValue: { readyForPickupCount: () => of({ status: 'unavailable' }) },
+        },
+        provideHttpClient(),
+        provideRouter(routes),
+      ],
+    });
     TestBed.inject(SessionState).authenticate(testUser);
   });
 
   it('redirects the root to the dashboard', async () => {
     const harness = await RouterTestingHarness.create('/');
     expect(TestBed.inject(Router).url).toBe('/dashboard');
-    expect(harness.routeNativeElement?.textContent).toContain('Your workshop, in harmony.');
+    expect(harness.routeNativeElement?.textContent).toContain('Werkstattübersicht');
   });
 
   for (const [path, heading] of [
-    ['customers', 'Customers'],
-    ['instruments', 'Instruments'],
-    ['repairs', 'Repairs'],
+    ['customers', 'Kunden'],
+    ['instruments', 'Instrumente'],
+    ['repairs', 'Reparaturen'],
     ['missing/deep/path', 'A little off-key.'],
   ]) {
     it(`renders /${path}`, async () => {
@@ -34,7 +45,14 @@ describe('Workspace routes', () => {
 describe('Protected navigation integration', () => {
   beforeEach(() =>
     TestBed.configureTestingModule({
-      providers: [provideHttpClient(), provideRouter(routes)],
+      providers: [
+        {
+          provide: DashboardService,
+          useValue: { readyForPickupCount: () => of({ status: 'unavailable' }) },
+        },
+        provideHttpClient(),
+        provideRouter(routes),
+      ],
     }),
   );
 

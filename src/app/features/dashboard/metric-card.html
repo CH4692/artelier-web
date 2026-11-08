@@ -1,0 +1,41 @@
+<article
+  class="panel metric"
+  [attr.aria-labelledby]="metric().key + '-title'"
+  [attr.data-tone]="metric().tone"
+>
+  <h2 [id]="metric().key + '-title'">{{ metric().title }}</h2>
+  <div
+    class="metric-content"
+    aria-live="polite"
+    aria-atomic="true"
+    [attr.aria-busy]="state().status === 'loading'"
+  >
+    @let current = state();
+    @switch (current.status) {
+      @case ('loading') {
+        <span class="skeleton" aria-hidden="true"></span>
+        <p class="state-label">{{ copy.loading }}</p>
+      }
+      @case ('available') {
+        <p class="value">
+          {{ current.value.toLocaleString('de-DE') }} <span>{{ copy.countUnit }}</span>
+        </p>
+        <p class="description">{{ current.value === 0 ? metric().empty : metric().hint }}</p>
+      }
+      @case ('error') {
+        <p class="state-label error">{{ copy.error }}</p>
+        <p class="description">{{ copy.errorHint }}</p>
+      }
+      @case ('unavailable') {
+        <p class="state-label">{{ copy.unavailable }}</p>
+        <p class="description">{{ copy.unavailableHint }}</p>
+      }
+    }
+  </div>
+  @if (state().status === 'available') {
+    <app-status-badge [tone]="metric().tone">{{ metric().label }}</app-status-badge>
+  }
+  @if (state().status === 'error') {
+    <button class="retry" type="button" (click)="retry.emit()">{{ copy.retry }}</button>
+  }
+</article>

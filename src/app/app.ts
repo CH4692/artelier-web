@@ -1,3 +1,4 @@
+import { UI_DE } from './shared/i18n/ui.de';
 import { Component, ElementRef, inject, signal, viewChild } from '@angular/core';
 import { NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router';
 
@@ -24,11 +25,12 @@ import { NavigationItem } from './shared/ui/navigation-item';
   host: { '(keydown.escape)': 'closeMenu()' },
 })
 export class App {
+  protected readonly copy = UI_DE;
   protected readonly session = inject(SessionState);
   private readonly menuButton = viewChild<ElementRef<HTMLButtonElement>>('menuButton');
   private readonly mainContent = viewChild<ElementRef<HTMLElement>>('mainContent');
   private readonly router = inject(Router);
-  protected readonly pageTitle = signal('Dashboard');
+  protected readonly pageTitle = signal<string>(UI_DE.navigation.dashboard);
 
   constructor() {
     this.router.events
@@ -62,9 +64,9 @@ export class App {
     this.menuOpen.update((open) => !open);
   }
   protected readonly navigation = [
-    { path: '/dashboard', label: 'Dashboard', symbol: '◫' },
-    { path: '/customers', label: 'Customers', symbol: '◎' },
-    { path: '/instruments', label: 'Instruments', symbol: '♮' },
-    { path: '/repairs', label: 'Repairs', symbol: '◇' },
+    { path: '/dashboard', label: UI_DE.navigation.dashboard, symbol: '◫' },
+    { path: '/customers', label: UI_DE.navigation.customers, symbol: '◎' },
+    { path: '/instruments', label: UI_DE.navigation.instruments, symbol: '♮' },
+    { path: '/repairs', label: UI_DE.navigation.repairs, symbol: '◇' },
   ];
 }

@@ -1,3 +1,5 @@
+import { of } from 'rxjs';
+import { DashboardService } from './features/dashboard/dashboard.service';
 import { provideHttpClient } from '@angular/common/http';
 import { SessionState } from './core/auth/session-state';
 import { testUser } from '../testing/auth';
@@ -13,7 +15,15 @@ describe('App navigation', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [App],
-      providers: [provideHttpClient(), provideRouter(routes), provideLocationMocks()],
+      providers: [
+        {
+          provide: DashboardService,
+          useValue: { readyForPickupCount: () => of({ status: 'unavailable' }) },
+        },
+        provideHttpClient(),
+        provideRouter(routes),
+        provideLocationMocks(),
+      ],
     });
     TestBed.inject(SessionState).authenticate(testUser);
   });
@@ -23,10 +33,10 @@ describe('App navigation', () => {
     await fixture.whenStable();
     const element: HTMLElement = fixture.nativeElement;
     expect([...element.querySelectorAll('nav a')].map((a) => a.textContent?.trim())).toEqual([
-      '◫Dashboard',
-      '◎Customers',
-      '♮Instruments',
-      '◇Repairs',
+      '◫Werkstattübersicht',
+      '◎Kunden',
+      '♮Instrumente',
+      '◇Reparaturen',
     ]);
     const toggle = element.querySelector<HTMLButtonElement>('.menu-toggle')!;
     expect(toggle.getAttribute('aria-expanded')).toBe('false');
@@ -48,7 +58,7 @@ describe('App navigation', () => {
     await fixture.whenStable();
     await router.navigateByUrl('/customers');
     await fixture.whenStable();
-    expect(element.querySelector('.current-page')?.textContent).toBe('Customers');
+    expect(element.querySelector('.current-page')?.textContent).toBe('Kunden');
     expect(element.querySelector('nav a[aria-current="page"]')?.getAttribute('href')).toBe(
       '/customers',
     );
@@ -58,17 +68,17 @@ describe('App navigation', () => {
     location.back();
     await back;
     await fixture.whenStable();
-    expect(element.querySelector('.current-page')?.textContent).toBe('Dashboard');
+    expect(element.querySelector('.current-page')?.textContent).toBe('Werkstattübersicht');
     const forward = firstValueFrom(
       router.events.pipe(filter((event) => event instanceof NavigationEnd)),
     );
     location.forward();
     await forward;
     await fixture.whenStable();
-    expect(element.querySelector('.current-page')?.textContent).toBe('Customers');
+    expect(element.querySelector('.current-page')?.textContent).toBe('Kunden');
     await router.navigateByUrl('/unknown');
     await fixture.whenStable();
-    expect(element.querySelector('.current-page')?.textContent).toBe('Page not found');
+    expect(element.querySelector('.current-page')?.textContent).toBe('Seite nicht gefunden');
     expect(element.querySelector('nav a[aria-current="page"]')).toBeNull();
   });
 
