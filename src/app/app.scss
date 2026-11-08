@@ -141,3 +141,7 @@ footer {
 main:focus {
   outline: none;
 }
+
+.shell.public-shell {
+  grid-template-columns: minmax(0, 1fr);
+}
