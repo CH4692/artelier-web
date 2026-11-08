@@ -159,3 +159,30 @@ Environment TypeScript files are public build inputs, not secret storage. Never
 place credentials in them. Machine-local `.env`, `.env.*`, and `*.local` files are
 ignored; a sanitized `.env.example` may be committed when needed. Angular CLI does
 not load `.env` files automatically.
+
+## Application shell and shared UI
+
+The standalone root shell composes the sidebar, `WorkspaceHeader`, and routed main
+content. The header derives its page title from Angular route titles, including
+history navigation and 404s, and accepts future account controls through its
+`[account-controls]` content slot. It does not implement authentication.
+
+The existing workshop palette is exposed as CSS custom properties in
+`src/styles.scss`. Reuse these tokens in shared components. Desktop uses a fixed
+sidebar column; at 800px and below navigation collapses behind a native Menu button.
+The dashboard cards become a single column below 1050px. Native links and buttons,
+visible focus rings, a skip link, current-page announcements, and Escape-to-close
+support keyboard navigation. Route changes close the menu and focus main content.
+
+Shared standalone components in `shared/ui/` include `NavigationItem`, `PageHeader`,
+`WorkspaceHeader`, `LoadingIndicator`, `EmptyState`, and `ErrorMessage`. Feature
+placeholders compose the same page header and empty-state components. Future
+features should select loading, empty, error, and content views from their own
+Signals/Observables; these presentation components do not make HTTP requests.
+Loading uses a polite status announcement and respects reduced-motion preferences;
+errors use an alert, and empty/error components accept contextual action content.
+
+Unit tests cover menu state, Escape focus restoration, route titles, active links,
+back/forward navigation, shared feedback semantics, and all lazy routes. Real-browser
+visual verification at desktop/tablet sizes remains a separate check when browser
+access is available; jsdom tests do not verify viewport layout.

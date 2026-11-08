@@ -1,19 +1,22 @@
 import { Component, input } from '@angular/core';
+import { PageHeader } from './page-header';
+import { EmptyState } from './empty-state';
 
 @Component({
   selector: 'app-feature-placeholder',
+  imports: [PageHeader, EmptyState],
   template: `
-    <span class="eyebrow">Your workshop</span>
-    <h1>{{ heading() }}</h1>
-    <p class="intro">{{ description() }}</p>
-    <section class="panel" style="margin-top: 32px" aria-label="Feature status">
-      <span class="eyebrow">Coming into tune</span>
-      <h2 style="margin-top: 16px">A space for {{ heading().toLowerCase() }}</h2>
-      <p class="intro">
-        This workspace is ready for its next chapter. Tools and records will appear here as Artelier
-        grows.
-      </p>
-    </section>
+    <app-page-header eyebrow="Your workshop" [heading]="heading()" [description]="description()" />
+    <app-empty-state
+      eyebrow="Coming into tune"
+      [heading]="'A space for ' + heading().toLowerCase()"
+      description="This workspace is ready for its next chapter. Tools and records will appear here as Artelier grows."
+    />
+  `,
+  styles: `
+    app-empty-state {
+      margin-top: 32px;
+    }
   `,
 })
 export class FeaturePlaceholder {

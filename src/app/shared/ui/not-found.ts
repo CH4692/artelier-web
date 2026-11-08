@@ -1,12 +1,16 @@
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
+import { PageHeader } from './page-header';
+
 @Component({
   selector: 'app-not-found',
-  imports: [RouterLink],
-  template: `<span class="eyebrow">404 / Page not found</span>
-    <h1>A little off-key.</h1>
-    <p class="intro">We couldn't find that page. Your workshop is just a click away.</p>
+  imports: [RouterLink, PageHeader],
+  template: `<app-page-header
+      eyebrow="404 / Page not found"
+      heading="A little off-key."
+      description="We couldn't find that page. Your workshop is just a click away."
+    />
     <a routerLink="/dashboard">Return to dashboard →</a>`,
 })
 export class NotFound {}

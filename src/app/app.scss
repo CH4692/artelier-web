@@ -9,8 +9,8 @@
 }
 .sidebar {
   padding: 32px 22px;
-  background: #182e2a;
-  color: #e6eee8;
+  background: var(--color-sidebar);
+  color: var(--color-sidebar-text);
   display: flex;
   flex-direction: column;
 }
@@ -30,8 +30,8 @@
   width: 40px;
   height: 40px;
   border-radius: 12px;
-  background: #d6e6ba;
-  color: #182e2a;
+  background: var(--color-brand);
+  color: var(--color-sidebar);
   font-family: Georgia, serif;
   font-size: 32px;
 }
@@ -47,27 +47,6 @@ nav {
   color: #aabdb6;
   padding: 0 14px 12px;
 }
-nav a {
-  padding: 13px 14px;
-  border-radius: 8px;
-  text-decoration: none;
-  color: #c7d6ce;
-  display: flex;
-  align-items: center;
-  gap: 13px;
-  font-size: 14px;
-}
-nav a span {
-  width: 20px;
-  font-size: 21px;
-}
-nav a:hover {
-  background: #26413a;
-}
-nav a.active {
-  color: #fff;
-  background: #345047;
-}
 .sidebar-note {
   margin-top: auto;
   padding: 60px 14px 0;
@@ -79,23 +58,6 @@ nav a.active {
   display: flex;
   flex-direction: column;
   min-width: 0;
-}
-.topbar {
-  min-height: 82px;
-  padding: 0 48px;
-  border-bottom: 1px solid #e1e4db;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  font-size: 13px;
-  color: #626d63;
-}
-.workspace-tag {
-  border: 1px solid #d8ded2;
-  border-radius: 24px;
-  padding: 7px 13px;
-  font-size: 12px;
 }
 main {
   flex: 1;
@@ -140,7 +102,7 @@ footer {
   .menu-toggle {
     display: block;
     background: transparent;
-    color: #fff;
+    color: var(--color-surface);
     border: 1px solid #789185;
     border-radius: 6px;
     padding: 9px 14px;
@@ -156,10 +118,6 @@ footer {
   }
   .sidebar-note {
     display: none;
-  }
-  .topbar {
-    min-height: 64px;
-    padding: 0 24px;
   }
   main {
     padding: 32px 24px;

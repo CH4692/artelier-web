@@ -1,9 +1,24 @@
-@use 'sass:color';
 :root {
+  --color-sidebar: #182e2a;
+  --color-sidebar-text: #e6eee8;
+  --color-brand: #d6e6ba;
+  --color-nav-text: #c7d6ce;
+  --color-nav-hover: #26413a;
+  --color-nav-active: #345047;
+  --color-text: #243c32;
+  --color-background: #f6f7f1;
+  --color-accent: #365e43;
+  --color-focus: #b27a36;
+  --color-muted: #6b776d;
+  --color-border: #dfe4d8;
+  --color-surface: #fff;
+  --color-error: #9b3f36;
+  --radius-control: 8px;
+
   color-scheme: light;
   font-family: Inter, 'Segoe UI', sans-serif;
-  color: #243c32;
-  background: #f6f7f1;
+  color: var(--color-text);
+  background: var(--color-background);
   font-synthesis: none;
 }
 * {
@@ -13,14 +28,14 @@ body {
   margin: 0;
 }
 a {
-  color: #365e43;
+  color: var(--color-accent);
 }
 button,
 a {
   -webkit-tap-highlight-color: transparent;
 }
 :focus-visible {
-  outline: 3px solid #b27a36;
+  outline: 3px solid var(--color-focus);
   outline-offset: 4px;
 }
 h1 {
@@ -46,13 +61,13 @@ p {
   color: #637961;
 }
 .intro {
-  color: #6b776d;
+  color: var(--color-muted);
   max-width: 600px;
   font-size: 14px;
 }
 .panel {
   padding: 28px;
-  border: 1px solid #dfe4d8;
+  border: 1px solid var(--color-border);
   border-radius: 12px;
-  background: #fff;
+  background: var(--color-surface);
 }
