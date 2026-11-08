@@ -1,16 +1,17 @@
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
+import { PageHeader } from '../../shared/ui/page-header';
+
 @Component({
   selector: 'app-dashboard',
-  imports: [RouterLink],
+  imports: [RouterLink, PageHeader],
   template: `
-    <span class="eyebrow">A place for good work</span>
-    <h1>Your workshop, in harmony.</h1>
-    <p class="intro">
-      Welcome to Artelier. A calm, connected home for your customers, instruments, and the work you
-      love.
-    </p>
+    <app-page-header
+      eyebrow="A place for good work"
+      heading="Your workshop, in harmony."
+      description="Welcome to Artelier. A calm, connected home for your customers, instruments, and the work you love."
+    />
     <section class="welcome" aria-labelledby="welcome-title">
       <div>
         <span class="eyebrow">The next chapter</span>
@@ -88,7 +89,7 @@ import { RouterLink } from '@angular/router';
       justify-content: space-between;
     }
     .panel p {
-      color: #6b776d;
+      color: var(--color-muted);
       font-size: 13px;
       min-height: 66px;
     }
@@ -99,7 +100,7 @@ import { RouterLink } from '@angular/router';
     .note {
       margin-top: 28px;
       font-size: 12px;
-      color: #6b776d;
+      color: var(--color-muted);
     }
     @media (max-width: 1050px) {
       .areas {

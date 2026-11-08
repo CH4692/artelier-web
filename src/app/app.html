@@ -11,6 +11,7 @@
     </a>
     <button
       class="menu-toggle"
+      #menuButton
       type="button"
       (click)="toggleMenu()"
       [attr.aria-expanded]="menuOpen()"
@@ -21,24 +22,19 @@
     <nav id="main-navigation" aria-label="Main navigation" [class.is-open]="menuOpen()">
       <span class="nav-label">WORKSPACE</span>
       @for (item of navigation; track item.path) {
-        <a
-          [routerLink]="item.path"
-          routerLinkActive="active"
-          ariaCurrentWhenActive="page"
-          (click)="menuOpen.set(false)"
-        >
-          <span aria-hidden="true">{{ item.symbol }}</span
-          >{{ item.label }}
-        </a>
+        <app-navigation-item
+          (selected)="selectNavigation()"
+          [path]="item.path"
+          [label]="item.label"
+          [symbol]="item.symbol"
+        />
       }
     </nav>
     <p class="sidebar-note">A little more harmony.<br />Every day in your workshop.</p>
   </aside>
   <div class="workspace">
-    <header class="topbar">
-      <span>Workshop workspace</span><span class="workspace-tag">Artelier</span>
-    </header>
-    <main id="main-content" tabindex="-1"><router-outlet /></main>
+    <app-workspace-header [title]="pageTitle()" />
+    <main #mainContent id="main-content" tabindex="-1"><router-outlet /></main>
     <footer>Artelier <span>Made for the craft.</span></footer>
   </div>
 </div>
