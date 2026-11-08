@@ -1,0 +1,81 @@
+name: Browser E2E
+on:
+  pull_request:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '23 4 * * 1'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: e2e-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  browsers:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      E2E_BACKEND_DIR: ${{ github.workspace }}/backend
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: web
+      - uses: actions/checkout@v4
+        with:
+          repository: CH4692/atelier-api
+          # Contract version verified locally. Update deliberately alongside API changes.
+          ref: 3495621f880b666c0e716bf00b63995c1a44e0aa
+          path: backend
+          token: ${{ secrets.BACKEND_READ_TOKEN || github.token }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: web/.nvmrc
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        with:
+          version: '0.13.1'
+          enable-cache: true
+          cache-dependency-glob: backend/uv.lock
+      - run: uv sync --frozen --python 3.14
+        working-directory: backend
+      - run: sudo apt-get update && sudo apt-get install -y postgresql
+      - run: npm ci
+        working-directory: web
+      - name: Check E2E TypeScript and ESLint
+        run: npm run e2e:typecheck && npm run e2e:lint
+        working-directory: web
+      - name: Install PR smoke browser
+        if: github.event_name == 'pull_request'
+        run: npx playwright install --with-deps chromium
+        working-directory: web
+      - name: Install regression browsers
+        if: github.event_name != 'pull_request'
+        run: npx playwright install --with-deps chromium firefox webkit
+        working-directory: web
+      - name: Real backend PR smoke
+        if: github.event_name == 'pull_request'
+        run: npm run e2e:smoke
+        working-directory: web
+      - name: Isolated UI error scenarios on PRs
+        if: github.event_name == 'pull_request'
+        run: npm run e2e:ui -- --project=chromium
+        working-directory: web
+      - name: Real backend full regression
+        if: github.event_name != 'pull_request'
+        run: npm run e2e:integration
+        working-directory: web
+      - name: Isolated UI full regression
+        if: github.event_name != 'pull_request'
+        run: npm run e2e:ui
+        working-directory: web
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-failure-artifacts
+          path: |
+            web/playwright-report/
+            web/test-results/
+          retention-days: 7
+          if-no-files-found: warn

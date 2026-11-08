@@ -186,3 +186,7 @@ Unit tests cover menu state, Escape focus restoration, route titles, active link
 back/forward navigation, shared feedback semantics, and all lazy routes. Real-browser
 visual verification at desktop/tablet sizes remains a separate check when browser
 access is available; jsdom tests do not verify viewport layout.
+
+## Browser end-to-end tests
+
+Playwright includes separate real FastAPI/PostgreSQL integration and isolated UI-error profiles. See [E2E setup and safety](e2e/README.md) and the [feature coverage matrix](docs/e2e-coverage.csv). Run `npm run e2e:smoke` for the PR subset or `npm run e2e:integration` for all browser profiles.
