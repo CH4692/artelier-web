@@ -16,6 +16,8 @@ import { customerError } from './customer-errors';
 export class CustomerSelect {
   readonly selectedId = input<number | null>(null);
   readonly disabled = input(false);
+  readonly legend = input('Kundenzuordnung');
+  readonly emptyLabel = input('Kein Kunde zugeordnet. Der Eigentümer ist noch nicht bekannt.');
   readonly inputId = input('customer-picker');
   readonly selectionChange = output<number | null>();
   readonly search = new FormControl('', { nonNullable: true });

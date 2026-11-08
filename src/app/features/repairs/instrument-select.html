@@ -1,0 +1,82 @@
+<fieldset [disabled]="disabled() || customerId() === null">
+  <legend>Instrument *</legend>
+  <div class="selection" aria-live="polite">
+    @if (customerId() === null) {
+      <p>Bitte wählen Sie zuerst einen Kunden.</p>
+    } @else if (selectedId() === null) {
+      <p>Bitte wählen Sie ein Instrument dieses Kunden.</p>
+    } @else {
+      @let current = selected();
+      @if (current.status === 'loading') {
+        <p>Instrument wird geladen…</p>
+      }
+      @if (current.status === 'error') {
+        <p role="alert">{{ current.message }} Die Auswahl bleibt erhalten.</p>
+        <button type="button" (click)="retrySelected()">Instrument erneut laden</button>
+      }
+      @if (current.status === 'loaded' && current.data) {
+        <p>
+          Ausgewählt: {{ labels[current.data.type] }} ·
+          {{ current.data.identification_number || '#' + current.data.id
+          }}{{ current.data.is_archived ? ' · Archiviert' : '' }}
+        </p>
+      }
+    }
+  </div>
+  <div class="actions">
+    <button
+      type="button"
+      #trigger
+      (click)="show()"
+      [attr.aria-expanded]="open()"
+      aria-controls="repair-instrument-results"
+    >
+      Instrumente suchen
+    </button>
+    @if (selectedId() !== null) {
+      <button type="button" (click)="choose(null)">Auswahl entfernen</button>
+    }
+  </div>
+  @if (open()) {
+    <div class="search-panel" id="repair-instrument-results">
+      <label for="repair-instrument-query">Kennnummer suchen</label
+      ><input id="repair-instrument-query" type="search" [formControl]="search" maxlength="200" />
+      <p>Nur Instrumente des gewählten Kunden, einschließlich archivierter Instrumente.</p>
+      @let found = results();
+      @if (found.status === 'loading') {
+        <p role="status">Instrumente werden gesucht…</p>
+      }
+      @if (found.status === 'error') {
+        <p role="alert">{{ found.message }}</p>
+        <button type="button" (click)="retry()">Erneut versuchen</button>
+      }
+      @if (found.status === 'loaded') {
+        @if (found.data.instruments.length === 0) {
+          <p role="status">Keine passenden Instrumente gefunden.</p>
+        }
+        <ul>
+          @for (instrument of found.data.instruments; track instrument.id) {
+            <li>
+              <button class="result" type="button" (click)="choose(instrument.id)">
+                {{ labels[instrument.type] }} ·
+                {{ instrument.identification_number || '#' + instrument.id
+                }}<span
+                  >{{ instrument.maker || 'Hersteller nicht hinterlegt'
+                  }}{{ instrument.is_archived ? ' · Archiviert' : '' }}</span
+                >
+              </button>
+            </li>
+          }
+        </ul>
+        <div class="actions">
+          <button type="button" (click)="page(-1)" [disabled]="offset() === 0">
+            Vorherige Instrumente</button
+          ><button type="button" (click)="page(1)" [disabled]="!hasNext(found.data)">
+            Weitere Instrumente
+          </button>
+        </div>
+      }
+      <button type="button" (click)="open.set(false)">Suche schließen</button>
+    </div>
+  }
+</fieldset>

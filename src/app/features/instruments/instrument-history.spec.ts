@@ -1,3 +1,4 @@
+import { provideRouter } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
@@ -9,7 +10,7 @@ describe('Instrument repair history', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [InstrumentHistoryView],
-      providers: [provideHttpClient(), provideHttpClientTesting()],
+      providers: [provideRouter([]), provideHttpClient(), provideHttpClientTesting()],
     });
     http = TestBed.inject(HttpTestingController);
   });
@@ -21,7 +22,7 @@ describe('Instrument repair history', () => {
     return fixture;
   }
   const request = () => http.expectOne((r) => r.url === '/api/v1/instruments/8/history');
-  it('renders backend order, statuses and supplied dates without inventing repair routes', async () => {
+  it('renders backend order, statuses and supplied dates with repair detail links', async () => {
     const fixture = await setup();
     expect(fixture.nativeElement.textContent).toContain('wird geladen');
     request().flush(
@@ -42,7 +43,7 @@ describe('Instrument repair history', () => {
     expect(fixture.nativeElement.textContent).toContain('Abgeschlossen');
     expect(fixture.nativeElement.textContent).toContain('Archiviert');
     expect(fixture.nativeElement.textContent).toContain('01.02.2026');
-    expect(fixture.nativeElement.querySelector('a')).toBeNull();
+    expect(fixture.nativeElement.querySelector('a[href="/repairs/20"]')).not.toBeNull();
   });
   it('shows a truthful empty history', async () => {
     const fixture = await setup();

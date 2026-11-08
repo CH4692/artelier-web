@@ -26,7 +26,9 @@
       @for (repair of current.data.history.repair_orders; track repair.id) {
         <li>
           <div class="repair-heading">
-            <h3>Auftrag #{{ repair.id }}</h3>
+            <h3>
+              <a [routerLink]="['/repairs', repair.id]">Auftrag #{{ repair.id }}</a>
+            </h3>
             <app-status-badge [tone]="tone(repair.status)">{{
               copy.statuses[repair.status]
             }}</app-status-badge>

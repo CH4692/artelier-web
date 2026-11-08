@@ -1,3 +1,4 @@
+import { RepairsService } from './features/repairs/repairs.service';
 import { InstrumentsService } from './features/instruments/instruments.service';
 import { CustomersService } from './features/customers/customers.service';
 import { of } from 'rxjs';
@@ -14,6 +15,7 @@ describe('Workspace routes', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
+        { provide: RepairsService, useValue: { list: () => of({ repairs: [], total: 0 }) } },
         {
           provide: InstrumentsService,
           useValue: { list: () => of({ instruments: [], total: 0 }) },
@@ -53,6 +55,7 @@ describe('Protected navigation integration', () => {
   beforeEach(() =>
     TestBed.configureTestingModule({
       providers: [
+        { provide: RepairsService, useValue: { list: () => of({ repairs: [], total: 0 }) } },
         {
           provide: InstrumentsService,
           useValue: { list: () => of({ instruments: [], total: 0 }) },

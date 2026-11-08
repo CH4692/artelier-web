@@ -32,6 +32,10 @@ describe('Session lifecycle integration', () => {
     });
     await navigation;
     expect(TestBed.inject(Router).url).toBe('/repairs?filter=open');
+    await harness.fixture.whenStable();
+    const lists = TestBed.inject(HttpTestingController).match((r) => r.url === '/api/v1/repairs');
+    expect(lists).toHaveLength(5);
+    for (const list of lists) list.flush([], { headers: { 'X-Total-Count': '0' } });
     TestBed.inject(HttpClient)
       .get('/api/v1/repairs')
       .subscribe({ error: () => undefined });

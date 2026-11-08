@@ -1,0 +1,121 @@
+<a class="back" routerLink="/repairs">← Zur Auftragsliste</a>
+<app-page-header
+  [compact]="true"
+  [heading]="editing ? 'Auftrag bearbeiten' : 'Neuer Reparaturauftrag'"
+  [description]="
+    editing
+      ? 'Arbeitsbeschreibung, Termin und interne Notizen pflegen.'
+      : 'Kunde, Instrument und Arbeitsbeschreibung sind Pflichtangaben.'
+  "
+/>
+@let current = state();
+@if (current.status === 'loading') {
+  <app-loading-indicator label="Auftrag wird geladen…" />
+}
+@if (current.status === 'error') {
+  <app-error-message
+    [heading]="current.notFound ? 'Auftrag nicht gefunden' : 'Auftrag nicht verfügbar'"
+    [message]="current.message"
+  >
+    @if (!current.notFound) {
+      <button type="button" (click)="retry()">Erneut versuchen</button>
+    }
+  </app-error-message>
+}
+@if (current.status === 'loaded') {
+  <form
+    class="panel editor"
+    [formGroup]="form"
+    (ngSubmit)="submit()"
+    novalidate
+    [attr.aria-busy]="pending()"
+  >
+    <fieldset class="editor-fields" [disabled]="pending()">
+      <legend>Auftragsdaten</legend>
+      @if (!editing) {
+        <app-customer-select
+          legend="Kunde *"
+          emptyLabel="Bitte wählen Sie einen vorhandenen Kunden."
+          [selectedId]="customerId()"
+          [disabled]="pending()"
+          (selectionChange)="form.controls.customer_id.setValue($event)"
+        />
+        <p class="field-error" role="status">{{ fieldError('customer_id') }}</p>
+        <app-instrument-select
+          [customerId]="customerId()"
+          [selectedId]="instrumentId()"
+          [disabled]="pending()"
+          (selectionChange)="form.controls.instrument_id.setValue($event)"
+        />
+        <p class="field-error" role="status">{{ fieldError('instrument_id') }}</p>
+      } @else if (current.data) {
+        <p>Die bei Annahme erfassten Kunden- und Instrumentenreferenzen bleiben erhalten.</p>
+        <p>
+          @if (current.data.customer_id !== null) {
+            <a [routerLink]="['/customers', current.data.customer_id]"
+              >Kunde #{{ current.data.customer_id }}</a
+            >
+          } @else {
+            Kunde nicht hinterlegt
+          }
+          ·
+          <a [routerLink]="['/instruments', current.data.instrument_id]"
+            >Instrument #{{ current.data.instrument_id }}</a
+          >
+        </p>
+      }
+      <div>
+        <label for="work_description">Arbeitsbeschreibung *</label
+        ><textarea
+          id="work_description"
+          formControlName="work_description"
+          rows="5"
+          required
+          [readOnly]="pending()"
+          [attr.aria-invalid]="!!fieldError('work_description')"
+          aria-describedby="work_description-error"
+        ></textarea>
+        <p id="work_description-error" class="field-error">{{ fieldError('work_description') }}</p>
+      </div>
+      <div>
+        <label for="expected_completion_date">Geplanter Abschluss (optional)</label
+        ><input
+          id="expected_completion_date"
+          type="date"
+          min="0001-01-01"
+          max="9999-12-31"
+          formControlName="expected_completion_date"
+          [readOnly]="pending()"
+          [attr.aria-invalid]="!!fieldError('expected_completion_date')"
+          aria-describedby="expected_completion_date-error"
+        />
+        <p id="expected_completion_date-error" class="field-error">
+          {{ fieldError('expected_completion_date') }}
+        </p>
+      </div>
+      <div>
+        <label for="internal_notes">Interne Notizen (optional)</label
+        ><textarea
+          id="internal_notes"
+          formControlName="internal_notes"
+          rows="4"
+          [readOnly]="pending()"
+          [attr.aria-invalid]="!!fieldError('internal_notes')"
+          aria-describedby="internal_notes-error"
+        ></textarea>
+        <p id="internal_notes-error" class="field-error">{{ fieldError('internal_notes') }}</p>
+      </div>
+      @if (error()) {
+        <p class="field-error" role="alert">{{ error() }}</p>
+      }
+    </fieldset>
+    <div class="actions">
+      <button type="submit" [disabled]="pending()">
+        {{ pending() ? 'Wird gespeichert…' : 'Speichern' }}
+      </button>
+      @if (!pending()) {
+        <a [routerLink]="current.data ? ['/repairs', current.data.id] : ['/repairs']">Abbrechen</a>
+      }
+    </div>
+  </form>
+}

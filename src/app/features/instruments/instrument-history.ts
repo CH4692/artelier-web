@@ -1,3 +1,4 @@
+import { RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { Component, inject, input, signal } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
@@ -12,7 +13,7 @@ import { INSTRUMENT_COPY } from './instrument.copy';
 
 @Component({
   selector: 'app-instrument-history',
-  imports: [DatePipe, ErrorMessage, LoadingIndicator, StatusBadge],
+  imports: [RouterLink, DatePipe, ErrorMessage, LoadingIndicator, StatusBadge],
   templateUrl: './instrument-history.html',
   styleUrl: './instrument-history.scss',
 })

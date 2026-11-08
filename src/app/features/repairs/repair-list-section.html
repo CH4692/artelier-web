@@ -1,0 +1,96 @@
+<section class="repair-section" [attr.aria-labelledby]="'status-' + status()">
+  <h2 [id]="'status-' + status()">{{ labels[status()] }}</h2>
+  @let current = state();
+  @if (current.status === 'loading') {
+    <app-loading-indicator label="Aufträge werden geladen…" />
+  }
+  @if (current.status === 'error') {
+    <app-error-message heading="Aufträge nicht verfügbar" [message]="current.message"
+      ><button type="button" (click)="retry()">Erneut versuchen</button></app-error-message
+    >
+  }
+  @if (current.status === 'loaded') {
+    <p role="status">
+      {{
+        current.data.total === null
+          ? 'Gesamtzahl nicht verfügbar'
+          : current.data.total + (current.data.total === 1 ? ' Auftrag' : ' Aufträge')
+      }}
+    </p>
+    @if (current.data.repairs.length === 0) {
+      <p>Keine Aufträge in dieser Auswahl.</p>
+    } @else {
+      <div
+        class="table-scroll panel"
+        tabindex="0"
+        role="region"
+        [attr.aria-label]="labels[status()] + ': Auftragsliste'"
+      >
+        <table>
+          <caption>
+            Aufsteigend nach Auftragsnummer
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col">Auftrag / Arbeit</th>
+              <th scope="col">Kunde / Instrument</th>
+              <th scope="col">Status</th>
+              <th scope="col">Termine</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (repair of current.data.repairs; track repair.id) {
+              <tr>
+                <th scope="row">
+                  <a [routerLink]="['/repairs', repair.id]">Auftrag #{{ repair.id }}</a>
+                  <p class="description preview">{{ repair.work_description }}</p>
+                </th>
+                <td>
+                  @if (repair.customer_id !== null) {
+                    <a [routerLink]="['/customers', repair.customer_id]"
+                      >Kunde #{{ repair.customer_id }}</a
+                    >
+                  } @else {
+                    <p>Kunde nicht hinterlegt</p>
+                  }
+                  <br /><a [routerLink]="['/instruments', repair.instrument_id]"
+                    >Instrument #{{ repair.instrument_id }}</a
+                  >
+                </td>
+                <td>
+                  <app-status-badge>{{ labels[repair.status] }}</app-status-badge>
+                  @if (repair.is_archived) {
+                    <p><app-status-badge tone="warning">Archiviert</app-status-badge></p>
+                  }
+                </td>
+                <td>
+                  <span>Angenommen</span>
+                  <p>
+                    {{
+                      repair.accepted_at
+                        ? (repair.accepted_at | date: 'dd.MM.yyyy HH:mm')
+                        : 'Nicht hinterlegt'
+                    }}
+                  </p>
+                  <span>Geplanter Abschluss</span>
+                  <p>
+                    {{
+                      repair.expected_completion_date
+                        ? (repair.expected_completion_date | date: 'dd.MM.yyyy')
+                        : 'Nicht hinterlegt'
+                    }}
+                  </p>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+    <nav class="pagination" [attr.aria-label]="labels[status()] + ': Seiten'">
+      <button type="button" (click)="page(-1)" [disabled]="offset() === 0">Zurück</button
+      ><span>Seite {{ pageNumber() }}</span
+      ><button type="button" (click)="page(1)" [disabled]="!hasNext(current.data)">Weiter</button>
+    </nav>
+  }
+</section>

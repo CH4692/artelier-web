@@ -86,6 +86,27 @@ export const routes: Routes = [
     loadComponent: () => import('./features/instruments/instruments').then((m) => m.Instruments),
   },
   {
+    path: 'repairs/new',
+    canActivate: [authGuard],
+    data: { roles: ['admin', 'employee'] },
+    title: 'Neuer Reparaturauftrag | Artelier',
+    loadComponent: () => import('./features/repairs/repair-editor').then((m) => m.RepairEditor),
+  },
+  {
+    path: 'repairs/:id/edit',
+    canActivate: [authGuard],
+    data: { roles: ['admin', 'employee'], edit: true },
+    title: 'Auftrag bearbeiten | Artelier',
+    loadComponent: () => import('./features/repairs/repair-editor').then((m) => m.RepairEditor),
+  },
+  {
+    path: 'repairs/:id',
+    canActivate: [authGuard],
+    data: { roles: ['admin', 'employee'] },
+    title: 'Auftragsdetails | Artelier',
+    loadComponent: () => import('./features/repairs/repair-detail').then((m) => m.RepairDetail),
+  },
+  {
     path: 'repairs',
     canActivate: [authGuard],
     data: { roles: ['admin', 'employee'] },

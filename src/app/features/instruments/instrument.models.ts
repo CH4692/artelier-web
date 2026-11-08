@@ -6,6 +6,7 @@ export type InstrumentType = Instrument['type'];
 export type Ownership = Instrument['ownership'];
 export type InstrumentInput = Omit<Instrument, 'id' | 'is_archived'>;
 export interface InstrumentFilters {
+  customer_id?: number;
   q: string;
   type: string;
   ownership: string;

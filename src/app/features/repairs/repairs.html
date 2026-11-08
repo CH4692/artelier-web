@@ -1,0 +1,60 @@
+<header class="page-heading">
+  <app-page-header
+    [compact]="true"
+    heading="Reparaturen"
+    description="Aufträge, Termine und Fortschritt Ihrer Werkstatt."
+  /><a class="button" routerLink="/repairs/new">+ Neuer Reparaturauftrag</a>
+</header>
+<nav class="actions" aria-label="Auftragsansicht">
+  <button type="button" (click)="setView('open')" [attr.aria-pressed]="view() === 'open'">
+    Offene Aufträge</button
+  ><button type="button" (click)="setView('closed')" [attr.aria-pressed]="view() === 'closed'">
+    Erledigte Aufträge
+  </button>
+</nav>
+@if (invalid()) {
+  <div class="panel">
+    <p role="alert">Die Filter in dieser Adresse sind ungültig.</p>
+    <button type="button" (click)="reset()">Filter zurücksetzen</button>
+  </div>
+} @else {
+  <section class="panel filters" aria-label="Aufträge filtern">
+    <div>
+      <label for="repair-status-filter">Status</label
+      ><select id="repair-status-filter" [ngModel]="status()" (ngModelChange)="setStatus($event)">
+        <option value="">Alle Status dieser Ansicht</option>
+        @for (value of available(); track value) {
+          <option [value]="value">{{ labels[value] }}</option>
+        }
+      </select>
+    </div>
+    <label class="check"
+      ><input
+        type="checkbox"
+        [checked]="includeArchived()"
+        (change)="setArchived($any($event.target).checked)"
+      />Archivierte einschließen</label
+    >
+    <app-customer-select
+      [selectedId]="customerId()"
+      emptyLabel="Alle Kunden. Wählen Sie einen Kunden, um die Aufträge zu filtern."
+      legend="Nach Kunde suchen und filtern"
+      (selectionChange)="setCustomer($event)"
+    />
+    <p class="hint">
+      {{
+        view() === 'open'
+          ? 'Offene Aufträge nach Bearbeitungsstand.'
+          : 'Abgeschlossene und stornierte Aufträge.'
+      }}
+      Jeder Status hat eigene Seiten. Die Suche nach Kunden nutzt Name, E-Mail oder Telefon.
+    </p>
+  </section>
+  @for (value of visible(); track value) {
+    <app-repair-list-section
+      [status]="value"
+      [customerId]="customerId()"
+      [includeArchived]="includeArchived()"
+    />
+  }
+}
