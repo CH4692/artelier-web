@@ -1,3 +1,5 @@
+import { of } from 'rxjs';
+import { DashboardService } from './dashboard.service';
 import { provideRouter } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
@@ -12,6 +14,9 @@ describe('Workshop dashboard', () => {
       providers: [provideRouter([]), provideHttpClient(), provideHttpClientTesting()],
     });
     http = TestBed.inject(HttpTestingController);
+    vi.spyOn(TestBed.inject(DashboardService), 'pickup').mockReturnValue(
+      of({ entries: [], total: 0, relationsPending: false }),
+    );
   });
   afterEach(() => http.verify());
 
@@ -28,7 +33,7 @@ describe('Workshop dashboard', () => {
       'Offene Reparaturen',
       'Abholbereit',
       'Überfällige Aufträge',
-      'Anstehende Termine',
+      'Bevorstehende Fristen',
     ]);
     expect(element.querySelector('.create-action a')?.getAttribute('href')).toBe('/repairs/new');
     expect(element.querySelector('.welcome')).toBeNull();
@@ -45,13 +50,13 @@ describe('Workshop dashboard', () => {
     request().flush([], { headers: { 'X-Total-Count': '0' } });
     await fixture.whenStable();
     const element: HTMLElement = fixture.nativeElement;
-    expect(element.textContent).toContain('Keine Instrumente abholbereit.');
+    expect(element.textContent).toContain('Keine Aufträge abholbereit.');
     expect(element.querySelectorAll('.value')).toHaveLength(1);
     expect(element.querySelectorAll('.state-label').length).toBe(3);
     expect(element.querySelector('.urgent')?.textContent).toContain(
       'Dringende Aufträge können dennoch bestehen.',
     );
-    expect(element.querySelector('.urgent a')).toBeNull();
+    expect(element.querySelector('.urgent a')?.getAttribute('href')).toBe('/repairs?view=open');
   });
 
   it('renders a real count and can refresh without duplicate requests', async () => {
@@ -65,7 +70,7 @@ describe('Workshop dashboard', () => {
     expect(fixture.nativeElement.querySelector('.refresh').disabled).toBe(true);
     request().flush([], { headers: { 'X-Total-Count': '0' } });
     await fixture.whenStable();
-    expect(fixture.nativeElement.textContent).toContain('Keine Instrumente abholbereit.');
+    expect(fixture.nativeElement.textContent).toContain('Keine Aufträge abholbereit.');
   });
 
   it('handles API failure with safe copy, then retries successfully', async () => {
@@ -116,13 +121,15 @@ describe('Workshop dashboard', () => {
     const element: HTMLElement = fixture.nativeElement;
     expect(element.querySelector('.value')?.textContent).toContain('0');
     expect(element.textContent).toContain('Letzter Stand');
-    expect(element.textContent).not.toContain('Keine Instrumente abholbereit.');
+    expect(element.querySelector('#ready-title')?.closest('article')?.textContent).not.toContain(
+      'Keine Aufträge abholbereit.',
+    );
     element.querySelector<HTMLButtonElement>('.retry')!.click();
     await fixture.whenStable();
     expect(element.querySelector('.value')?.textContent).toContain('0');
     request().flush([], { headers: { 'X-Total-Count': '0' } });
     await fixture.whenStable();
-    expect(element.textContent).toContain('Keine Instrumente abholbereit.');
+    expect(element.textContent).toContain('Keine Aufträge abholbereit.');
     expect(element.textContent).not.toContain('Letzter Stand');
   });
 

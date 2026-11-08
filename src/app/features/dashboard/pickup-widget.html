@@ -1,0 +1,118 @@
+<section class="panel pickup" aria-labelledby="pickup-title">
+  <header class="widget-header">
+    <div>
+      <h2 id="pickup-title">Zur Abholung bereit</h2>
+      <p>Aktuelle Aufträge mit abholbereiten Instrumenten.</p>
+    </div>
+    <button
+      type="button"
+      class="pickup-refresh"
+      (click)="refresh()"
+      [disabled]="pending()"
+      [attr.aria-busy]="pending()"
+      aria-label="Abholliste aktualisieren"
+    >
+      {{ pending() ? 'Wird geladen…' : 'Aktualisieren' }}
+    </button>
+  </header>
+  @let current = state();
+  @if (current.status === 'loading') {
+    <app-loading-indicator label="Abholbereite Aufträge werden geladen…" />
+  }
+  @if (current.status === 'error') {
+    <app-error-message heading="Abholliste nicht verfügbar" [message]="current.message" />
+  }
+  @if (current.status === 'loaded') {
+    @if (current.data.entries.length === 0) {
+      <p class="empty" role="status">Keine Aufträge abholbereit.</p>
+    } @else {
+      <p class="scope">
+        Bis zu fünf Aufträge, aufsteigend nach Auftragsnummer.
+        @if (current.data.total !== null) {
+          Insgesamt {{ current.data.total.toLocaleString('de-DE') }} abholbereit.
+        }
+      </p>
+      @if (current.data.relationsPending) {
+        <p class="scope" role="status">Kunden- und Instrumentendaten werden ergänzt…</p>
+      }
+      <ul class="pickup-list">
+        @for (entry of current.data.entries; track entry.repair.id) {
+          <li>
+            <div class="entry-heading">
+              <h3>
+                <a [routerLink]="['/repairs', entry.repair.id]">Auftrag #{{ entry.repair.id }}</a>
+              </h3>
+              <app-status-badge tone="success">{{
+                statuses[entry.repair.status]
+              }}</app-status-badge>
+            </div>
+            <p class="description">{{ entry.repair.work_description }}</p>
+            <dl>
+              <div>
+                <dt>Kunde bei Annahme</dt>
+                <dd>
+                  @if (entry.repair.customer_id !== null) {
+                    <a [routerLink]="['/customers', entry.repair.customer_id]"
+                      >{{
+                        entry.customer
+                          ? entry.customer.first_name + ' ' + entry.customer.last_name
+                          : 'Kunde'
+                      }}
+                      · #{{ entry.repair.customer_id }}</a
+                    >
+                  } @else {
+                    Nicht hinterlegt
+                  }
+                  @if (entry.customerUnavailable) {
+                    <span class="relation-warning">Kundendaten nicht verfügbar</span>
+                  }
+                </dd>
+              </div>
+              <div>
+                <dt>Instrument</dt>
+                <dd>
+                  <a [routerLink]="['/instruments', entry.repair.instrument_id]">{{
+                    entry.instrument
+                      ? types[entry.instrument.type] +
+                        ' · ' +
+                        (entry.instrument.identification_number || '#' + entry.instrument.id)
+                      : 'Instrument #' + entry.repair.instrument_id
+                  }}</a>
+                  @if (entry.instrumentUnavailable) {
+                    <span class="relation-warning">Instrumentendaten nicht verfügbar</span>
+                  }
+                </dd>
+              </div>
+              <div>
+                <dt>Geplanter Abschluss</dt>
+                <dd>
+                  {{
+                    entry.repair.expected_completion_date
+                      ? (entry.repair.expected_completion_date | date: 'dd.MM.yyyy')
+                      : 'Nicht hinterlegt'
+                  }}
+                </dd>
+              </div>
+              <div>
+                <dt>Status geändert</dt>
+                <dd>
+                  {{
+                    entry.repair.status_updated_at
+                      ? (entry.repair.status_updated_at | date: 'dd.MM.yyyy HH:mm')
+                      : 'Nicht hinterlegt'
+                  }}
+                </dd>
+              </div>
+            </dl>
+          </li>
+        }
+      </ul>
+    }
+  }
+  <a
+    class="all-link"
+    routerLink="/repairs"
+    [queryParams]="{ view: 'open', status: 'ready_for_pickup' }"
+    >Alle abholbereiten Aufträge anzeigen →</a
+  >
+</section>

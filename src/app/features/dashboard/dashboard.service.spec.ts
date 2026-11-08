@@ -1,3 +1,6 @@
+import { testManagedRepair } from '../../../testing/repairs';
+import { testCustomer } from '../../../testing/customers';
+import { testInstrument } from '../../../testing/instruments';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
@@ -60,4 +63,43 @@ describe('Dashboard API integration', () => {
       expect(result).toEqual({ status: 'unavailable' });
     });
   }
+  it('requests a bounded server-filtered pickup page, preserves order and deduplicates related reads', () => {
+    const snapshots = vi.fn();
+    TestBed.inject(DashboardService).pickup().subscribe(snapshots);
+    const request = http.expectOne((r) => r.url === '/api/v1/repairs');
+    expect(request.request.params.get('status')).toBe('ready_for_pickup');
+    expect(request.request.params.get('include_archived')).toBe('false');
+    expect(request.request.params.get('offset')).toBe('0');
+    expect(request.request.params.get('limit')).toBe('5');
+    expect(request.request.params.has('sort_by')).toBe(false);
+    request.flush(
+      [
+        { ...testManagedRepair, id: 20, status: 'ready_for_pickup' },
+        { ...testManagedRepair, id: 22, status: 'ready_for_pickup' },
+      ],
+      { headers: { 'X-Total-Count': '12' } },
+    );
+    expect(snapshots).toHaveBeenCalledTimes(1);
+    expect(snapshots.mock.calls[0][0]).toMatchObject({ total: 12, relationsPending: true });
+    http.expectOne('/api/v1/customers/12').flush(testCustomer);
+    http.expectOne('/api/v1/instruments/8').flush(testInstrument);
+    expect(snapshots).toHaveBeenCalledTimes(2);
+    expect(
+      snapshots.mock.lastCall![0].entries.map(
+        (entry: { repair: { id: number } }) => entry.repair.id,
+      ),
+    ).toEqual([20, 22]);
+    expect(snapshots.mock.lastCall![0].relationsPending).toBe(false);
+  });
+  it('keeps missing historical customers unknown and does not request invented aggregates', () => {
+    const snapshots = vi.fn();
+    TestBed.inject(DashboardService).pickup().subscribe(snapshots);
+    http
+      .expectOne((r) => r.url === '/api/v1/repairs')
+      .flush([{ ...testManagedRepair, customer_id: null }]);
+    http.expectNone((r) => r.url.includes('/customers/'));
+    http.expectOne('/api/v1/instruments/8').flush(testInstrument);
+    expect(snapshots.mock.lastCall![0].entries[0].customerUnavailable).toBe(false);
+    expect(snapshots.mock.lastCall![0].total).toBeNull();
+  });
 });

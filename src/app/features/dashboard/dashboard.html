@@ -7,6 +7,14 @@
   />
   <div class="create-action">
     <a class="button" routerLink="/repairs/new">{{ copy.create }}</a>
+    <button
+      type="button"
+      class="refresh-all"
+      (click)="refreshAll()"
+      [disabled]="ready().status === 'loading'"
+    >
+      Übersicht aktualisieren
+    </button>
   </div>
 </header>
 <section class="metrics" [attr.aria-label]="copy.metricsLabel" aria-describedby="metrics-scope">
@@ -17,6 +25,16 @@
       [showRetry]="metric.key !== 'ready'"
       (retry)="loadReady()"
     >
+      @if (metric.key === 'open' || metric.key === 'ready') {
+        <a
+          metric-actions
+          routerLink="/repairs"
+          [queryParams]="
+            metric.key === 'ready' ? { view: 'open', status: 'ready_for_pickup' } : { view: 'open' }
+          "
+          >{{ metric.key === 'ready' ? 'Abholliste öffnen' : 'Offene Aufträge öffnen' }}</a
+        >
+      }
       @if (metric.key === 'ready') {
         <button
           metric-actions
@@ -45,18 +63,17 @@
   }
 </section>
 <p id="metrics-scope" class="metrics-context">{{ copy.scope }}</p>
-<section class="panel urgent" aria-labelledby="urgent-title">
-  <header class="section-header">
-    <div>
-      <h2 id="urgent-title">{{ copy.urgentTitle }}</h2>
-      <p>{{ copy.urgentSubtitle }}</p>
-    </div>
-  </header>
-  <div class="unavailable-state">
-    <span class="state-icon" aria-hidden="true">◷</span>
-    <div>
-      <h3>{{ copy.urgentUnavailable }}</h3>
-      <p>{{ copy.urgentDescription }}</p>
-    </div>
-  </div>
-</section>
+<app-pickup-widget [refreshKey]="refreshKey()" />
+<div class="deadline-widgets">
+  <app-unavailable-widget
+    class="urgent"
+    widgetId="urgent-title"
+    heading="Überfällige Aufträge"
+    description="Eine verlässliche Übersicht über überfällige Aufträge liegt noch nicht vor. Dringende Aufträge können dennoch bestehen. Bitte prüfen Sie die Termine in der Auftragsverwaltung."
+  />
+  <app-unavailable-widget
+    widgetId="deadlines-title"
+    heading="Bevorstehende Fristen"
+    description="Eine vollständige, nach Dringlichkeit sortierte Terminübersicht ist noch nicht verfügbar. Bitte prüfen Sie die geplanten Abschlüsse in den einzelnen Aufträgen."
+  />
+</div>
