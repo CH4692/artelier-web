@@ -3,18 +3,29 @@ import { NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router
 
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { filter } from 'rxjs';
+import { SessionState } from './core/auth/session-state';
+import { LoadingIndicator } from './shared/ui/loading-indicator';
+import { AccountControls } from './shared/ui/account-controls';
 import { WorkspaceHeader } from './shared/ui/workspace-header';
 import { NavigationItem } from './shared/ui/navigation-item';
 
 @Component({
-  imports: [RouterOutlet, RouterLink, NavigationItem, WorkspaceHeader],
+  imports: [
+    RouterOutlet,
+    RouterLink,
+    NavigationItem,
+    WorkspaceHeader,
+    AccountControls,
+    LoadingIndicator,
+  ],
   selector: 'app-root',
   styleUrl: './app.scss',
   templateUrl: './app.html',
   host: { '(keydown.escape)': 'closeMenu()' },
 })
 export class App {
-  private readonly menuButton = viewChild.required<ElementRef<HTMLButtonElement>>('menuButton');
+  protected readonly session = inject(SessionState);
+  private readonly menuButton = viewChild<ElementRef<HTMLButtonElement>>('menuButton');
   private readonly mainContent = viewChild<ElementRef<HTMLElement>>('mainContent');
   private readonly router = inject(Router);
   protected readonly pageTitle = signal('Dashboard');
@@ -37,7 +48,7 @@ export class App {
   protected closeMenu() {
     if (this.menuOpen()) {
       this.menuOpen.set(false);
-      this.menuButton().nativeElement.focus();
+      this.menuButton()?.nativeElement.focus();
     }
   }
 

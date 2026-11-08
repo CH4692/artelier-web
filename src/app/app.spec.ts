@@ -1,3 +1,6 @@
+import { provideHttpClient } from '@angular/common/http';
+import { SessionState } from './core/auth/session-state';
+import { testUser } from '../testing/auth';
 import { TestBed } from '@angular/core/testing';
 import { Location } from '@angular/common';
 import { provideLocationMocks } from '@angular/common/testing';
@@ -7,12 +10,13 @@ import { App } from './app';
 import { routes } from './app.routes';
 
 describe('App navigation', () => {
-  beforeEach(() =>
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [App],
-      providers: [provideRouter(routes), provideLocationMocks()],
-    }),
-  );
+      providers: [provideHttpClient(), provideRouter(routes), provideLocationMocks()],
+    });
+    TestBed.inject(SessionState).authenticate(testUser);
+  });
 
   it('exposes the four workspaces and toggles the mobile navigation', async () => {
     const fixture = TestBed.createComponent(App);

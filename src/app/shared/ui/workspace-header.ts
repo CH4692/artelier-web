@@ -15,9 +15,10 @@ import { Component, input } from '@angular/core';
     }
     header {
       min-height: 82px;
-      padding: 0 48px;
+      padding: var(--space-3) 48px;
       border-bottom: 1px solid var(--color-border);
       display: flex;
+      flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
       gap: 16px;
@@ -31,6 +32,9 @@ import { Component, input } from '@angular/core';
       display: flex;
       align-items: center;
       gap: 12px;
+      flex-wrap: wrap;
+      min-width: 0;
+      max-width: 100%;
     }
     .workspace-tag {
       border: 1px solid var(--color-border);
@@ -42,7 +46,7 @@ import { Component, input } from '@angular/core';
     @media (max-width: 800px) {
       header {
         min-height: 64px;
-        padding: 0 24px;
+        padding: var(--space-3) 24px;
       }
     }
     @media (max-width: 450px) {

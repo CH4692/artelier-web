@@ -1,40 +1,51 @@
 <a class="skip-link" href="#main-content">Skip to content</a>
-<div class="shell">
-  <aside class="sidebar">
-    <a
-      class="brand"
-      routerLink="/dashboard"
-      (click)="menuOpen.set(false)"
-      aria-label="Artelier home"
-    >
-      <span class="brand-mark" aria-hidden="true">a.</span> Artelier
-    </a>
-    <button
-      class="menu-toggle"
-      #menuButton
-      type="button"
-      (click)="toggleMenu()"
-      [attr.aria-expanded]="menuOpen()"
-      aria-controls="main-navigation"
-    >
-      Menu
-    </button>
-    <nav id="main-navigation" aria-label="Main navigation" [class.is-open]="menuOpen()">
-      <span class="nav-label">WORKSPACE</span>
-      @for (item of navigation; track item.path) {
-        <app-navigation-item
-          (selected)="selectNavigation()"
-          [path]="item.path"
-          [label]="item.label"
-          [symbol]="item.symbol"
-        />
-      }
-    </nav>
-    <p class="sidebar-note">A little more harmony.<br />Every day in your workshop.</p>
-  </aside>
+<div class="shell" [class.public-shell]="!session.workshopAccess()">
+  @if (session.workshopAccess()) {
+    <aside class="sidebar">
+      <a
+        class="brand"
+        routerLink="/dashboard"
+        (click)="menuOpen.set(false)"
+        aria-label="Artelier home"
+      >
+        <span class="brand-mark" aria-hidden="true">a.</span> Artelier
+      </a>
+      <button
+        class="menu-toggle"
+        #menuButton
+        type="button"
+        (click)="toggleMenu()"
+        [attr.aria-expanded]="menuOpen()"
+        aria-controls="main-navigation"
+      >
+        Menu
+      </button>
+      <nav id="main-navigation" aria-label="Main navigation" [class.is-open]="menuOpen()">
+        <span class="nav-label">WORKSPACE</span>
+        @for (item of navigation; track item.path) {
+          <app-navigation-item
+            (selected)="selectNavigation()"
+            [path]="item.path"
+            [label]="item.label"
+            [symbol]="item.symbol"
+          />
+        }
+      </nav>
+      <p class="sidebar-note">A little more harmony.<br />Every day in your workshop.</p>
+    </aside>
+  }
   <div class="workspace">
-    <app-workspace-header [title]="pageTitle()" />
-    <main #mainContent id="main-content" tabindex="-1"><router-outlet /></main>
+    @if (session.workshopAccess()) {
+      <app-workspace-header [title]="pageTitle()">
+        <app-account-controls account-controls />
+      </app-workspace-header>
+    }
+    <main #mainContent id="main-content" tabindex="-1">
+      @if (session.status() === 'loading') {
+        <app-loading-indicator label="Checking your session…" />
+      }
+      <router-outlet />
+    </main>
     <footer>Artelier <span>Made for the craft.</span></footer>
   </div>
 </div>
