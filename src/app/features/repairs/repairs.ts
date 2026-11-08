@@ -1,3 +1,4 @@
+import { UI_DE } from '../../shared/i18n/ui.de';
 import { Component } from '@angular/core';
 import { FeaturePlaceholder } from '../../shared/ui/feature-placeholder';
 
@@ -5,8 +6,10 @@ import { FeaturePlaceholder } from '../../shared/ui/feature-placeholder';
   selector: 'app-repairs',
   imports: [FeaturePlaceholder],
   template: `<app-feature-placeholder
-    heading="Repairs"
-    description="A clear view of the care and craft in your workshop."
+    [heading]="copy.navigation.repairs"
+    description="Ihre Reparaturaufträge und die Arbeit in der Werkstatt."
   />`,
 })
-export class Repairs {}
+export class Repairs {
+  protected readonly copy = UI_DE;
+}

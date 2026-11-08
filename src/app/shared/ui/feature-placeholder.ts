@@ -6,11 +6,11 @@ import { EmptyState } from './empty-state';
   selector: 'app-feature-placeholder',
   imports: [PageHeader, EmptyState],
   template: `
-    <app-page-header eyebrow="Your workshop" [heading]="heading()" [description]="description()" />
+    <app-page-header eyebrow="Werkstatt" [heading]="heading()" [description]="description()" />
     <app-empty-state
-      eyebrow="Coming into tune"
-      [heading]="'A space for ' + heading().toLowerCase()"
-      description="This workspace is ready for its next chapter. Tools and records will appear here as Artelier grows."
+      eyebrow="In Vorbereitung"
+      [heading]="heading() + ' – demnächst verfügbar'"
+      description="Dieser Bereich wird noch eingerichtet. Die Werkzeuge zur Verwaltung Ihrer Daten folgen."
     />
   `,
   styles: `

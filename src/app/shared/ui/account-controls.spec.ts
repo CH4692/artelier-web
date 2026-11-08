@@ -42,7 +42,7 @@ describe('AccountControls', () => {
     expect(TestBed.inject(SessionState).status()).toBe('authenticated');
     expect(navigate).not.toHaveBeenCalled();
     expect(fixture.nativeElement.querySelector('[role="alert"]').textContent).toContain(
-      'may still be active',
+      'möglicherweise noch aktiv',
     );
   });
 });

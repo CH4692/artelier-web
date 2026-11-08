@@ -1,3 +1,4 @@
+import { UI_DE } from '../i18n/ui.de';
 import { Component, input } from '@angular/core';
 
 @Component({
@@ -6,7 +7,7 @@ import { Component, input } from '@angular/core';
     <span class="current-page" aria-live="polite">{{ title() }}</span>
     <div class="account-controls">
       <ng-content select="[account-controls]" />
-      <span class="workspace-tag">Workshop workspace</span>
+      <span class="workspace-tag">{{ copy.shell.workspace }}</span>
     </div>
   </header>`,
   styles: `
@@ -57,5 +58,6 @@ import { Component, input } from '@angular/core';
   `,
 })
 export class WorkspaceHeader {
+  protected readonly copy = UI_DE;
   readonly title = input.required<string>();
 }

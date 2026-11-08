@@ -8,6 +8,7 @@ import { AuthService } from '../../core/auth/auth.service';
 import { safeReturnUrl } from '../../core/auth/return-url';
 
 @Component({
+  host: { lang: 'en' },
   selector: 'app-login',
   imports: [ReactiveFormsModule],
   template: `

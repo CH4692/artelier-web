@@ -1,4 +1,4 @@
-<a class="skip-link" href="#main-content">Skip to content</a>
+<a class="skip-link" href="#main-content">{{ copy.shell.skip }}</a>
 <div class="shell" [class.public-shell]="!session.workshopAccess()">
   @if (session.workshopAccess()) {
     <aside class="sidebar">
@@ -6,7 +6,7 @@
         class="brand"
         routerLink="/dashboard"
         (click)="menuOpen.set(false)"
-        aria-label="Artelier home"
+        [attr.aria-label]="copy.shell.home"
       >
         <span class="brand-mark" aria-hidden="true">a.</span> Artelier
       </a>
@@ -18,10 +18,14 @@
         [attr.aria-expanded]="menuOpen()"
         aria-controls="main-navigation"
       >
-        Menu
+        {{ copy.shell.menu }}
       </button>
-      <nav id="main-navigation" aria-label="Main navigation" [class.is-open]="menuOpen()">
-        <span class="nav-label">WORKSPACE</span>
+      <nav
+        id="main-navigation"
+        [attr.aria-label]="copy.shell.navigation"
+        [class.is-open]="menuOpen()"
+      >
+        <span class="nav-label">{{ copy.shell.workspace }}</span>
         @for (item of navigation; track item.path) {
           <app-navigation-item
             (selected)="selectNavigation()"
@@ -31,7 +35,7 @@
           />
         }
       </nav>
-      <p class="sidebar-note">A little more harmony.<br />Every day in your workshop.</p>
+      <p class="sidebar-note">{{ copy.shell.note }}</p>
     </aside>
   }
   <div class="workspace">
@@ -42,10 +46,12 @@
     }
     <main #mainContent id="main-content" tabindex="-1">
       @if (session.status() === 'loading') {
-        <app-loading-indicator label="Checking your session…" />
+        <app-loading-indicator [label]="copy.shell.checkingSession" />
       }
       <router-outlet />
     </main>
-    <footer>Artelier <span>Made for the craft.</span></footer>
+    <footer>
+      Artelier <span>{{ copy.shell.footer }}</span>
+    </footer>
   </div>
 </div>

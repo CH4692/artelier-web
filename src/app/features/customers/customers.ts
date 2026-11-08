@@ -1,3 +1,4 @@
+import { UI_DE } from '../../shared/i18n/ui.de';
 import { Component } from '@angular/core';
 import { FeaturePlaceholder } from '../../shared/ui/feature-placeholder';
 
@@ -5,8 +6,10 @@ import { FeaturePlaceholder } from '../../shared/ui/feature-placeholder';
   selector: 'app-customers',
   imports: [FeaturePlaceholder],
   template: `<app-feature-placeholder
-    heading="Customers"
-    description="A thoughtful place for the people behind every instrument."
+    [heading]="copy.navigation.customers"
+    description="Ihre Kunden und ihre Kontaktdaten im Überblick."
   />`,
 })
-export class Customers {}
+export class Customers {
+  protected readonly copy = UI_DE;
+}

@@ -3,6 +3,7 @@ import { RouterLink } from '@angular/router';
 import { AccountControls } from '../../shared/ui/account-controls';
 
 @Component({
+  host: { lang: 'en' },
   selector: 'app-access-denied',
   imports: [AccountControls, RouterLink],
   template: `<section class="panel">

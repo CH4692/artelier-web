@@ -1,0 +1,49 @@
+<header class="dashboard-header">
+  <app-page-header
+    [compact]="true"
+    [eyebrow]="copy.eyebrow"
+    [heading]="copy.title"
+    [description]="copy.subtitle"
+  />
+  <div class="create-action">
+    <button type="button" disabled aria-describedby="create-unavailable">{{ copy.create }}</button>
+    <p id="create-unavailable">{{ copy.createUnavailable }}</p>
+  </div>
+</header>
+<section class="metrics" [attr.aria-label]="copy.metricsLabel" aria-describedby="metrics-scope">
+  @for (metric of metrics; track metric.key) {
+    <app-metric-card
+      [metric]="metric"
+      [state]="metric.key === 'ready' ? ready() : unavailable"
+      (retry)="loadReady()"
+    />
+  }
+</section>
+<div class="metrics-context">
+  <p id="metrics-scope">{{ copy.scope }}</p>
+  <button
+    class="refresh"
+    type="button"
+    (click)="loadReady()"
+    [disabled]="ready().status === 'loading'"
+  >
+    <span aria-hidden="true">↻</span>
+    {{ ready().status === 'loading' ? copy.refreshing : copy.refresh }}
+  </button>
+</div>
+<section class="panel urgent" aria-labelledby="urgent-title">
+  <header class="section-header">
+    <div>
+      <h2 id="urgent-title">{{ copy.urgentTitle }}</h2>
+      <p>{{ copy.urgentSubtitle }}</p>
+    </div>
+    <span class="section-number" aria-hidden="true">01</span>
+  </header>
+  <div class="unavailable-state">
+    <span class="state-icon" aria-hidden="true">◷</span>
+    <div>
+      <h3>{{ copy.urgentUnavailable }}</h3>
+      <p>{{ copy.urgentDescription }}</p>
+    </div>
+  </div>
+</section>
