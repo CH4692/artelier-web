@@ -10,7 +10,7 @@ import { Component, input } from '@angular/core';
       display: flex;
       align-items: center;
       gap: 12px;
-      color: var(--color-muted);
+      color: var(--color-text-muted);
     }
     .spinner {
       width: 18px;

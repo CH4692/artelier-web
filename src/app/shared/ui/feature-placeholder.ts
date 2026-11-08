@@ -15,7 +15,7 @@ import { EmptyState } from './empty-state';
   `,
   styles: `
     app-empty-state {
-      margin-top: 32px;
+      margin-top: var(--space-6);
     }
   `,
 })
