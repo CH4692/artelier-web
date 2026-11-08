@@ -53,6 +53,9 @@ describe('Session lifecycle integration', () => {
     expect(login.request.headers.get('X-CSRF-Protection')).toBe('1');
     login.flush(testUser);
     const harness = await RouterTestingHarness.create('/customers');
+    TestBed.inject(HttpTestingController)
+      .expectOne((r) => r.url === '/api/v1/customers')
+      .flush([], { headers: { 'X-Total-Count': '0' } });
     auth.logout().subscribe();
     const logout = TestBed.inject(HttpTestingController).expectOne('/api/v1/auth/logout');
     expect(logout.request.withCredentials).toBe(true);

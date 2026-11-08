@@ -1,0 +1,79 @@
+<a class="back" [routerLink]="['/customers']">← {{ copy.back }}</a>
+<app-page-header
+  [compact]="true"
+  [heading]="editing ? 'Kundendaten bearbeiten' : copy.create"
+  [description]="copy.requiredHint"
+/>
+@let current = state();
+@if (current.status === 'loading') {
+  <app-loading-indicator [label]="copy.loading" />
+}
+@if (current.status === 'error') {
+  <app-error-message
+    [heading]="current.notFound ? 'Kunde nicht gefunden' : 'Daten konnten nicht geladen werden'"
+    [message]="current.message"
+  >
+    @if (!current.notFound) {
+      <button type="button" (click)="load()">{{ copy.retry }}</button>
+    }
+  </app-error-message>
+}
+@if (current.status === 'loaded') {
+  <form
+    class="panel editor"
+    [formGroup]="form"
+    (ngSubmit)="submit()"
+    novalidate
+    [attr.aria-busy]="pending()"
+  >
+    @if (current.data?.is_archived) {
+      <p class="archive-note">
+        Dieser Kunde ist archiviert. Die Kontaktdaten können weiterhin gepflegt werden.
+      </p>
+    }
+    <div class="fields">
+      @for (field of fields; track field) {
+        <div>
+          <label [for]="field"
+            >{{ copy[field]
+            }}{{ field === 'email' || field === 'phone' ? ' (optional)' : ' *' }}</label
+          >
+          <input
+            [id]="field"
+            [formControlName]="field"
+            [type]="field === 'email' ? 'email' : field === 'phone' ? 'tel' : 'text'"
+            [autocomplete]="
+              field === 'first_name'
+                ? 'given-name'
+                : field === 'last_name'
+                  ? 'family-name'
+                  : field === 'phone'
+                    ? 'tel'
+                    : 'email'
+            "
+            [readOnly]="pending()"
+            [required]="field === 'first_name' || field === 'last_name'"
+            [attr.aria-invalid]="!!fieldError(field)"
+            [attr.aria-describedby]="fieldError(field) ? field + '-error' : null"
+          />
+          @if (fieldError(field)) {
+            <p class="field-error" [id]="field + '-error'">{{ fieldError(field) }}</p>
+          }
+        </div>
+      }
+    </div>
+    @if (error()) {
+      <p class="field-error" role="alert">{{ error() }}</p>
+    }
+    <div class="actions">
+      <button type="submit" [disabled]="pending()" [attr.aria-busy]="pending()">
+        {{ pending() ? copy.saving : copy.save }}
+      </button>
+      @if (!pending()) {
+        <a [routerLink]="current.data ? ['/customers', current.data.id] : ['/customers']">{{
+          copy.cancel
+        }}</a>
+      }
+    </div>
+  </form>
+}

@@ -11,6 +11,18 @@ export class ApiService {
   get<T>(path: string) {
     return this.http.get<T>(`${this.baseUrl.replace(/\/$/, '')}/${path.replace(/^\/+/, '')}`);
   }
+  post<T>(path: string, body: unknown) {
+    return this.http.post<T>(
+      `${this.baseUrl.replace(/\/$/, '')}/${path.replace(/^\/+/, '')}`,
+      body,
+    );
+  }
+  patch<T>(path: string, body: unknown) {
+    return this.http.patch<T>(
+      `${this.baseUrl.replace(/\/$/, '')}/${path.replace(/^\/+/, '')}`,
+      body,
+    );
+  }
   getResponse<T>(path: string, params: Record<string, string | number | boolean>) {
     return this.http.get<T>(`${this.baseUrl.replace(/\/$/, '')}/${path.replace(/^\/+/, '')}`, {
       params,

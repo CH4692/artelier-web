@@ -1,0 +1,98 @@
+<a class="back" routerLink="/customers">← {{ copy.back }}</a>
+@if (confirmation()) {
+  <p class="confirmation" role="status" tabindex="-1" #confirmationMessage>{{ confirmation() }}</p>
+}
+@let current = state();
+@if (current.status === 'loading') {
+  <app-loading-indicator [label]="copy.loading" />
+}
+@if (current.status === 'error') {
+  <h1>{{ current.notFound ? 'Kunde nicht gefunden' : 'Kundendetails' }}</h1>
+  <app-error-message heading="Kundendaten nicht verfügbar" [message]="current.message">
+    @if (!current.notFound) {
+      <button type="button" (click)="retry()">{{ copy.retry }}</button>
+    }
+  </app-error-message>
+}
+@if (current.status === 'loaded') {
+  @let customer = current.data.customer;
+  <div class="page-heading">
+    <app-page-header
+      [compact]="true"
+      [heading]="customer.first_name + ' ' + customer.last_name"
+      [description]="'Kundennummer ' + customer.id"
+    />
+    <app-status-badge [tone]="customer.is_archived ? 'warning' : 'success'">{{
+      customer.is_archived ? copy.archived : copy.active
+    }}</app-status-badge>
+  </div>
+  <section class="panel" aria-labelledby="contact-heading">
+    <h2 id="contact-heading">Kontaktdaten</h2>
+    <dl class="contact">
+      <div>
+        <dt>{{ copy.email }}</dt>
+        <dd>{{ customer.email || copy.noContact }}</dd>
+      </div>
+      <div>
+        <dt>{{ copy.phone }}</dt>
+        <dd>{{ customer.phone || copy.noContact }}</dd>
+      </div>
+    </dl>
+    <div class="actions">
+      <a class="button" [routerLink]="['/customers', customer.id, 'edit']">{{ copy.edit }}</a>
+      @if (!customer.is_archived) {
+        <app-archive-customer [customer]="customer" (archived)="archived($event)" />
+      }
+    </div>
+  </section>
+  <section class="panel instruments" aria-labelledby="instrument-heading">
+    <h2 id="instrument-heading">{{ copy.instruments }}</h2>
+    @if (current.data.instruments.length === 0) {
+      <p class="hint">{{ copy.noInstruments }}</p>
+    }
+    <ul>
+      @for (instrument of current.data.instruments; track instrument.id) {
+        <li>
+          <div class="instrument-heading">
+            <h3>
+              {{ copy.types[instrument.type] }} ·
+              {{ instrument.identification_number || '#' + instrument.id }}
+            </h3>
+            @if (instrument.is_archived) {
+              <app-status-badge tone="warning">{{ copy.archived }}</app-status-badge>
+            }
+          </div>
+          <dl class="instrument-data">
+            <div>
+              <dt>Instrumentennummer</dt>
+              <dd>{{ instrument.id }}</dd>
+            </div>
+            <div>
+              <dt>Hersteller</dt>
+              <dd>{{ instrument.maker || copy.noContact }}</dd>
+            </div>
+            <div>
+              <dt>Baujahr</dt>
+              <dd>{{ instrument.year_of_manufacture || copy.noContact }}</dd>
+            </div>
+            @if (instrument.body_length_mm !== null) {
+              <div>
+                <dt>Korpuslänge</dt>
+                <dd>{{ instrument.body_length_mm }} mm</dd>
+              </div>
+            }
+            @if (instrument.bow_weight_g !== null) {
+              <div>
+                <dt>Bogengewicht</dt>
+                <dd>{{ instrument.bow_weight_g }} g</dd>
+              </div>
+            }
+          </dl>
+          @if (instrument.notes) {
+            <p class="notes">{{ instrument.notes }}</p>
+          }
+        </li>
+      }
+    </ul>
+  </section>
+}
