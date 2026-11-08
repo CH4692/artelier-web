@@ -1,3 +1,4 @@
+import { RouterLink } from '@angular/router';
 import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { PageHeader } from '../../shared/ui/page-header';
@@ -7,7 +8,7 @@ import { MetricCard, MetricDefinition } from './metric-card';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [PageHeader, MetricCard],
+  imports: [RouterLink, PageHeader, MetricCard],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
   host: { lang: 'de' },

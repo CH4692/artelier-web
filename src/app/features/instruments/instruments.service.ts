@@ -22,19 +22,18 @@ export class InstrumentsService {
       sort_by: filters.sort_by,
       sort_order: filters.sort_order,
     };
+    if (filters.customer_id !== undefined) params['customer_id'] = filters.customer_id;
     if (filters.type) params['type'] = filters.type;
     if (filters.ownership) params['ownership'] = filters.ownership;
-    return this.api
-      .getResponse<Instrument[]>('instruments', params)
-      .pipe(
-        map(
-          (response) =>
-            ({
-              instruments: response.body ?? [],
-              total: responseTotal(response.headers.get('X-Total-Count')),
-            }) as InstrumentPage,
-        ),
-      );
+    return this.api.getResponse<Instrument[]>('instruments', params).pipe(
+      map(
+        (response) =>
+          ({
+            instruments: response.body ?? [],
+            total: responseTotal(response.headers.get('X-Total-Count')),
+          }) as InstrumentPage,
+      ),
+    );
   }
   get(id: number) {
     return this.api.get<Instrument>(`instruments/${id}`);

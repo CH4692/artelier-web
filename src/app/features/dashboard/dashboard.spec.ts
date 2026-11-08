@@ -1,3 +1,4 @@
+import { provideRouter } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
@@ -8,7 +9,7 @@ describe('Workshop dashboard', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [Dashboard],
-      providers: [provideHttpClient(), provideHttpClientTesting()],
+      providers: [provideRouter([]), provideHttpClient(), provideHttpClientTesting()],
     });
     http = TestBed.inject(HttpTestingController);
   });
@@ -18,7 +19,7 @@ describe('Workshop dashboard', () => {
     return http.expectOne((req) => req.url === '/api/v1/repairs');
   }
 
-  it('shows four German KPIs, a compact header and an explicitly unavailable creation action', async () => {
+  it('shows four German KPIs, a compact header and an available repair creation action', async () => {
     const fixture = TestBed.createComponent(Dashboard);
     await fixture.whenStable();
     const element: HTMLElement = fixture.nativeElement;
@@ -29,12 +30,7 @@ describe('Workshop dashboard', () => {
       'Überfällige Aufträge',
       'Anstehende Termine',
     ]);
-    const create = element.querySelector<HTMLButtonElement>('.create-action button')!;
-    expect(create.disabled).toBe(true);
-    expect(
-      element.querySelector('#' + create.getAttribute('aria-describedby'))?.textContent,
-    ).toContain('In Vorbereitung');
-    expect(element.querySelectorAll('a[href]')).toHaveLength(0);
+    expect(element.querySelector('.create-action a')?.getAttribute('href')).toBe('/repairs/new');
     expect(element.querySelector('.welcome')).toBeNull();
     expect(element.querySelector('.section-number')).toBeNull();
     expect(element.querySelectorAll('.refresh')).toHaveLength(1);

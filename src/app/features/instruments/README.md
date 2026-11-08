@@ -16,7 +16,7 @@ The reusable customer selector searches and paginates existing customers, labels
 
 Details display instrument metadata and independently resolve the customer name and link. A customer lookup failure does not hide the instrument. The list links customer IDs without issuing a request for every row.
 
-History uses `GET /instruments/{id}/history` with 25-record pagination and preserves backend ordering by execution date and ID. Status, description, available dates and archived state are rendered. Missing dates are explicit. Repair detail routes do not yet exist, so links are not invented.
+History uses `GET /instruments/{id}/history` with 25-record pagination and preserves backend ordering by execution date and ID. Status, description, available dates and archived state are rendered. Missing dates are explicit. Repair records link to their repair detail routes.
 
 QR download uses the authenticated existing `GET /instruments/{id}/qr-code.svg` endpoint as a Blob, without injecting SVG markup into the page. Temporary object URLs are revoked. The existing stable public UUID and `/i/{uuid}` scan flow remain unchanged. The backend must configure `PUBLIC_QR_BASE_URL`; unavailable QR generation displays a safe retry/configuration message.
 

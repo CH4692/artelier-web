@@ -1,9 +1,9 @@
 <fieldset [disabled]="disabled()">
-  <legend>Kundenzuordnung</legend>
+  <legend>{{ legend() }}</legend>
   @let current = selected();
   <div class="selection" aria-live="polite">
     @if (selectedId() === null) {
-      <p>Kein Kunde zugeordnet. Der Eigentümer ist noch nicht bekannt.</p>
+      <p>{{ emptyLabel() }}</p>
     } @else if (current.status === 'loading') {
       <p>Kunde #{{ selectedId() }} wird geladen…</p>
     } @else if (current.status === 'error') {

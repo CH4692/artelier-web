@@ -1,0 +1,40 @@
+<section class="panel status-panel" aria-labelledby="change-status-title">
+  <h2 id="change-status-title">Status ändern</h2>
+  <p id="status-hint">
+    Wählen Sie den gewünschten Zielstatus. Ob der Wechsel im aktuellen Bearbeitungsstand erlaubt
+    ist, prüft die Werkstattverwaltung beim Speichern. Abgeschlossene und stornierte Aufträge können
+    nicht wieder geöffnet werden.
+  </p>
+  <form [formGroup]="form" (ngSubmit)="submit()" [attr.aria-busy]="pending()">
+    <fieldset class="editor-fields" [disabled]="pending()">
+      <legend>Zielstatus</legend>
+      <label for="target-status">Gewünschter Status</label
+      ><select
+        id="target-status"
+        [formControl]="target"
+        required
+        aria-describedby="status-hint status-selection-error"
+      >
+        <option value="">Bitte wählen</option>
+        @for (status of statuses; track status) {
+          <option [value]="status">{{ labels[status] }}</option>
+        }
+      </select>
+      @if (target.touched && target.invalid) {
+        <p class="field-error" id="status-selection-error">Bitte wählen Sie einen Zielstatus.</p>
+      }
+      <div class="actions">
+        <button type="submit" [disabled]="pending()">
+          {{ pending() ? 'Wird geprüft und gespeichert…' : 'Status speichern' }}
+        </button>
+      </div>
+    </fieldset>
+  </form>
+  @if (error()) {
+    <p class="field-error" role="alert">{{ error() }}</p>
+    <button type="button" (click)="reload.emit()">Auftrag erneut laden</button>
+  }
+  @if (success()) {
+    <p class="confirmation" role="status">{{ success() }}</p>
+  }
+</section>

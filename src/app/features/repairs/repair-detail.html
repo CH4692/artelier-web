@@ -1,0 +1,134 @@
+<a class="back" routerLink="/repairs">← Zur Auftragsliste</a>
+@let current = state();
+@if (current.status === 'loading') {
+  <app-loading-indicator label="Auftrag wird geladen…" />
+}
+@if (current.status === 'error') {
+  <app-error-message
+    [heading]="current.notFound ? 'Auftrag nicht gefunden' : 'Auftrag nicht verfügbar'"
+    [message]="current.message"
+  >
+    @if (!current.notFound) {
+      <button type="button" (click)="retry()">Erneut versuchen</button>
+    }
+  </app-error-message>
+}
+@if (current.status === 'loaded') {
+  @let repair = current.data;
+  @if (confirmation()) {
+    <p class="confirmation" role="status">{{ confirmation() }}</p>
+  }
+  <header class="page-heading">
+    <app-page-header
+      [compact]="true"
+      [heading]="'Auftrag #' + repair.id"
+      description="Arbeitsumfang, Zuordnung und Bearbeitungsstand."
+    /><app-status-badge>{{ labels[repair.status] }}</app-status-badge>
+    @if (repair.is_archived) {
+      <app-status-badge tone="warning">Archiviert</app-status-badge>
+    }
+  </header>
+  <section class="panel" aria-labelledby="repair-data-title">
+    <h2 id="repair-data-title">Auftragsdaten</h2>
+    <dl class="data-grid">
+      <div>
+        <dt>Kunde bei Annahme</dt>
+        <dd>
+          @if (repair.customer_id !== null) {
+            <a [routerLink]="['/customers', repair.customer_id]"
+              >{{ customer() ? customer()!.first_name + ' ' + customer()!.last_name : 'Kunde' }} ·
+              #{{ repair.customer_id }}</a
+            >
+          } @else {
+            Nicht hinterlegt
+          }
+        </dd>
+      </div>
+      <div>
+        <dt>Instrument</dt>
+        <dd>
+          <a [routerLink]="['/instruments', repair.instrument_id]">{{
+            instrument()
+              ? types[instrument()!.type] +
+                ' · ' +
+                (instrument()!.identification_number || '#' + instrument()!.id)
+              : 'Instrument #' + repair.instrument_id
+          }}</a>
+        </dd>
+      </div>
+      <div>
+        <dt>Angenommen</dt>
+        <dd>
+          {{
+            repair.accepted_at
+              ? (repair.accepted_at | date: 'dd.MM.yyyy HH:mm')
+              : 'Nicht hinterlegt'
+          }}
+        </dd>
+      </div>
+      <div>
+        <dt>Geplanter Abschluss</dt>
+        <dd>
+          {{
+            repair.expected_completion_date
+              ? (repair.expected_completion_date | date: 'dd.MM.yyyy')
+              : 'Nicht hinterlegt'
+          }}
+        </dd>
+      </div>
+      <div>
+        <dt>Ausgeführt</dt>
+        <dd>
+          {{
+            repair.performed_at
+              ? (repair.performed_at | date: 'dd.MM.yyyy HH:mm')
+              : 'Nicht hinterlegt'
+          }}
+        </dd>
+      </div>
+      <div>
+        <dt>Status geändert</dt>
+        <dd>
+          {{
+            repair.status_updated_at
+              ? (repair.status_updated_at | date: 'dd.MM.yyyy HH:mm')
+              : 'Nicht hinterlegt'
+          }}
+        </dd>
+      </div>
+      <div>
+        <dt>Erfasst</dt>
+        <dd>{{ repair.created_at | date: 'dd.MM.yyyy HH:mm' }}</dd>
+      </div>
+    </dl>
+    @if (relationsPending()) {
+      <p role="status">Kunden- und Instrumentendaten werden geladen…</p>
+    }
+    @if (customerError() || instrumentError()) {
+      <p role="alert">
+        {{ customerError() ? 'Die Kundendaten konnten nicht geladen werden. ' : ''
+        }}{{ instrumentError() ? 'Die Instrumentendaten konnten nicht geladen werden.' : '' }} Der
+        Auftrag bleibt verfügbar.
+      </p>
+      <button type="button" (click)="retry()">Zugehörige Daten erneut laden</button>
+    }
+    <h3>Arbeitsbeschreibung</h3>
+    <p class="description">{{ repair.work_description }}</p>
+    <h3>Interne Notizen</h3>
+    <p class="description">{{ repair.internal_notes || 'Nicht hinterlegt' }}</p>
+    <div class="actions">
+      <a class="button" [routerLink]="['/repairs', repair.id, 'edit']">Auftrag bearbeiten</a
+      ><a
+        routerLink="/repairs"
+        [queryParams]="{
+          view: repair.status === 'completed' || repair.status === 'cancelled' ? 'closed' : 'open',
+          status: repair.status,
+        }"
+        >Im aktuellen Status anzeigen</a
+      >
+    </div>
+  </section>
+  @for (id of [repair.id]; track id) {
+    <app-repair-status-editor [repair]="repair" (saved)="statusSaved($event)" (reload)="retry()" />
+  }
+}

@@ -6,8 +6,7 @@
     [description]="copy.subtitle"
   />
   <div class="create-action">
-    <button type="button" disabled aria-describedby="create-unavailable">{{ copy.create }}</button>
-    <span id="create-unavailable">{{ copy.preparing }}</span>
+    <a class="button" routerLink="/repairs/new">{{ copy.create }}</a>
   </div>
 </header>
 <section class="metrics" [attr.aria-label]="copy.metricsLabel" aria-describedby="metrics-scope">
