@@ -1,3 +1,4 @@
+import { CustomersService } from './features/customers/customers.service';
 import { of } from 'rxjs';
 import { DashboardService } from './features/dashboard/dashboard.service';
 import { provideHttpClient } from '@angular/common/http';
@@ -12,6 +13,7 @@ describe('Workspace routes', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
+        { provide: CustomersService, useValue: { list: () => of({ customers: [], total: 0 }) } },
         {
           provide: DashboardService,
           useValue: { readyForPickupCount: () => of({ status: 'unavailable' }) },
@@ -46,6 +48,7 @@ describe('Protected navigation integration', () => {
   beforeEach(() =>
     TestBed.configureTestingModule({
       providers: [
+        { provide: CustomersService, useValue: { list: () => of({ customers: [], total: 0 }) } },
         {
           provide: DashboardService,
           useValue: { readyForPickupCount: () => of({ status: 'unavailable' }) },

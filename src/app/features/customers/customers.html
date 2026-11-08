@@ -1,0 +1,104 @@
+<div class="page-heading">
+  <app-page-header [compact]="true" [heading]="copy.title" [description]="copy.subtitle" />
+  <a class="button" routerLink="/customers/new">+ {{ copy.create }}</a>
+</div>
+<section class="panel filters" aria-label="Kunden filtern">
+  <div class="search-field">
+    <label for="customer-search">{{ copy.search }}</label>
+    <input
+      id="customer-search"
+      type="search"
+      [formControl]="search"
+      [placeholder]="copy.searchHint"
+      aria-describedby="search-hint"
+      maxlength="200"
+    />
+    <p id="search-hint" class="hint">{{ copy.searchHint }}</p>
+  </div>
+  <label class="check"
+    ><input
+      type="checkbox"
+      #archiveFilter
+      [checked]="includeArchived()"
+      (change)="setArchived(archiveFilter.checked)"
+    />{{ copy.includeArchived }}</label
+  >
+</section>
+@let current = state();
+@if (current.status === 'loading') {
+  <app-loading-indicator [label]="copy.loading" />
+}
+@if (current.status === 'error') {
+  <app-error-message heading="Kunden konnten nicht geladen werden" [message]="current.message"
+    ><button type="button" (click)="retry()">{{ copy.retry }}</button></app-error-message
+  >
+}
+@if (current.status === 'loaded') {
+  <p class="result-count" role="status">
+    {{
+      current.data.total === null
+        ? 'Gesamtzahl nicht verfügbar'
+        : current.data.total + (current.data.total === 1 ? ' Kunde gefunden' : ' Kunden gefunden')
+    }}
+  </p>
+  @if (current.data.customers.length === 0) {
+    <app-empty-state
+      [heading]="
+        term()
+          ? copy.noResults
+          : offset() > 0
+            ? 'Auf dieser Seite sind keine Kunden vorhanden.'
+            : copy.empty
+      "
+      description="Ändern Sie die Filter oder legen Sie einen Kunden an."
+    >
+      @if (term()) {
+        <button type="button" (click)="clearSearch()">{{ copy.clear }}</button>
+      }
+    </app-empty-state>
+  } @else {
+    <div
+      class="table-scroll panel customer-table"
+      role="region"
+      aria-label="Kundenliste"
+      tabindex="0"
+    >
+      <table>
+        <caption class="visually-hidden">
+          Kunden und Kontaktdaten
+        </caption>
+        <thead>
+          <tr>
+            <th scope="col">Name</th>
+            <th scope="col">E-Mail</th>
+            <th scope="col">Telefon</th>
+            <th scope="col">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (customer of current.data.customers; track customer.id) {
+            <tr>
+              <th scope="row">
+                <a [routerLink]="['/customers', customer.id]"
+                  >{{ customer.first_name }} {{ customer.last_name }}</a
+                >
+              </th>
+              <td>{{ customer.email || copy.noContact }}</td>
+              <td>{{ customer.phone || copy.noContact }}</td>
+              <td>
+                <app-status-badge [tone]="customer.is_archived ? 'warning' : 'success'">{{
+                  customer.is_archived ? copy.archived : copy.active
+                }}</app-status-badge>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+  <nav class="pagination" aria-label="Kundenseiten">
+    <button type="button" (click)="page(-1)" [disabled]="offset() === 0">Zurück</button>
+    <span>Seite {{ pageNumber() }}</span>
+    <button type="button" (click)="page(1)" [disabled]="!hasNext(current.data)">Weiter</button>
+  </nav>
+}

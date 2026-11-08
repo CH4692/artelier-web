@@ -24,6 +24,30 @@ export const routes: Routes = [
     loadComponent: () => import('./features/dashboard/dashboard').then((m) => m.Dashboard),
   },
   {
+    path: 'customers/new',
+    canActivate: [authGuard],
+    data: { roles: ['admin', 'employee'] },
+    title: 'Kunde anlegen | Artelier',
+    loadComponent: () =>
+      import('./features/customers/customer-editor').then((m) => m.CustomerEditor),
+  },
+  {
+    path: 'customers/:id/edit',
+    canActivate: [authGuard],
+    data: { roles: ['admin', 'employee'], edit: true },
+    title: 'Kundendaten bearbeiten | Artelier',
+    loadComponent: () =>
+      import('./features/customers/customer-editor').then((m) => m.CustomerEditor),
+  },
+  {
+    path: 'customers/:id',
+    canActivate: [authGuard],
+    data: { roles: ['admin', 'employee'] },
+    title: 'Kundendetails | Artelier',
+    loadComponent: () =>
+      import('./features/customers/customer-detail').then((m) => m.CustomerDetail),
+  },
+  {
     path: 'customers',
     canActivate: [authGuard],
     data: { roles: ['admin', 'employee'] },
