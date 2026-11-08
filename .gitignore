@@ -42,3 +42,9 @@ __screenshots__/
 # System files
 .DS_Store
 Thumbs.db
+
+# Machine-local configuration and environment files
+.env
+.env.*
+!.env.example
+*.local

@@ -147,3 +147,15 @@ proxy.conf.json
 ```
 
 The backend is a separate repository and is not modified by frontend tooling.
+
+## Architectural conventions
+
+Use standalone components and lazy routes for each feature. Keep feature-specific
+UI, forms, and endpoint services together under `features/`; put application-wide
+configuration and interceptors in `core/`, and reusable presentation components in
+`shared/ui/`. SCSS is the default for CLI-generated components.
+
+Environment TypeScript files are public build inputs, not secret storage. Never
+place credentials in them. Machine-local `.env`, `.env.*`, and `*.local` files are
+ignored; a sanitized `.env.example` may be committed when needed. Angular CLI does
+not load `.env` files automatically.
