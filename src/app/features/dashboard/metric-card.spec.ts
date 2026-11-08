@@ -19,13 +19,13 @@ describe('MetricCard states', () => {
   it('announces loading without showing a fake number', () => {
     const fixture = render({ status: 'loading' });
     expect(fixture.nativeElement.querySelector('[aria-busy="true"]')).not.toBeNull();
-    expect(fixture.nativeElement.textContent).toContain('Wird geladen');
+    expect(fixture.nativeElement.textContent).toContain('Daten werden geladen.');
     expect(fixture.nativeElement.querySelector('.value')).toBeNull();
   });
 
   it('distinguishes unavailable integration from an empty result', () => {
     const fixture = render({ status: 'unavailable' });
-    expect(fixture.nativeElement.textContent).toContain('Nicht verfügbar');
+    expect(fixture.nativeElement.textContent).toContain('Noch nicht verfügbar');
     expect(fixture.nativeElement.textContent).not.toContain(UI_DE.dashboard.ready.empty);
     expect(fixture.nativeElement.querySelector('.value')).toBeNull();
   });
@@ -46,6 +46,24 @@ describe('MetricCard states', () => {
     );
   });
 
+  for (const status of ['loading', 'error', 'unavailable'] as const) {
+    it(`labels a previous value as stale in the ${status} state`, () => {
+      const fixture = render({ status, previousValue: 0 });
+      expect(fixture.nativeElement.querySelector('.value').textContent).toContain('0');
+      expect(fixture.nativeElement.textContent).toContain('Letzter Stand');
+      expect(fixture.nativeElement.textContent).not.toContain(UI_DE.dashboard.ready.empty);
+      expect(fixture.nativeElement.querySelector('app-status-badge')).toBeNull();
+    });
+  }
+
+  it('uses the singular unit and avoids a misleading pickup badge for an empty result', () => {
+    const fixture = render({ status: 'available', value: 1 });
+    expect(fixture.nativeElement.querySelector('.value > span').textContent.trim()).toBe('Auftrag');
+    fixture.componentRef.setInput('state', { status: 'available', value: 0 });
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('app-status-badge')).toBeNull();
+  });
+
   it('provides a keyboard-accessible retry action for errors', () => {
     const fixture = render({ status: 'error' });
     const retry = vi.fn();
@@ -54,6 +72,6 @@ describe('MetricCard states', () => {
     expect(button.type).toBe('button');
     button.click();
     expect(retry).toHaveBeenCalledTimes(1);
-    expect(fixture.nativeElement.textContent).toContain('Nicht geladen');
+    expect(fixture.nativeElement.textContent).toContain('Daten konnten nicht geladen werden.');
   });
 });

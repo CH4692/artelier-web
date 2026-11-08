@@ -3,10 +3,8 @@ import { map } from 'rxjs';
 import { ApiService } from '../../core/api/api.service';
 
 export type MetricState =
-  | { status: 'loading' }
   | { status: 'available'; value: number }
-  | { status: 'unavailable' }
-  | { status: 'error' };
+  | { status: 'loading' | 'unavailable' | 'error'; previousValue?: number };
 
 @Injectable({ providedIn: 'root' })
 export class DashboardService {

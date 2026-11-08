@@ -41,7 +41,7 @@ nav {
   gap: 8px;
 }
 .nav-label {
-  font-size: 10px;
+  font-size: var(--text-xs);
   font-weight: var(--weight-medium);
   letter-spacing: 2px;
   color: var(--color-nav-muted);
