@@ -103,7 +103,7 @@ describe('Workshop dashboard', () => {
     expect(element.querySelector('.value')?.textContent).toContain('7');
     expect(element.textContent).toContain('Letzter Stand');
     expect(element.textContent).toContain('Daten konnten nicht geladen werden.');
-    expect(element.querySelector('.refresh')).toBeNull();
+    expect(element.querySelectorAll('.metric-actions button')).toHaveLength(1);
     element.querySelector<HTMLButtonElement>('.retry')!.click();
     request().flush([], { headers: { 'X-Total-Count': '3' } });
     await fixture.whenStable();
@@ -140,6 +140,32 @@ describe('Workshop dashboard', () => {
     expect(element.querySelector('.value')?.textContent).toContain('4');
     expect(element.textContent).toContain('Letzter Stand');
     expect(fixture.componentInstance.ready()).toEqual({ status: 'unavailable', previousValue: 4 });
+  });
+
+  it('preserves the focused refresh control through failure, retry and recovery', async () => {
+    const fixture = TestBed.createComponent(Dashboard);
+    request().flush([], { headers: { 'X-Total-Count': '2' } });
+    await fixture.whenStable();
+    const element: HTMLElement = fixture.nativeElement;
+    const button = element.querySelector<HTMLButtonElement>('.refresh')!;
+    button.focus();
+    button.click();
+    request().flush({}, { status: 503, statusText: 'Unavailable' });
+    await fixture.whenStable();
+    expect(element.querySelector('.refresh')).toBe(button);
+    expect(document.activeElement).toBe(button);
+    expect(button.getAttribute('aria-label')).toBe('Abholbereit: Erneut versuchen');
+    expect(element.querySelectorAll('.metric-actions button')).toHaveLength(1);
+    button.click();
+    await fixture.whenStable();
+    expect(element.querySelector('.refresh')).toBe(button);
+    expect(button.disabled).toBe(true);
+    request().flush([], { headers: { 'X-Total-Count': '3' } });
+    await fixture.whenStable();
+    expect(element.querySelector('.refresh')).toBe(button);
+    expect(button.getAttribute('aria-label')).toBe('Abholzahl aktualisieren');
+    expect(button.disabled).toBe(false);
+    expect(document.activeElement).toBe(button);
   });
 
   it('cancels an outstanding request when leaving the dashboard', () => {

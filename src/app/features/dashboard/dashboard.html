@@ -15,21 +15,31 @@
     <app-metric-card
       [metric]="metric"
       [state]="metric.key === 'ready' ? ready() : unavailable"
+      [showRetry]="metric.key !== 'ready'"
       (retry)="loadReady()"
     >
-      @if (metric.key === 'ready' && ready().status !== 'error') {
+      @if (metric.key === 'ready') {
         <button
           metric-actions
           class="refresh"
+          [class.retry]="ready().status === 'error'"
           type="button"
           (click)="loadReady()"
           [disabled]="ready().status === 'loading'"
           [attr.aria-busy]="ready().status === 'loading'"
-          [attr.aria-label]="copy.refresh"
+          [attr.aria-label]="
+            ready().status === 'error' ? copy.ready.title + ': ' + copy.retry : copy.refresh
+          "
           aria-describedby="ready-title"
         >
           <span aria-hidden="true">↻</span>
-          {{ ready().status === 'loading' ? copy.refreshing : copy.refreshShort }}
+          {{
+            ready().status === 'loading'
+              ? copy.refreshing
+              : ready().status === 'error'
+                ? copy.retry
+                : copy.refreshShort
+          }}
         </button>
       }
     </app-metric-card>
