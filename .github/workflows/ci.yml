@@ -20,6 +20,7 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run api:setup
+      - run: npm run test:api-tooling
       - run: npm run api:check
       - run: npm run lint
       - run: npm run test:ci

@@ -21,7 +21,8 @@
     "api:setup": "npm ci --prefix tools/openapi",
     "api:generate": "node scripts/openapi.mjs",
     "api:check": "node scripts/openapi.mjs --check",
-    "api:snapshot": "node scripts/openapi-snapshot.mjs"
+    "api:snapshot": "node scripts/openapi-snapshot.mjs",
+    "test:api-tooling": "node --test scripts/openapi-contract.test.mjs"
   },
   "private": true,
   "packageManager": "npm@11.12.1",

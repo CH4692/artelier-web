@@ -65,3 +65,7 @@ Remote GitHub Actions status is established only after pushing. No backend aggre
 - Both browser reports recorded zero failures, skips or flaky tests.
 - Production build, generated-type byte comparison and pinned backend snapshot comparison passed.
 - Backend working tree remained clean. Remote CI has been configured but has not been claimed for these unpushed changes.
+
+## CI metadata comparison
+
+The backend software release (`info.version`) derives from installed VCS package metadata. A shallow GitHub checkout can report `0.1.dev1+g3495621f8` for the same source that reports `0.20.0` in a tagged local checkout. The snapshot contract comparison excludes only this field and compares JSON objects independently of key order. All paths, operations, schemas, required fields, authentication definitions and the OpenAPI specification version remain checked. The committed snapshot and generated types are not rewritten or weakened. `npm run test:api-tooling` tests both the observed CI mismatch and rejection of real contract changes; both workflows run it before checking contracts.

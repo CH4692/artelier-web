@@ -1,4 +1,5 @@
 // Export schema metadata only. Never starts the API, connects a database or runs migrations.
+import { sameOpenApiContract } from './openapi-contract.mjs';
 import { spawnSync } from 'node:child_process';
 import { readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
@@ -30,7 +31,7 @@ const schema = JSON.parse(result.stdout);
 if (!String(schema.openapi).startsWith('3.')) throw new Error('Expected OpenAPI 3.');
 const output = new URL('../openapi/atelier-api.json', import.meta.url);
 if (args.includes('--check')) {
-  if (JSON.stringify(JSON.parse(await readFile(output, 'utf8'))) !== JSON.stringify(schema))
+  if (!sameOpenApiContract(JSON.parse(await readFile(output, 'utf8')), schema))
     throw new Error(
       'Backend OpenAPI differs from the committed snapshot. Review the contract change and regenerate types.',
     );
