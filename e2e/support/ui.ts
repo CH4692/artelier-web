@@ -42,6 +42,7 @@ export async function prepareForm(page: Page, feature: string, edit = false) {
       ? `/${feature}/${feature === 'customers' ? 12 : feature === 'instruments' ? 8 : 20}/edit`
       : `/${feature}/new`,
   );
+  await expect(page.getByRole('main')).toBeFocused();
   if (feature === 'customers') {
     await page.getByLabel('Vorname *', { exact: true }).fill('Ungespeichert');
     await page.getByLabel('Nachname *', { exact: true }).fill('Test');

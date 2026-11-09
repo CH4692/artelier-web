@@ -1,3 +1,4 @@
+import { ScrollableTable } from '../../shared/ui/scrollable-table';
 import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
@@ -16,6 +17,7 @@ import { CUSTOMER_COPY } from './customer.copy';
 @Component({
   selector: 'app-customers',
   imports: [
+    ScrollableTable,
     RouterLink,
     ReactiveFormsModule,
     PageHeader,

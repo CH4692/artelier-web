@@ -1,0 +1,52 @@
+:host {
+  display: block;
+  min-inline-size: 0;
+}
+fieldset {
+  margin: 0;
+  padding: var(--panel-padding);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+legend {
+  font-weight: var(--weight-medium);
+  padding-inline: var(--space-2);
+}
+.signature-surface {
+  border: 1px solid var(--color-control-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  overflow: hidden;
+}
+canvas {
+  display: block;
+  inline-size: 100%;
+  block-size: clamp(12rem, 25vw, 20rem);
+  color: var(--color-primary);
+  touch-action: none;
+  cursor: crosshair;
+}
+canvas:focus-visible {
+  outline-offset: -5px;
+}
+canvas[aria-disabled='true'] {
+  cursor: not-allowed;
+  background: var(--color-surface-muted);
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-block: var(--space-4);
+}
+p {
+  overflow-wrap: anywhere;
+  font-size: var(--text-sm);
+}
+.drawing-state {
+  color: var(--color-text-muted);
+}
+.field-error:empty {
+  display: none;
+}

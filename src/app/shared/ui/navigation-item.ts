@@ -18,7 +18,10 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
       display: block;
     }
     a {
-      padding: 13px 14px;
+      padding: var(--space-3);
+      min-height: var(--control-height);
+      min-width: var(--control-height);
+      overflow-wrap: anywhere;
       border-radius: var(--radius-sm);
       text-decoration: none;
       color: var(--color-nav-muted);

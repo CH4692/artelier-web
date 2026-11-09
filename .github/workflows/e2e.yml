@@ -66,9 +66,17 @@ jobs:
         if: github.event_name != 'pull_request'
         run: npm run e2e:integration
         working-directory: web
+      - name: Signature input on PRs
+        if: github.event_name == 'pull_request'
+        run: npm run e2e:signature -- --project=chromium-desktop --project=chromium-portrait --project=chromium-landscape
+        working-directory: web
       - name: Isolated UI full regression
         if: github.event_name != 'pull_request'
         run: npm run e2e:ui
+        working-directory: web
+      - name: Signature input full regression
+        if: github.event_name != 'pull_request'
+        run: npm run e2e:signature
         working-directory: web
       - uses: actions/upload-artifact@v4
         if: failure()

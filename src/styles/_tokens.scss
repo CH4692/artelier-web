@@ -51,4 +51,6 @@
   --sidebar-width: 248px;
   --content-width: 1400px;
   --control-height: 44px;
+  --page-gutter: clamp(1rem, 2.5vw, 3rem);
+  --panel-padding: clamp(1rem, 2vw, 2rem);
 }

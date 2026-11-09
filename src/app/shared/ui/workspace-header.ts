@@ -16,7 +16,7 @@ import { Component, input } from '@angular/core';
     }
     header {
       min-height: 82px;
-      padding: var(--space-3) 48px;
+      padding: var(--space-3) var(--page-gutter);
       border-bottom: 1px solid var(--color-border);
       display: flex;
       flex-wrap: wrap;
@@ -36,6 +36,7 @@ import { Component, input } from '@angular/core';
       flex-wrap: wrap;
       min-width: 0;
       max-width: 100%;
+      overflow-wrap: anywhere;
     }
     .workspace-tag {
       border: 1px solid var(--color-border);
@@ -44,10 +45,10 @@ import { Component, input } from '@angular/core';
       font-size: 12px;
       color: var(--color-text-muted);
     }
-    @media (max-width: 800px) {
+    @media (max-width: 1099px) {
       header {
         min-height: 64px;
-        padding: var(--space-3) 24px;
+        padding: var(--space-3) var(--page-gutter);
       }
     }
     @media (max-width: 450px) {
