@@ -74,7 +74,13 @@ describe('Login', () => {
       const alert: HTMLElement = fixture.nativeElement.querySelector('[role="alert"]');
       expect(alert.textContent).not.toContain('sensitive');
       expect(alert.textContent).toContain(
-        status === 401 ? 'incorrect' : status === 429 ? 'wait' : 'try again',
+        status === 401
+          ? 'falsch'
+          : status === 429
+            ? 'warten'
+            : status === 403
+              ? 'Berechtigung'
+              : 'erneut',
       );
     });
   }

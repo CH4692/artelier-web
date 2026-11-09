@@ -4,19 +4,16 @@ import { catchError, throwError } from 'rxjs';
 import { SKIP_AUTH_REDIRECT } from '../auth/auth-context';
 import { SessionState } from '../auth/session-state';
 import { SessionNavigation } from '../auth/session-navigation';
+import { apiBaseUrl, isTrustedApiUrl } from '../api/api-url';
+import { isCsrfFailure } from '../api/api-error';
 import { API_BASE_URL } from '../api/api.config';
 
 /** Preserve the backend's HttpOnly session and custom-header CSRF contract. */
 export const apiSessionInterceptor: HttpInterceptorFn = (request, next) => {
-  const base = new URL(inject(API_BASE_URL), globalThis.location.origin);
+  const base = apiBaseUrl(inject(API_BASE_URL));
+  if (!isTrustedApiUrl(request.url, base)) return next(request);
   const target = new URL(request.url, globalThis.location.origin);
-  const basePath = base.pathname.replace(/\/$/, '');
-  if (
-    target.origin !== base.origin ||
-    !(target.pathname === basePath || target.pathname.startsWith(`${basePath}/`))
-  ) {
-    return next(request);
-  }
+  const basePath = base.pathname;
   const session = inject(SessionState);
   const navigation = inject(SessionNavigation);
   const revision = session.revision;
@@ -39,7 +36,7 @@ export const apiSessionInterceptor: HttpInterceptorFn = (request, next) => {
         if (error.status === 401) {
           session.clear();
           navigation.redirect(401);
-        } else if (error.status === 403) {
+        } else if (error.status === 403 && !isCsrfFailure(error)) {
           navigation.redirect(403);
         }
       }

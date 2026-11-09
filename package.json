@@ -17,7 +17,12 @@
     "e2e:typecheck": "tsc -p e2e/tsconfig.json",
     "e2e:lint": "eslint e2e/**/*.ts playwright*.config.ts",
     "build:signature": "ng build --configuration production --browser e2e/signature-host.ts --ts-config e2e/tsconfig.signature.json --output-path dist/signature-e2e",
-    "e2e:signature": "node e2e/run-signature.mjs"
+    "e2e:signature": "node e2e/run-signature.mjs",
+    "api:setup": "npm ci --prefix tools/openapi",
+    "api:generate": "node scripts/openapi.mjs",
+    "api:check": "node scripts/openapi.mjs --check",
+    "api:snapshot": "node scripts/openapi-snapshot.mjs",
+    "test:api-tooling": "node --test scripts/openapi-contract.test.mjs"
   },
   "private": true,
   "packageManager": "npm@11.12.1",

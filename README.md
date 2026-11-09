@@ -2,10 +2,11 @@
 
 Artelier is the independent Angular frontend for the Atelier Management System.
 It provides a responsive workshop workspace for customers, instruments, and repairs,
-and will integrate with the sibling FastAPI project, `atelier-api`.
+and integrates with the sibling FastAPI project, `atelier-api`.
 
-This initial application contains navigation and placeholder screens only. It does
-not load business records or implement login, authorization, or editing workflows.
+The application includes session-based login and customer, instrument and repair
+workflows. API configuration, generated contracts and error handling are described
+in [docs/api-integration.md](docs/api-integration.md).
 
 ## Technology stack
 
@@ -53,7 +54,7 @@ npm start
 
 Open **http://localhost:3000**. Source changes reload automatically. The development
 server proxies `/api/**` to `http://localhost:8000`; start the backend separately
-using its own README. The shell works without a running backend.
+using its own README. Authenticated data workflows require the backend.
 
 Use `localhost` for both services. Port 3000 matches the backend's documented
 allowed development origins. The proxy preserves the original Origin header so

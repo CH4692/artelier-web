@@ -58,3 +58,19 @@ for (const status of [401, 403])
     await expect(page).toHaveURL(status === 401 ? /\/login/ : /\/access-denied/);
     await expect(page.getByRole('main')).not.toContainText('private');
   });
+
+test('CSRF rejection keeps the authenticated editor and entered values available', async ({
+  page,
+}) => {
+  await prepareForm(page, 'customers');
+  await page.route('**/api/v1/customers', async (route) => {
+    if (route.request().method() === 'POST')
+      await route.fulfill({ status: 403, json: { detail: 'Request forbidden' } });
+    else await route.fallback();
+  });
+  await page.getByRole('button', { name: 'Speichern', exact: true }).click();
+  await expect(page.getByRole('alert')).toContainText('Sicherheitsprüfung');
+  await expect(page).toHaveURL(/\/customers\/new$/);
+  await expect(page.getByLabel('Vorname *', { exact: true })).toHaveValue('Ungespeichert');
+  await expect(page.getByRole('button', { name: 'Speichern', exact: true })).toBeEnabled();
+});

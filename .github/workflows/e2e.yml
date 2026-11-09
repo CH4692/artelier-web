@@ -43,6 +43,12 @@ jobs:
       - run: sudo apt-get update && sudo apt-get install -y postgresql
       - run: npm ci
         working-directory: web
+      - name: Check OpenAPI comparison regression tests
+        run: npm run test:api-tooling
+        working-directory: web
+      - name: Verify pinned backend OpenAPI contract
+        run: npm run api:snapshot -- --backend ../backend --check
+        working-directory: web
       - name: Check E2E TypeScript and ESLint
         run: npm run e2e:typecheck && npm run e2e:lint
         working-directory: web

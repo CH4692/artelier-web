@@ -1,3 +1,4 @@
+import { applyApiValidation } from '../../core/api/form-validation';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -170,18 +171,7 @@ export class RepairEditor {
         },
         error: (error: unknown) => {
           this.error.set(repairError(error));
-          if (
-            error instanceof HttpErrorResponse &&
-            error.status === 422 &&
-            Array.isArray(error.error?.detail)
-          )
-            for (const item of error.error.detail) {
-              const field = Array.isArray(item?.loc) ? item.loc.at(-1) : null;
-              if (typeof field === 'string' && Object.hasOwn(this.form.controls, field))
-                this.form.controls[field as keyof RepairEditor['form']['controls']].setErrors({
-                  server: true,
-                });
-            }
+          applyApiValidation(this.form, error);
         },
       });
   }

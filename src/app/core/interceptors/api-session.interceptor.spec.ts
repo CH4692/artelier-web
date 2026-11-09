@@ -9,6 +9,8 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { TestBed } from '@angular/core/testing';
 import { API_BASE_URL } from '../api/api.config';
 import { ApiService } from '../api/api.service';
+import { apiErrorInterceptor } from './api-error.interceptor';
+import { ApiError } from '../api/api-error';
 import { apiSessionInterceptor } from './api-session.interceptor';
 
 describe('API session boundary', () => {
@@ -18,7 +20,7 @@ describe('API session boundary', () => {
     TestBed.configureTestingModule({
       providers: [
         provideRouter([]),
-        provideHttpClient(withInterceptors([apiSessionInterceptor])),
+        provideHttpClient(withInterceptors([apiErrorInterceptor, apiSessionInterceptor])),
         provideHttpClientTesting(),
         { provide: API_BASE_URL, useValue: '/api/v1' },
       ],
@@ -50,6 +52,7 @@ describe('API session boundary', () => {
     'https://unrelated.example/api/v1/customers',
     '/api/v10/customers',
     '/assets/example.json',
+    'api/v1/customers',
   ]) {
     it(`leaves requests outside the API boundary untouched: ${url}`, () => {
       client.post(url, {}).subscribe();
@@ -65,7 +68,7 @@ describe('API session boundary', () => {
     TestBed.configureTestingModule({
       providers: [
         provideRouter([]),
-        provideHttpClient(withInterceptors([apiSessionInterceptor])),
+        provideHttpClient(withInterceptors([apiErrorInterceptor, apiSessionInterceptor])),
         provideHttpClientTesting(),
         { provide: API_BASE_URL, useValue: 'https://api.example.com/api/v1' },
       ],
@@ -76,6 +79,18 @@ describe('API session boundary', () => {
     expect(request.request.withCredentials).toBe(true);
     expect(request.request.headers.get('X-CSRF-Protection')).toBe('1');
     request.flush({});
+    for (const url of [
+      'https://api.example.com.evil.example/api/v1/customers',
+      'http://api.example.com/api/v1/customers',
+      'https://api.example.com:444/api/v1/customers',
+      'https://api.example.com/api/v10/customers',
+    ]) {
+      TestBed.inject(HttpClient).post(url, {}).subscribe();
+      const outside = http.expectOne(url);
+      expect(outside.request.withCredentials).toBe(false);
+      expect(outside.request.headers.has('X-CSRF-Protection')).toBe(false);
+      outside.flush({});
+    }
   });
 });
 
@@ -88,7 +103,7 @@ describe('Session response handling', () => {
     TestBed.configureTestingModule({
       providers: [
         provideRouter([]),
-        provideHttpClient(withInterceptors([apiSessionInterceptor])),
+        provideHttpClient(withInterceptors([apiErrorInterceptor, apiSessionInterceptor])),
         provideHttpClientTesting(),
       ],
     });
@@ -133,6 +148,19 @@ describe('Session response handling', () => {
       });
     }
   }
+
+  it('keeps CSRF failures inline without losing the session or redirecting', () => {
+    let result: ApiError | undefined;
+    client
+      .post('/api/v1/customers', {})
+      .subscribe({ error: (error: ApiError) => (result = error) });
+    http
+      .expectOne('/api/v1/customers')
+      .flush({ detail: 'Request forbidden' }, { status: 403, statusText: 'Forbidden' });
+    expect(result?.kind).toBe('csrf');
+    expect(session.status()).toBe('authenticated');
+    expect(redirect).not.toHaveBeenCalled();
+  });
 
   it('supports explicitly public API requests without expiring the workshop session', () => {
     client

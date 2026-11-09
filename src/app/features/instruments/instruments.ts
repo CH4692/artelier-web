@@ -2,8 +2,19 @@ import { ScrollableTable } from '../../shared/ui/scrollable-table';
 import { Component, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { catchError, debounceTime, map, merge, of, startWith, Subject, switchMap } from 'rxjs';
+import { ActivatedRoute, NavigationStart, Router, RouterLink } from '@angular/router';
+import {
+  catchError,
+  timer,
+  filter,
+  takeUntil,
+  map,
+  merge,
+  of,
+  startWith,
+  Subject,
+  switchMap,
+} from 'rxjs';
 import { InstrumentsService } from './instruments.service';
 import { InstrumentFilters, InstrumentPage, InstrumentState } from './instrument.models';
 import { instrumentError } from './instrument-errors';
@@ -60,7 +71,13 @@ export class Instruments {
   constructor() {
     this.search.valueChanges
       .pipe(
-        debounceTime(300),
+        switchMap((value) =>
+          timer(300).pipe(
+            map(() => value),
+            // A pending search must not supersede an explicit detail/filter/history navigation.
+            takeUntil(this.router.events.pipe(filter((event) => event instanceof NavigationStart))),
+          ),
+        ),
         map((q) => q.trim()),
         takeUntilDestroyed(),
       )

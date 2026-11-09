@@ -1,6 +1,8 @@
 import { HttpClient, HttpContext, HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { catchError, defer, finalize, map, Observable, of, shareReplay, tap } from 'rxjs';
+import { apiUrl } from '../api/api-url';
+import type { components } from '../api/generated/schema';
 import { API_BASE_URL } from '../api/api.config';
 import { SKIP_AUTH_REDIRECT } from './auth-context';
 import { SessionState, SessionUser } from './session-state';
@@ -18,25 +20,27 @@ export class AuthService {
     if (this.session.status() !== 'loading') return of(undefined);
     if (!this.restoration) {
       const revision = this.session.revision;
-      this.restoration = this.http.get<SessionUser>(`${this.base}/auth/me`, this.options).pipe(
-        tap((user) => {
-          if (this.session.revision === revision) this.session.authenticate(user);
-        }),
-        map(() => undefined),
-        catchError((error: unknown) => {
-          if (this.session.revision === revision) {
-            this.session.clear();
-            this.session.restorationFailed.set(
-              !(error instanceof HttpErrorResponse && error.status === 401),
-            );
-          }
-          return of(undefined);
-        }),
-        finalize(() => {
-          this.restoration = undefined;
-        }),
-        shareReplay({ bufferSize: 1, refCount: false }),
-      );
+      this.restoration = this.http
+        .get<SessionUser>(apiUrl(this.base, 'auth/me'), this.options)
+        .pipe(
+          tap((user) => {
+            if (this.session.revision === revision) this.session.authenticate(user);
+          }),
+          map(() => undefined),
+          catchError((error: unknown) => {
+            if (this.session.revision === revision) {
+              this.session.clear();
+              this.session.restorationFailed.set(
+                !(error instanceof HttpErrorResponse && error.status === 401),
+              );
+            }
+            return of(undefined);
+          }),
+          finalize(() => {
+            this.restoration = undefined;
+          }),
+          shareReplay({ bufferSize: 1, refCount: false }),
+        );
     }
     return this.restoration;
   }
@@ -45,7 +49,11 @@ export class AuthService {
     return defer(() => {
       const revision = this.session.revision;
       return this.http
-        .post<SessionUser>(`${this.base}/auth/login`, { email, password }, this.options)
+        .post<SessionUser>(
+          apiUrl(this.base, 'auth/login'),
+          { email, password } satisfies components['schemas']['LoginRequest'],
+          this.options,
+        )
         .pipe(
           tap((user) => {
             if (this.session.revision === revision) this.session.authenticate(user);
@@ -57,7 +65,7 @@ export class AuthService {
 
   logout(): Observable<void> {
     return this.http
-      .post<void>(`${this.base}/auth/logout`, {}, this.options)
+      .post<void>(apiUrl(this.base, 'auth/logout'), {}, this.options)
       .pipe(tap(() => this.session.clear()));
   }
 }

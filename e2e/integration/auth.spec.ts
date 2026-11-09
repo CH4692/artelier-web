@@ -22,7 +22,7 @@ test('login, real HttpOnly session persistence and logout @smoke', async ({
 test('invalid credentials preserve email and clear password', async ({ page, credentials }) => {
   await open(page, '/login');
   await loginUI(page, { ...credentials, password: 'invalid-test-password' });
-  await expect(page.getByRole('alert')).toHaveText('Email or password is incorrect.');
+  await expect(page.getByRole('alert')).toHaveText('E-Mail-Adresse oder Passwort ist falsch.');
   await expect(page.getByLabel('Email', { exact: true })).toHaveValue(credentials.email);
   await expect(page.getByLabel('Password', { exact: true })).toHaveValue('');
 });

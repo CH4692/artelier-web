@@ -2,8 +2,19 @@ import { ScrollableTable } from '../../shared/ui/scrollable-table';
 import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { catchError, debounceTime, map, of, startWith, Subject, switchMap, merge } from 'rxjs';
+import { ActivatedRoute, NavigationStart, Router, RouterLink } from '@angular/router';
+import {
+  catchError,
+  timer,
+  filter,
+  takeUntil,
+  map,
+  of,
+  startWith,
+  Subject,
+  switchMap,
+  merge,
+} from 'rxjs';
 import { PageHeader } from '../../shared/ui/page-header';
 import { LoadingIndicator } from '../../shared/ui/loading-indicator';
 import { StatusBadge } from '../../shared/ui/status-badge';
@@ -46,7 +57,13 @@ export class Customers {
   constructor() {
     this.search.valueChanges
       .pipe(
-        debounceTime(300),
+        switchMap((value) =>
+          timer(300).pipe(
+            map(() => value),
+            // A pending search must not supersede an explicit detail/filter/history navigation.
+            takeUntil(this.router.events.pipe(filter((event) => event instanceof NavigationStart))),
+          ),
+        ),
         map((value) => value.trim()),
         takeUntilDestroyed(),
       )

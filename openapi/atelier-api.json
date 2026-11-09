@@ -1,0 +1,6767 @@
+{
+  "components": {
+    "schemas": {
+      "ApprovalMethod": {
+        "description": "Describe how staff received the customer's approval.",
+        "enum": [
+          "in_person",
+          "phone",
+          "email",
+          "written"
+        ],
+        "title": "ApprovalMethod",
+        "type": "string"
+      },
+      "ArchiveUpdate": {
+        "additionalProperties": false,
+        "description": "Change visibility state without deleting work or documents.",
+        "properties": {
+          "is_archived": {
+            "title": "Is Archived",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "is_archived"
+        ],
+        "title": "ArchiveUpdate",
+        "type": "object"
+      },
+      "AuditAction": {
+        "description": "Enumerate application-controlled actions rather than accepting request text.",
+        "enum": [
+          "repair_template.created",
+          "repair_template.updated",
+          "repair_estimate.created",
+          "repair_estimate.updated",
+          "repair_estimate.status_changed",
+          "repair_estimate.approved",
+          "repair_item.created",
+          "repair_item.updated",
+          "repair_order.status_changed",
+          "customer.created",
+          "customer.updated",
+          "customer.deleted",
+          "customer.archived",
+          "customer.restored",
+          "instrument.created",
+          "instrument.updated",
+          "instrument.archived",
+          "instrument.restored",
+          "instrument.deleted",
+          "repair_order.created",
+          "repair_order.updated",
+          "repair_order.archived",
+          "repair_order.restored",
+          "repair_document.created",
+          "instrument_photo.restored",
+          "instrument_photo.hold_created",
+          "instrument_photo.hold_released",
+          "instrument_photo.purge_approved",
+          "instrument_photo.purge_started",
+          "instrument_photo.purged",
+          "instrument_photo.purge_failed",
+          "instrument_photo.uploaded",
+          "instrument_photo.deletion_requested",
+          "user.bootstrapped",
+          "user.created",
+          "user.activated",
+          "user.deactivated",
+          "user.role_changed",
+          "user.customer_association_changed",
+          "user.deleted",
+          "user.sessions_revoked",
+          "auth.login",
+          "auth.login_throttled",
+          "auth.logout",
+          "auth.session_revoked",
+          "user.administration_denied",
+          "auth.cleanup",
+          "auth.session_rejected",
+          "auth.workshop_access_denied",
+          "audit.access_denied",
+          "audit.read",
+          "audit.retention"
+        ],
+        "title": "AuditAction",
+        "type": "string"
+      },
+      "AuditDetails": {
+        "additionalProperties": false,
+        "description": "Allow only non-secret identifiers, roles and repair states in event details.",
+        "properties": {
+          "changed_fields": {
+            "anyOf": [
+              {
+                "items": {
+                  "enum": [
+                    "work_description",
+                    "expected_completion_date",
+                    "internal_notes",
+                    "kind",
+                    "description",
+                    "quantity",
+                    "unit_price"
+                  ],
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Changed Fields"
+          },
+          "estimate_status": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/EstimateStatus"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "execution_id": {
+            "anyOf": [
+              {
+                "pattern": "^[0-9a-f-]{36}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Execution Id"
+          },
+          "instrument_id": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Instrument Id"
+          },
+          "new_customer_id": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "New Customer Id"
+          },
+          "new_expected_completion_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "New Expected Completion Date"
+          },
+          "new_role": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/UserRole"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "new_status": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RepairStatus"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "previous_customer_id": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Previous Customer Id"
+          },
+          "previous_estimate_status": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/EstimateStatus"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "previous_expected_completion_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Previous Expected Completion Date"
+          },
+          "previous_role": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/UserRole"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "previous_status": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RepairStatus"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "removed_count": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Removed Count"
+          },
+          "repair_order_id": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Repair Order Id"
+          },
+          "template_id": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Template Id"
+          }
+        },
+        "title": "AuditDetails",
+        "type": "object"
+      },
+      "AuditEventRead": {
+        "description": "Return minimal historical facts without joining account or customer data.",
+        "properties": {
+          "action": {
+            "title": "Action",
+            "type": "string"
+          },
+          "actor_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Actor Id"
+          },
+          "details": {
+            "$ref": "#/components/schemas/AuditDetails"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "occurred_at": {
+            "format": "date-time",
+            "title": "Occurred At",
+            "type": "string"
+          },
+          "resource_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Resource Id"
+          },
+          "resource_type": {
+            "title": "Resource Type",
+            "type": "string"
+          },
+          "succeeded": {
+            "title": "Succeeded",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "action",
+          "resource_type",
+          "resource_id",
+          "actor_id",
+          "occurred_at",
+          "succeeded",
+          "details"
+        ],
+        "title": "AuditEventRead",
+        "type": "object"
+      },
+      "AuditResource": {
+        "description": "Identify resource categories without retaining resource contents.",
+        "enum": [
+          "repair_template",
+          "customer",
+          "instrument",
+          "repair_estimate",
+          "repair_item",
+          "repair_order",
+          "repair_document",
+          "instrument_photo",
+          "user",
+          "session",
+          "audit"
+        ],
+        "title": "AuditResource",
+        "type": "string"
+      },
+      "CustomerArchiveUpdate": {
+        "additionalProperties": false,
+        "description": "Set archive state independently of personal details and permanent deletion.",
+        "properties": {
+          "is_archived": {
+            "title": "Is Archived",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "is_archived"
+        ],
+        "title": "CustomerArchiveUpdate",
+        "type": "object"
+      },
+      "CustomerCreate": {
+        "description": "Accept names and optional contact details without a client-supplied ID.",
+        "properties": {
+          "email": {
+            "anyOf": [
+              {
+                "format": "email",
+                "maxLength": 254,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email"
+          },
+          "first_name": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "First Name",
+            "type": "string"
+          },
+          "last_name": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Last Name",
+            "type": "string"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "maxLength": 64,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          }
+        },
+        "required": [
+          "first_name",
+          "last_name"
+        ],
+        "title": "CustomerCreate",
+        "type": "object"
+      },
+      "CustomerOverview": {
+        "description": "Return customer details and the instruments currently assigned to them.",
+        "properties": {
+          "customer": {
+            "$ref": "#/components/schemas/CustomerRead"
+          },
+          "instruments": {
+            "items": {
+              "$ref": "#/components/schemas/InstrumentRead"
+            },
+            "title": "Instruments",
+            "type": "array"
+          }
+        },
+        "required": [
+          "customer",
+          "instruments"
+        ],
+        "title": "CustomerOverview",
+        "type": "object"
+      },
+      "CustomerRead": {
+        "description": "Represent a stored customer, including archive state.",
+        "properties": {
+          "email": {
+            "anyOf": [
+              {
+                "format": "email",
+                "maxLength": 254,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email"
+          },
+          "first_name": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "First Name",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "is_archived": {
+            "default": false,
+            "title": "Is Archived",
+            "type": "boolean"
+          },
+          "last_name": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Last Name",
+            "type": "string"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "maxLength": 64,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          }
+        },
+        "required": [
+          "first_name",
+          "last_name",
+          "id"
+        ],
+        "title": "CustomerRead",
+        "type": "object"
+      },
+      "CustomerUpdate": {
+        "additionalProperties": false,
+        "description": "Preserve omitted fields; clear contacts with null or blank text.\n\nSupplied names cannot be null. Unknown fields are rejected.",
+        "properties": {
+          "email": {
+            "anyOf": [
+              {
+                "format": "email",
+                "maxLength": 254,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email"
+          },
+          "first_name": {
+            "anyOf": [
+              {
+                "maxLength": 100,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "First Name"
+          },
+          "last_name": {
+            "anyOf": [
+              {
+                "maxLength": 100,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Name"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "maxLength": 64,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          }
+        },
+        "title": "CustomerUpdate",
+        "type": "object"
+      },
+      "EstimateApproval": {
+        "additionalProperties": false,
+        "description": "Record when and how the contracting customer approved this exact document.",
+        "properties": {
+          "approval_method": {
+            "$ref": "#/components/schemas/ApprovalMethod"
+          },
+          "approval_reference": {
+            "anyOf": [
+              {
+                "maxLength": 500,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Approval Reference"
+          },
+          "approved_at": {
+            "format": "date-time",
+            "title": "Approved At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "approved_at",
+          "approval_method"
+        ],
+        "title": "EstimateApproval",
+        "type": "object"
+      },
+      "EstimateItemRead": {
+        "additionalProperties": false,
+        "description": "Return a position with its exact rounded line amount.",
+        "properties": {
+          "description": {
+            "maxLength": 2000,
+            "minLength": 1,
+            "title": "Description",
+            "type": "string"
+          },
+          "estimate_id": {
+            "title": "Estimate Id",
+            "type": "integer"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/RepairItemKind"
+          },
+          "line_total": {
+            "title": "Line Total",
+            "type": "string"
+          },
+          "quantity": {
+            "title": "Quantity",
+            "type": "string"
+          },
+          "unit_price": {
+            "title": "Unit Price",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "description",
+          "quantity",
+          "unit_price",
+          "id",
+          "estimate_id",
+          "line_total"
+        ],
+        "title": "EstimateItemRead",
+        "type": "object"
+      },
+      "EstimateRead": {
+        "description": "Read one bounded estimate snapshot and consistently rounded totals.",
+        "properties": {
+          "approval_method": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ApprovalMethod"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "approval_recorded_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Approval Recorded At"
+          },
+          "approval_recorded_by": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Approval Recorded By"
+          },
+          "approval_reference": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Approval Reference"
+          },
+          "approved_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Approved At"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "created_by": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created By"
+          },
+          "customer_id": {
+            "title": "Customer Id",
+            "type": "integer"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "issued_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Issued At"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/EstimateItemRead"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "material_total": {
+            "title": "Material Total",
+            "type": "string"
+          },
+          "repair_order_id": {
+            "title": "Repair Order Id",
+            "type": "integer"
+          },
+          "revision": {
+            "title": "Revision",
+            "type": "integer"
+          },
+          "service_total": {
+            "title": "Service Total",
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/EstimateStatus"
+          },
+          "status_updated_at": {
+            "format": "date-time",
+            "title": "Status Updated At",
+            "type": "string"
+          },
+          "total": {
+            "title": "Total",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "repair_order_id",
+          "customer_id",
+          "revision",
+          "status",
+          "created_at",
+          "created_by",
+          "status_updated_at",
+          "issued_at",
+          "approved_at",
+          "approval_method",
+          "approval_recorded_at",
+          "approval_recorded_by",
+          "approval_reference",
+          "items",
+          "service_total",
+          "material_total",
+          "total"
+        ],
+        "title": "EstimateRead",
+        "type": "object"
+      },
+      "EstimateStatus": {
+        "description": "Represent document state independently of the repair's workshop status.",
+        "enum": [
+          "draft",
+          "issued",
+          "approved",
+          "rejected",
+          "withdrawn"
+        ],
+        "title": "EstimateStatus",
+        "type": "string"
+      },
+      "EstimateSummary": {
+        "description": "Expose the stored document identity, state and original approval facts.",
+        "properties": {
+          "approval_method": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ApprovalMethod"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "approval_recorded_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Approval Recorded At"
+          },
+          "approval_recorded_by": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Approval Recorded By"
+          },
+          "approval_reference": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Approval Reference"
+          },
+          "approved_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Approved At"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "created_by": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created By"
+          },
+          "customer_id": {
+            "title": "Customer Id",
+            "type": "integer"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "issued_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Issued At"
+          },
+          "repair_order_id": {
+            "title": "Repair Order Id",
+            "type": "integer"
+          },
+          "revision": {
+            "title": "Revision",
+            "type": "integer"
+          },
+          "status": {
+            "$ref": "#/components/schemas/EstimateStatus"
+          },
+          "status_updated_at": {
+            "format": "date-time",
+            "title": "Status Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "repair_order_id",
+          "customer_id",
+          "revision",
+          "status",
+          "created_at",
+          "created_by",
+          "status_updated_at",
+          "issued_at",
+          "approved_at",
+          "approval_method",
+          "approval_recorded_at",
+          "approval_recorded_by",
+          "approval_reference"
+        ],
+        "title": "EstimateSummary",
+        "type": "object"
+      },
+      "EstimateTransition": {
+        "additionalProperties": false,
+        "description": "Use the dedicated approval operation for the approved state.",
+        "properties": {
+          "status": {
+            "enum": [
+              "issued",
+              "rejected",
+              "withdrawn"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "title": "EstimateTransition",
+        "type": "object"
+      },
+      "EstimateWrite": {
+        "additionalProperties": false,
+        "description": "Create or replace a draft's complete set of bounded estimated positions.",
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/RepairItemCreate"
+            },
+            "maxItems": 200,
+            "minItems": 1,
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "EstimateWrite",
+        "type": "object"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail",
+            "type": "array"
+          }
+        },
+        "title": "HTTPValidationError",
+        "type": "object"
+      },
+      "InstrumentArchiveUpdate": {
+        "additionalProperties": false,
+        "description": "Change archive state independently of instrument and ownership updates.",
+        "properties": {
+          "is_archived": {
+            "title": "Is Archived",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "is_archived"
+        ],
+        "title": "InstrumentArchiveUpdate",
+        "type": "object"
+      },
+      "InstrumentCreate": {
+        "additionalProperties": false,
+        "description": "Accept instrument details without a client-supplied identifier.",
+        "properties": {
+          "body_length_mm": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Body Length Mm"
+          },
+          "bow_weight_g": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bow Weight G"
+          },
+          "customer_id": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Customer Id"
+          },
+          "identification_number": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Identification Number"
+          },
+          "maker": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Maker"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "ownership": {
+            "$ref": "#/components/schemas/InstrumentOwnership",
+            "default": "unassigned"
+          },
+          "type": {
+            "$ref": "#/components/schemas/InstrumentType"
+          },
+          "year_of_manufacture": {
+            "anyOf": [
+              {
+                "maximum": 9999.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Year Of Manufacture"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "title": "InstrumentCreate",
+        "type": "object"
+      },
+      "InstrumentHistoryRead": {
+        "description": "Compose instrument details and chronologically ordered repair history.",
+        "properties": {
+          "instrument": {
+            "$ref": "#/components/schemas/InstrumentRead"
+          },
+          "repair_orders": {
+            "items": {
+              "$ref": "#/components/schemas/RepairOrderDetail"
+            },
+            "title": "Repair Orders",
+            "type": "array"
+          }
+        },
+        "required": [
+          "instrument",
+          "repair_orders"
+        ],
+        "title": "InstrumentHistoryRead",
+        "type": "object"
+      },
+      "InstrumentOwnership": {
+        "description": "Distinguish known workshop stock from customer or unassigned ownership.",
+        "enum": [
+          "customer",
+          "workshop",
+          "unassigned"
+        ],
+        "title": "InstrumentOwnership",
+        "type": "string"
+      },
+      "InstrumentOwnershipRead": {
+        "description": "Expose minimal ownership facts without copying customer personal data.",
+        "properties": {
+          "actor_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Actor Id"
+          },
+          "customer_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Customer Id"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "instrument_id": {
+            "title": "Instrument Id",
+            "type": "integer"
+          },
+          "ownership": {
+            "$ref": "#/components/schemas/InstrumentOwnership"
+          },
+          "previous_customer_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Previous Customer Id"
+          },
+          "previous_ownership": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/InstrumentOwnership"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "recorded_at": {
+            "format": "date-time",
+            "title": "Recorded At",
+            "type": "string"
+          },
+          "source": {
+            "title": "Source",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "instrument_id",
+          "previous_ownership",
+          "previous_customer_id",
+          "ownership",
+          "customer_id",
+          "actor_id",
+          "source",
+          "recorded_at"
+        ],
+        "title": "InstrumentOwnershipRead",
+        "type": "object"
+      },
+      "InstrumentRead": {
+        "additionalProperties": false,
+        "description": "Represent a stored instrument with its database-generated identifier.",
+        "properties": {
+          "body_length_mm": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Body Length Mm"
+          },
+          "bow_weight_g": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bow Weight G"
+          },
+          "customer_id": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Customer Id"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "identification_number": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Identification Number"
+          },
+          "is_archived": {
+            "default": false,
+            "title": "Is Archived",
+            "type": "boolean"
+          },
+          "maker": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Maker"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "ownership": {
+            "$ref": "#/components/schemas/InstrumentOwnership",
+            "default": "unassigned"
+          },
+          "type": {
+            "$ref": "#/components/schemas/InstrumentType"
+          },
+          "year_of_manufacture": {
+            "anyOf": [
+              {
+                "maximum": 9999.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Year Of Manufacture"
+          }
+        },
+        "required": [
+          "type",
+          "id"
+        ],
+        "title": "InstrumentRead",
+        "type": "object"
+      },
+      "InstrumentSortField": {
+        "description": "Allow only explicit public fields as SQL sorting targets.",
+        "enum": [
+          "id",
+          "identification_number",
+          "type",
+          "maker",
+          "year_of_manufacture",
+          "customer_id",
+          "ownership"
+        ],
+        "title": "InstrumentSortField",
+        "type": "string"
+      },
+      "InstrumentSortOrder": {
+        "description": "Define the supported sort directions.",
+        "enum": [
+          "asc",
+          "desc"
+        ],
+        "title": "InstrumentSortOrder",
+        "type": "string"
+      },
+      "InstrumentType": {
+        "description": "Classify string instruments and bows using one canonical category field.",
+        "enum": [
+          "violin",
+          "viola",
+          "cello",
+          "double_bass",
+          "bow"
+        ],
+        "title": "InstrumentType",
+        "type": "string"
+      },
+      "InstrumentUpdate": {
+        "additionalProperties": false,
+        "description": "Validate supplied changes while preserving omitted instrument fields.\n\nOptional details and the customer association can be cleared with null.\nType and ownership cannot explicitly be null. Ownership/customer combinations\nare validated against the locked current record by the update service.",
+        "properties": {
+          "body_length_mm": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Body Length Mm"
+          },
+          "bow_weight_g": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bow Weight G"
+          },
+          "customer_id": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Customer Id"
+          },
+          "identification_number": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Identification Number"
+          },
+          "maker": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Maker"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "ownership": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/InstrumentOwnership"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "type": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/InstrumentType"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "year_of_manufacture": {
+            "anyOf": [
+              {
+                "maximum": 9999.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Year Of Manufacture"
+          }
+        },
+        "title": "InstrumentUpdate",
+        "type": "object"
+      },
+      "LoginRequest": {
+        "additionalProperties": false,
+        "description": "Validate the request shape; credential validity always produces generic 401.",
+        "properties": {
+          "email": {
+            "maxLength": 320,
+            "title": "Email",
+            "type": "string"
+          },
+          "password": {
+            "format": "password",
+            "maxLength": 1024,
+            "title": "Password",
+            "type": "string",
+            "writeOnly": true
+          }
+        },
+        "required": [
+          "email",
+          "password"
+        ],
+        "title": "LoginRequest",
+        "type": "object"
+      },
+      "PhotoRead": {
+        "description": "Represent a successfully stored photograph, including deletion requests.",
+        "properties": {
+          "content_type": {
+            "title": "Content Type",
+            "type": "string"
+          },
+          "deletion_requested_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Deletion Requested At"
+          },
+          "deletion_requested_by_user_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Deletion Requested By User Id"
+          },
+          "file_size_bytes": {
+            "title": "File Size Bytes",
+            "type": "integer"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "instrument_id": {
+            "title": "Instrument Id",
+            "type": "integer"
+          },
+          "original_filename": {
+            "title": "Original Filename",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "ready",
+              "deleted"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "uploaded_at": {
+            "format": "date-time",
+            "title": "Uploaded At",
+            "type": "string"
+          },
+          "uploaded_by_user_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Uploaded By User Id"
+          }
+        },
+        "required": [
+          "id",
+          "instrument_id",
+          "original_filename",
+          "content_type",
+          "file_size_bytes",
+          "uploaded_at",
+          "uploaded_by_user_id",
+          "status",
+          "deletion_requested_at",
+          "deletion_requested_by_user_id"
+        ],
+        "title": "PhotoRead",
+        "type": "object"
+      },
+      "PhotoRetentionRead": {
+        "description": "Expose lifecycle safeguards only through administrator operations.",
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "instrument_id": {
+            "title": "Instrument Id",
+            "type": "integer"
+          },
+          "purge_approved_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Purge Approved At"
+          },
+          "purge_approved_by_user_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Purge Approved By User Id"
+          },
+          "retention_hold_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Retention Hold At"
+          },
+          "retention_hold_by_user_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Retention Hold By User Id"
+          },
+          "retention_hold_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Retention Hold Reason"
+          },
+          "status": {
+            "enum": [
+              "ready",
+              "deleted",
+              "purging"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "instrument_id",
+          "status",
+          "retention_hold_reason",
+          "retention_hold_at",
+          "retention_hold_by_user_id",
+          "purge_approved_at",
+          "purge_approved_by_user_id"
+        ],
+        "title": "PhotoRetentionRead",
+        "type": "object"
+      },
+      "PurgeApproval": {
+        "additionalProperties": false,
+        "description": "Require explicit review of other documentation/contract retention needs.",
+        "properties": {
+          "confirm_no_retention_requirements": {
+            "const": true,
+            "title": "Confirm No Retention Requirements",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "confirm_no_retention_requirements"
+        ],
+        "title": "PurgeApproval",
+        "type": "object"
+      },
+      "RepairDocumentRead": {
+        "description": "Return metadata only; content requires the separate authenticated download.",
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "filename": {
+            "title": "Filename",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "repair_order_id": {
+            "title": "Repair Order Id",
+            "type": "integer"
+          },
+          "sha256": {
+            "title": "Sha256",
+            "type": "string"
+          },
+          "size_bytes": {
+            "title": "Size Bytes",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "repair_order_id",
+          "filename",
+          "size_bytes",
+          "sha256",
+          "created_at"
+        ],
+        "title": "RepairDocumentRead",
+        "type": "object"
+      },
+      "RepairItemCreate": {
+        "additionalProperties": false,
+        "description": "Accept a service or material line; monetary JSON strings preserve precision.",
+        "properties": {
+          "description": {
+            "maxLength": 2000,
+            "minLength": 1,
+            "title": "Description",
+            "type": "string"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/RepairItemKind"
+          },
+          "quantity": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "maximum": 999999.999,
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "title": "Quantity"
+          },
+          "unit_price": {
+            "anyOf": [
+              {
+                "maximum": 9999999999.99,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "title": "Unit Price"
+          }
+        },
+        "required": [
+          "kind",
+          "description",
+          "quantity",
+          "unit_price"
+        ],
+        "title": "RepairItemCreate",
+        "type": "object"
+      },
+      "RepairItemKind": {
+        "description": "Distinguish workshop services from material costs.",
+        "enum": [
+          "service",
+          "material"
+        ],
+        "title": "RepairItemKind",
+        "type": "string"
+      },
+      "RepairItemRead": {
+        "additionalProperties": false,
+        "description": "Return an exact line amount derived from the stored quantity and price.",
+        "properties": {
+          "description": {
+            "maxLength": 2000,
+            "minLength": 1,
+            "title": "Description",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/RepairItemKind"
+          },
+          "line_total": {
+            "title": "Line Total",
+            "type": "string"
+          },
+          "quantity": {
+            "title": "Quantity",
+            "type": "string"
+          },
+          "repair_order_id": {
+            "title": "Repair Order Id",
+            "type": "integer"
+          },
+          "unit_price": {
+            "title": "Unit Price",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "description",
+          "quantity",
+          "unit_price",
+          "id",
+          "repair_order_id",
+          "line_total"
+        ],
+        "title": "RepairItemRead",
+        "type": "object"
+      },
+      "RepairItemUpdate": {
+        "additionalProperties": false,
+        "description": "Preserve omitted fields and reject explicit null for every item field.",
+        "properties": {
+          "description": {
+            "anyOf": [
+              {
+                "maxLength": 2000,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "kind": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RepairItemKind"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "quantity": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "maximum": 999999.999,
+                "type": "number"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quantity"
+          },
+          "unit_price": {
+            "anyOf": [
+              {
+                "maximum": 9999999999.99,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit Price"
+          }
+        },
+        "title": "RepairItemUpdate",
+        "type": "object"
+      },
+      "RepairItemsRead": {
+        "description": "Return ordered positions and totals from the same database snapshot.",
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/RepairItemRead"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "material_total": {
+            "title": "Material Total",
+            "type": "string"
+          },
+          "repair_order_id": {
+            "title": "Repair Order Id",
+            "type": "integer"
+          },
+          "service_total": {
+            "title": "Service Total",
+            "type": "string"
+          },
+          "total": {
+            "title": "Total",
+            "type": "string"
+          }
+        },
+        "required": [
+          "repair_order_id",
+          "items",
+          "service_total",
+          "material_total",
+          "total"
+        ],
+        "title": "RepairItemsRead",
+        "type": "object"
+      },
+      "RepairOrderCreate": {
+        "additionalProperties": false,
+        "description": "Require an explicit work timestamp rather than inventing historical dates.",
+        "properties": {
+          "performed_at": {
+            "format": "date-time",
+            "title": "Performed At",
+            "type": "string"
+          },
+          "work_description": {
+            "maxLength": 10000,
+            "minLength": 1,
+            "title": "Work Description",
+            "type": "string"
+          }
+        },
+        "required": [
+          "work_description",
+          "performed_at"
+        ],
+        "title": "RepairOrderCreate",
+        "type": "object"
+      },
+      "RepairOrderDetail": {
+        "description": "Include documents belonging to this repair order only.",
+        "properties": {
+          "accepted_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Accepted At"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "customer_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Customer Id"
+          },
+          "documents": {
+            "items": {
+              "$ref": "#/components/schemas/RepairDocumentRead"
+            },
+            "title": "Documents",
+            "type": "array"
+          },
+          "expected_completion_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expected Completion Date"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "instrument_id": {
+            "title": "Instrument Id",
+            "type": "integer"
+          },
+          "internal_notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Internal Notes"
+          },
+          "is_archived": {
+            "title": "Is Archived",
+            "type": "boolean"
+          },
+          "performed_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Performed At"
+          },
+          "status": {
+            "$ref": "#/components/schemas/RepairStatus",
+            "default": "completed"
+          },
+          "status_updated_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status Updated At"
+          },
+          "work_description": {
+            "title": "Work Description",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "instrument_id",
+          "work_description",
+          "performed_at",
+          "created_at",
+          "is_archived",
+          "documents"
+        ],
+        "title": "RepairOrderDetail",
+        "type": "object"
+      },
+      "RepairOrderRead": {
+        "description": "Return current orders and preserved historical work with explicit unknowns.",
+        "properties": {
+          "accepted_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Accepted At"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "customer_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Customer Id"
+          },
+          "expected_completion_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expected Completion Date"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "instrument_id": {
+            "title": "Instrument Id",
+            "type": "integer"
+          },
+          "internal_notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Internal Notes"
+          },
+          "is_archived": {
+            "title": "Is Archived",
+            "type": "boolean"
+          },
+          "performed_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Performed At"
+          },
+          "status": {
+            "$ref": "#/components/schemas/RepairStatus",
+            "default": "completed"
+          },
+          "status_updated_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status Updated At"
+          },
+          "work_description": {
+            "title": "Work Description",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "instrument_id",
+          "work_description",
+          "performed_at",
+          "created_at",
+          "is_archived"
+        ],
+        "title": "RepairOrderRead",
+        "type": "object"
+      },
+      "RepairOrderRegister": {
+        "additionalProperties": false,
+        "description": "Accept a customer-linked order without inventing a completed-work date.",
+        "properties": {
+          "accepted_at": {
+            "format": "date-time",
+            "title": "Accepted At",
+            "type": "string"
+          },
+          "customer_id": {
+            "exclusiveMinimum": 0.0,
+            "title": "Customer Id",
+            "type": "integer"
+          },
+          "expected_completion_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expected Completion Date"
+          },
+          "instrument_id": {
+            "exclusiveMinimum": 0.0,
+            "title": "Instrument Id",
+            "type": "integer"
+          },
+          "internal_notes": {
+            "anyOf": [
+              {
+                "maxLength": 10000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Internal Notes"
+          },
+          "performed_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Performed At"
+          },
+          "status": {
+            "$ref": "#/components/schemas/RepairStatus",
+            "default": "accepted"
+          },
+          "template_id": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Template Id"
+          },
+          "template_unit_price": {
+            "anyOf": [
+              {
+                "maximum": 9999999999.99,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Template Unit Price"
+          },
+          "work_description": {
+            "anyOf": [
+              {
+                "maxLength": 10000,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Work Description"
+          }
+        },
+        "required": [
+          "customer_id",
+          "instrument_id"
+        ],
+        "title": "RepairOrderRegister",
+        "type": "object"
+      },
+      "RepairOrderUpdate": {
+        "additionalProperties": false,
+        "description": "Preserve omitted fields; allow null only for the date and internal notes.",
+        "properties": {
+          "expected_completion_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expected Completion Date"
+          },
+          "internal_notes": {
+            "anyOf": [
+              {
+                "maxLength": 10000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Internal Notes"
+          },
+          "work_description": {
+            "anyOf": [
+              {
+                "maxLength": 10000,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Work Description"
+          }
+        },
+        "title": "RepairOrderUpdate",
+        "type": "object"
+      },
+      "RepairStatus": {
+        "description": "Describe the current workshop stage of a repair order.",
+        "enum": [
+          "accepted",
+          "awaiting_approval",
+          "in_progress",
+          "awaiting_materials",
+          "ready_for_pickup",
+          "completed",
+          "cancelled"
+        ],
+        "title": "RepairStatus",
+        "type": "string"
+      },
+      "RepairStatusUpdate": {
+        "additionalProperties": false,
+        "description": "Request a target state without accepting client-controlled timestamps.",
+        "properties": {
+          "status": {
+            "$ref": "#/components/schemas/RepairStatus"
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "title": "RepairStatusUpdate",
+        "type": "object"
+      },
+      "RepairTemplateCreate": {
+        "additionalProperties": false,
+        "description": "Require meaningful text; a missing price does not imply a free service.",
+        "properties": {
+          "default_unit_price": {
+            "anyOf": [
+              {
+                "maximum": 9999999999.99,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Default Unit Price"
+          },
+          "description": {
+            "maxLength": 2000,
+            "minLength": 1,
+            "title": "Description",
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "description"
+        ],
+        "title": "RepairTemplateCreate",
+        "type": "object"
+      },
+      "RepairTemplateRead": {
+        "additionalProperties": false,
+        "description": "Expose selectable template values, without any customer information.",
+        "properties": {
+          "default_unit_price": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Default Unit Price"
+          },
+          "description": {
+            "maxLength": 2000,
+            "minLength": 1,
+            "title": "Description",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "name": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "description",
+          "id"
+        ],
+        "title": "RepairTemplateRead",
+        "type": "object"
+      },
+      "RepairTemplateUpdate": {
+        "additionalProperties": false,
+        "description": "Preserve omitted values and allow clearing the optional default price.",
+        "properties": {
+          "default_unit_price": {
+            "anyOf": [
+              {
+                "maximum": 9999999999.99,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Default Unit Price"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "maxLength": 2000,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "maxLength": 100,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          }
+        },
+        "title": "RepairTemplateUpdate",
+        "type": "object"
+      },
+      "RetentionHoldCreate": {
+        "additionalProperties": false,
+        "description": "Accept a minimal retention justification without logging its contents.",
+        "properties": {
+          "reason": {
+            "maxLength": 500,
+            "minLength": 1,
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "reason"
+        ],
+        "title": "RetentionHoldCreate",
+        "type": "object"
+      },
+      "UserRead": {
+        "additionalProperties": false,
+        "description": "Expose account identity and state without a password or its hash.",
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "customer_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Customer Id"
+          },
+          "email": {
+            "format": "email",
+            "maxLength": 320,
+            "title": "Email",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "is_active": {
+            "default": true,
+            "title": "Is Active",
+            "type": "boolean"
+          },
+          "role": {
+            "$ref": "#/components/schemas/UserRole"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "email",
+          "id",
+          "role",
+          "customer_id",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "UserRead",
+        "type": "object"
+      },
+      "UserRole": {
+        "description": "Distinguish workshop administrators, employees and future portal users.",
+        "enum": [
+          "admin",
+          "employee",
+          "customer"
+        ],
+        "title": "UserRole",
+        "type": "string"
+      },
+      "ValidationError": {
+        "properties": {
+          "ctx": {
+            "title": "Context",
+            "type": "object"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "title": "Location",
+            "type": "array"
+          },
+          "msg": {
+            "title": "Message",
+            "type": "string"
+          },
+          "type": {
+            "title": "Error Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError",
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "ServerSideSession": {
+        "description": "Opaque server-side session cookie created by POST /api/v1/auth/login.",
+        "in": "cookie",
+        "name": "dev-session",
+        "type": "apiKey"
+      }
+    }
+  },
+  "info": {
+    "description": "Manage workshop customers and instruments through the versioned v1 API. Browser authentication uses opaque PostgreSQL-backed session cookies; internal resources require an administrator or employee account. API contract versions are independent from this software release version.",
+    "summary": "Workshop Management API",
+    "title": "Atelier API",
+    "version": "0.20.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/": {
+      "get": {
+        "operationId": "root__get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "title": "Response Root  Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Get the API greeting"
+      }
+    },
+    "/api/v1/audit-events": {
+      "get": {
+        "description": "Filter events using inclusive timezone-aware dates and descending ID pagination.",
+        "operationId": "list_audit_events_api_v1_audit_events_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "actor_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Actor Id"
+            }
+          },
+          {
+            "in": "query",
+            "name": "action",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/AuditAction"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Action"
+            }
+          },
+          {
+            "in": "query",
+            "name": "resource_type",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/AuditResource"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Resource Type"
+            }
+          },
+          {
+            "in": "query",
+            "name": "resource_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Resource Id"
+            }
+          },
+          {
+            "in": "query",
+            "name": "since",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date-time",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Since"
+            }
+          },
+          {
+            "in": "query",
+            "name": "until",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date-time",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Until"
+            }
+          },
+          {
+            "in": "query",
+            "name": "before_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Before Id"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 100,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/AuditEventRead"
+                  },
+                  "title": "Response List Audit Events Api V1 Audit Events Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Administrator required"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "ServerSideSession": []
+          }
+        ],
+        "summary": "List audit events as administrator",
+        "tags": [
+          "audit"
+        ]
+      }
+    },
+    "/api/v1/auth/login": {
+      "post": {
+        "description": "Verify credentials and return the account with an opaque HttpOnly cookie.\n\nSession tokens are included only in Set-Cookie, never in the response JSON.\nEvery successful login rotates the current browser session.",
+        "operationId": "login_endpoint_api_v1_auth_login_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "Invalid credentials"
+          },
+          "403": {
+            "description": "CSRF protection failed"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "429": {
+            "description": "Too many attempts"
+          }
+        },
+        "summary": "Create a secure browser session",
+        "tags": [
+          "authentication"
+        ]
+      }
+    },
+    "/api/v1/auth/logout": {
+      "post": {
+        "description": "Revoke the cookie's session and clear it even when already absent or revoked.",
+        "operationId": "logout_endpoint_api_v1_auth_logout_post",
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Revoke the current session",
+        "tags": [
+          "authentication"
+        ]
+      }
+    },
+    "/api/v1/auth/me": {
+      "get": {
+        "description": "Return current account metadata without credentials or session verifiers.",
+        "operationId": "current_account_api_v1_auth_me_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "Authentication required"
+          }
+        },
+        "security": [
+          {
+            "ServerSideSession": []
+          }
+        ],
+        "summary": "Get the authenticated account",
+        "tags": [
+          "authentication"
+        ]
+      }
+    },
+    "/api/v1/customers": {
+      "get": {
+        "description": "Search names, email and phone using case-insensitive literal substrings.\n\nOmitted or whitespace-only queries list customers. Results are ordered by ID\nbefore applying offset and limit. SQL wildcard characters are treated as text.\nFull names can be searched in first-name last-name order.\nX-Total-Count reports matching customers before pagination, including for\nempty pages. Count and page queries may observe concurrent committed changes.\nArchived customers are excluded unless include_archived is true. Direct ID\nretrieval and resource associations remain available for historical records.",
+        "operationId": "get_customers_api_v1_customers_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "q",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 200,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Q"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 100,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "include_archived",
+            "required": false,
+            "schema": {
+              "default": false,
+              "title": "Include Archived",
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/CustomerRead"
+                  },
+                  "title": "Response Get Customers Api V1 Customers Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response",
+            "headers": {
+              "X-Total-Count": {
+                "description": "Number of matching customers before pagination",
+                "schema": {
+                  "minimum": 0,
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "503": {
+            "description": "Database unavailable"
+          }
+        },
+        "security": [
+          {
+            "ServerSideSession": []
+          }
+        ],
+        "summary": "List customers",
+        "tags": [
+          "customers"
+        ]
+      },
+      "post": {
+        "description": "Persist customer details and return the database-generated identifier.\n\nThe request commits the new record before refreshing its stored values.",
+        "operationId": "create_customer_api_v1_customers_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomerCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomerRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "503": {
+            "description": "Database unavailable"
+          }
+        },
+        "security": [
+          {
+            "ServerSideSession": []
+          }
+        ],
+        "summary": "Create a customer",
+        "tags": [
+          "customers"
+        ]
+      }
+    },
+    "/api/v1/customers/{customer_id}": {
+      "delete": {
+        "description": "Permanently delete a customer and return an empty response.\n\nDeletion is committed before responding. Repeating the request for the\ndeleted identifier returns 404.\n\nArgs:\n    customer_id: The identifier of the customer to delete.\n    session: The database session provided for this request.\n\nReturns:\n    HTTP 204 with no response body after successful deletion.\n\nRaises:\n    HTTPException: With status 404 if the customer does not exist.",
+        "operationId": "delete_customer_api_v1_customers__customer_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "customer_id",
+            "required": true,
+            "schema": {
+              "title": "Customer Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "404": {
+            "description": "Customer not found"
+          },
+          "409": {
+            "description": "Customer has associated historical records"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "503": {
+            "description": "Database unavailable"
+          }
+        },
+        "security": [
+          {
+            "ServerSideSession": []
+          }
+        ],
+        "summary": "Delete a customer",
+        "tags": [
+          "customers"
+        ]
+      },
+      "get": {
+        "description": "Return the customer matching the supplied identifier.\n\nRaises:\n    HTTPException: With status 404 if the customer does not exist.",
+        "operationId": "get_customer_by_id_api_v1_customers__customer_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "customer_id",
+            "required": true,
+            "schema": {
+              "title": "Customer Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomerRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "description": "Customer not found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "503": {
+            "description": "Database unavailable"
+          }
+        },
+        "security": [
+          {
+            "ServerSideSession": []
+          }
+        ],
+        "summary": "Get a customer by ID",
+        "tags": [
+          "customers"
+        ]
+      },
+      "patch": {
+        "description": "Update supplied fields; omitted fields remain unchanged.\n\nSet email or phone to null or blank text to remove it. Names cannot be null.\nAn empty object returns the existing customer unchanged.\n\nArgs:\n    customer_id: The identifier of the customer to update.\n    customer_update: Validated fields supplied in the request body.\n    session: The database session provided for this request.\n\nReturns:\n    The complete customer after committing any supplied changes.\n\nRaises:\n    HTTPException: With status 404 if the customer does not exist.",
+        "operationId": "update_customer_api_v1_customers__customer_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "customer_id",
+            "required": true,
+            "schema": {
+              "title": "Customer Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomerUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomerRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "description": "Customer not found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "503": {
+            "description": "Database unavailable"
+          }
+        },
+        "security": [
+          {
+            "ServerSideSession": []
+          }
+        ],
+        "summary": "Update customer information",
+        "tags": [
+          "customers"
+        ]
+      }
+    },
+    "/api/v1/customers/{customer_id}/archive": {
+      "patch": {
+        "description": "Change visibility without removing records, associations or account access.\n\nRepeating the current state is a no-op. Keep the transition and its audit\nevent in one transaction, serializing concurrent archive/restore requests.",
+        "operationId": "set_customer_archive_api_v1_customers__customer_id__archive_patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "customer_id",
+            "required": true,
+            "schema": {
+              "title": "Customer Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomerArchiveUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomerRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "description": "Customer not found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "503": {
+            "description": "Database unavailable"
+          }
+        },
+        "security": [
+          {
+            "ServerSideSession": []
+          }
+        ],
+        "summary": "Archive or restore a customer",
+        "tags": [
+          "customers"
+        ]
+      }
+    },
+    "/api/v1/customers/{customer_id}/instruments": {
+      "get": {
+        "description": "Return only instruments currently associated with the customer.\n\nAn existing customer without instruments returns an empty list. This is\nthe current association, not a historical ownership record. Archived instruments\nare excluded unless include_archived is true. Unassigned\ninstruments are excluded. Results have no explicit ordering or pagination.\n\nRaises:\n    HTTPException: With status 404 if the customer does not exist.",
+        "operationId": "get_customer_instruments_api_v1_customers__customer_id__instruments_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "customer_id",
+            "required": true,
+            "schema": {
+              "title": "Customer Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "include_archived",
+            "required": false,
+            "schema": {
+              "default": false,
+              "title": "Include Archived",
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/InstrumentRead"
+                  },
+                  "title": "Response Get Customer Instruments Api V1 Customers  Customer Id  Instruments Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "description": "Customer not found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "503": {
+            "description": "Database unavailable"
+          }
+        },
+        "security": [
+          {
+            "ServerSideSession": []
+          }
+        ],
+        "summary": "List a customer's instruments",
+        "tags": [
+          "customers"
+        ]
+      }
+    },
+    "/api/v1/customers/{customer_id}/overview": {
+      "get": {
+        "description": "Include archived customers and only their currently assigned instruments.\n\nArchived instruments require include_archived=true. Instruments are sorted by ID. An existing customer without instruments has\nan empty instrument list; an unknown customer returns 404.",
+        "operationId": "get_customer_overview_api_v1_customers__customer_id__overview_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "customer_id",
+            "required": true,
+            "schema": {
+              "title": "Customer Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "include_archived",
+            "required": false,
+            "schema": {
+              "default": false,
+              "title": "Include Archived",
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomerOverview"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "description": "Customer not found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "503": {
+            "description": "Database unavailable"
+          }
+        },
+        "security": [
+          {
+            "ServerSideSession": []
+          }
+        ],
+        "summary": "Get a customer's workshop overview",
+        "tags": [
+          "customers"
+        ]
+      }
+    },
+    "/api/v1/instruments": {
+      "get": {
+        "description": "Search identification numbers and combine filters before pagination.\n\nSearch uses case-insensitive literal substrings; blank search lists all\nmatching instruments. Filters are combined with AND. Sorting puts nulls\nlast and uses ascending ID to resolve ties. Default order is ascending ID.\nX-Total-Count includes matches beyond the page, even for empty pages.\nArchived instruments are hidden unless include_archived is true.\nCount and page queries may observe concurrent committed changes.",
+        "operationId": "get_instruments_api_v1_instruments_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "include_archived",
+            "required": false,
+            "schema": {
+              "default": false,
+              "title": "Include Archived",
+              "type": "boolean"
+            }
+          },
+          {
+            "in": "query",
+            "name": "ownership",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/InstrumentOwnership"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Ownership"
+            }
+          },
+          {
+            "in": "query",
+            "name": "type",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/InstrumentType"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Type"
+            }
+          },
+          {
+            "in": "query",
+            "name": "q",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 200,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Q"
+            }
+          },
+          {
+            "in": "query",
+            "name": "customer_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Customer Id"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 100,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "sort_by",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/InstrumentSortField",
+              "default": "id"
+            }
+          },
+          {
+            "in": "query",
+            "name": "sort_order",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/InstrumentSortOrder",
+              "default": "asc"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/InstrumentRead"
+                  },
+                  "title": "Response Get Instruments Api V1 Instruments Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response",
+            "headers": {
+              "X-Total-Count": {
+                "description": "Number of matching instruments before pagination",
+                "schema": {
+                  "minimum": 0,
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "503": {
+            "description": "Database unavailable"
+          }
+        },
+        "security": [
+          {
+            "ServerSideSession": []
+          }
+        ],
+        "summary": "List registered instruments",
+        "tags": [
+          "instruments"
+        ]
+      },
+      "post": {
+        "description": "Store an instrument and return its database-generated identifier.\n\nOmit customer_id or set it to null to register an unassigned instrument.\nA supplied identifier must reference an existing customer. The record is\ncommitted before its stored values are returned.\n\nArgs:\n    instrument: Validated instrument details from the JSON request body.\n    session: The database session provided for this request.\n\nReturns:\n    The stored instrument, including its identifier and optional fields.\n\nRaises:\n    HTTPException: With status 404 if the referenced customer does not exist.",
+        "operationId": "create_instrument_api_v1_instruments_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstrumentCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InstrumentRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "description": "Referenced customer not found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "503": {
+            "description": "Database unavailable"
+          }
+        },
+        "security": [
+          {
+            "ServerSideSession": []
+          }
+        ],
+        "summary": "Register an instrument",
+        "tags": [
+          "instruments"
+        ]
+      }
+    },
+    "/api/v1/instruments/{instrument_id}": {
+      "delete": {
+        "description": "Permanently delete an instrument while preserving its customer.\n\nDeletion is committed before returning an empty response. Repeating the\nrequest for the deleted identifier returns 404.\nInstruments referenced by repair history or photographs return 409.\n\nArgs:\n    instrument_id: The identifier of the instrument to delete.\n    session: The database session provided for this request.\n\nReturns:\n    HTTP 204 without a response body after successful deletion.\n\nRaises:\n    HTTPException: With status 404 if the instrument does not exist.",
+        "operationId": "delete_instrument_api_v1_instruments__instrument_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instrument_id",
+            "required": true,
+            "schema": {
+              "title": "Instrument Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "404": {
+            "description": "Instrument not found"
+          },
+          "409": {
+            "description": "Instrument has associated historical records"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "503": {
+            "description": "Database unavailable"
+          }
+        },
+        "security": [
+          {
+            "ServerSideSession": []
+          }
+        ],
+        "summary": "Delete an instrument",
+        "tags": [
+          "instruments"
+        ]
+      },
+      "get": {
+        "description": "Return the instrument details and its optional associated customer ID.\n\nUnassigned instruments include customer_id as null.\n\nRaises:\n    HTTPException: With status 404 if the instrument does not exist.",
+        "operationId": "get_instrument_by_id_api_v1_instruments__instrument_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instrument_id",
+            "required": true,
+            "schema": {
+              "title": "Instrument Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InstrumentRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "description": "Instrument not found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "503": {
+            "description": "Database unavailable"
+          }
+        },
+        "security": [
+          {
+            "ServerSideSession": []
+          }
+        ],
+        "summary": "Get an instrument by ID",
+        "tags": [
+          "instruments"
+        ]
+      },
+      "patch": {
+        "description": "Update supplied instrument fields and return the complete stored record.\n\nOmitted fields remain unchanged. Set customer_id to null to remove the\nassociation, or supply an existing customer's ID to change it. Optional\ndetails can be cleared with null; type cannot. An empty object is a no-op.\n\nArgs:\n    instrument_id: The identifier of the instrument to update.\n    instrument_update: Validated changes supplied in the JSON request body.\n    session: The database session provided for this request.\n\nReturns:\n    The complete instrument after committing any supplied changes.\n\nRaises:\n    HTTPException: With status 404 if the instrument or customer is missing.",
+        "operationId": "update_instrument_api_v1_instruments__instrument_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instrument_id",
+            "required": true,
+            "schema": {
+              "title": "Instrument Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstrumentUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InstrumentRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "description": "Instrument or referenced customer not found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "503": {
+            "description": "Database unavailable"
+          }
+        },
+        "security": [
+          {
+            "ServerSideSession": []
+          }
+        ],
+        "summary": "Update instrument information",
+        "tags": [
+          "instruments"
+        ]
+      }
+    },
+    "/api/v1/instruments/{instrument_id}/archive": {
+      "patch": {
+        "description": "Serialize archive changes and record their audit event in one transaction.\n\nRepeating the same state is a no-op. Archive status changes do not detach\ncustomers, repair orders or photos, and do not alter the stable public ID.",
+        "operationId": "set_instrument_archive_api_v1_instruments__instrument_id__archive_patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instrument_id",
+            "required": true,
+            "schema": {
+              "title": "Instrument Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstrumentArchiveUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InstrumentRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "description": "Instrument not found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "ServerSideSession": []
+          }
+        ],
+        "summary": "Archive or restore an instrument without deleting its history",
+        "tags": [
+          "instruments"
+        ]
+      }
+    },
+    "/api/v1/instruments/{instrument_id}/history": {
+      "get": {
+        "description": "Order by work timestamp then ID; include document metadata without blobs.\n\nArchiving a repair or customer does not hide history. Counts and page queries\nmay observe concurrent commits. Page through the history using offset/limit.",
+        "operationId": "get_instrument_history_api_v1_instruments__instrument_id__history_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instrument_id",
+            "required": true,
+            "schema": {
+              "title": "Instrument Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 100,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InstrumentHistoryRead"
+                }
+              }
+            },
+            "description": "Successful Response",
+            "headers": {
+              "X-Total-Count": {
+                "description": "Repair count including archived orders, before pagination",
+                "schema": {
+                  "minimum": 0,
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Workshop access required"
+          },
+          "404": {
+            "description": "Instrument not found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "503": {
+            "description": "Database unavailable"
+          }
+        },
+        "security": [
+          {
+            "ServerSideSession": []
+          }
+        ],
+        "summary": "Get chronological workshop history, including archived repairs",
+        "tags": [
+          "repairs"
+        ]
+      }
+    },
+    "/api/v1/instruments/{instrument_id}/ownership-history": {
+      "get": {
+        "description": "Return newest facts first, including retained history of deleted instruments.\n\nA migration entry is a snapshot at migration time, not a claimed purchase\ndate. Historical customer IDs may refer to subsequently deleted customers.",
+        "operationId": "get_ownership_history_api_v1_instruments__instrument_id__ownership_history_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instrument_id",
+            "required": true,
+            "schema": {
+              "title": "Instrument Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 100,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/InstrumentOwnershipRead"
+                  },
+                  "title": "Response Get Ownership History Api V1 Instruments  Instrument Id  Ownership History Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "description": "Instrument and ownership history not found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "ServerSideSession": []
+          }
+        ],
+        "summary": "List an instrument's ownership history",
+        "tags": [
+          "instruments"
+        ]
+      }
+    },
+    "/api/v1/instruments/{instrument_id}/photos": {
+      "get": {
+        "operationId": "list_photos_api_v1_instruments__instrument_id__photos_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instrument_id",
+            "required": true,
+            "schema": {
+              "title": "Instrument Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 100,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/PhotoRead"
+                  },
+                  "title": "Response List Photos Api V1 Instruments  Instrument Id  Photos Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Workshop access required"
+          },
+          "404": {
+            "description": "Instrument or photograph not found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "503": {
+            "description": "Photo storage or database unavailable"
+          }
+        },
+        "security": [
+          {
+            "ServerSideSession": []
+          }
+        ],
+        "summary": "List active photograph metadata",
+        "tags": [
+          "instrument photos"
+        ]
+      },
+      "post": {
+        "description": "Verify the instrument before parsing; spool bounded input and strip metadata.\n\nActual image bytes determine MIME type, regardless of the declared type or\nextension. Images exceeding 20 megapixels and animated images are rejected.\nA failed batch publishes no partial photo list. Original encodings are not\nretained; JPEG/WebP re-encoding may change pixels through compression.",
+        "operationId": "upload_api_v1_instruments__instrument_id__photos_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instrument_id",
+            "required": true,
+            "schema": {
+              "title": "Instrument Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "properties": {
+                  "files": {
+                    "items": {
+                      "format": "binary",
+                      "type": "string"
+                    },
+                    "maxItems": 10,
+                    "minItems": 1,
+                    "type": "array"
+                  }
+                },
+                "required": [
+                  "files"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/PhotoRead"
+                  },
+                  "title": "Response Upload Api V1 Instruments  Instrument Id  Photos Post",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Workshop access required"
+          },
+          "404": {
+            "description": "Instrument or photograph not found"
+          },
+          "413": {
+            "description": "Upload limit exceeded"
+          },
+          "415": {
+            "description": "Unsupported image format"
+          },
+          "422": {
+            "description": "Invalid image or filename"
+          },
+          "503": {
+            "description": "Photo storage or database unavailable"
+          }
+        },
+        "security": [
+          {
+            "ServerSideSession": []
+          }
+        ],
+        "summary": "Upload up to 10 JPEG, PNG or WebP photos (10 MB each)",
+        "tags": [
+          "instrument photos"
+        ]
+      }
+    },
+    "/api/v1/instruments/{instrument_id}/photos/{photo_id}": {
+      "delete": {
+        "description": "Hide a photo without deleting evidence; repeat requests are idempotent.",
+        "operationId": "delete_photo_api_v1_instruments__instrument_id__photos__photo_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instrument_id",
+            "required": true,
+            "schema": {
+              "title": "Instrument Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "path",
+            "name": "photo_id",
+            "required": true,
+            "schema": {
+              "title": "Photo Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhotoRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Workshop access required"
+          },
+          "404": {
+            "description": "Instrument or photograph not found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "503": {
+            "description": "Photo storage or database unavailable"
+          }
+        },
+        "security": [
+          {
+            "ServerSideSession": []
+          }
+        ],
+        "summary": "Request recoverable deletion as administrator",
+        "tags": [
+          "instrument photos"
+        ]
+      },
+      "get": {
+        "operationId": "metadata_api_v1_instruments__instrument_id__photos__photo_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instrument_id",
+            "required": true,
+            "schema": {
+              "title": "Instrument Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "path",
+            "name": "photo_id",
+            "required": true,
+            "schema": {
+              "title": "Photo Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhotoRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Workshop access required"
+          },
+          "404": {
+            "description": "Instrument or photograph not found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "503": {
+            "description": "Photo storage or database unavailable"
+          }
+        },
+        "security": [
+          {
+            "ServerSideSession": []
+          }
+        ],
+        "summary": "Get photograph metadata",
+        "tags": [
+          "instrument photos"
+        ]
+      }
+    },
+    "/api/v1/instruments/{instrument_id}/photos/{photo_id}/content": {
+      "get": {
+        "operationId": "view_api_v1_instruments__instrument_id__photos__photo_id__content_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instrument_id",
+            "required": true,
+            "schema": {
+              "title": "Instrument Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "path",
+            "name": "photo_id",
+            "required": true,
+            "schema": {
+              "title": "Photo Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Workshop access required"
+          },
+          "404": {
+            "description": "Instrument or photograph not found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "503": {
+            "description": "Photo storage or database unavailable"
+          }
+        },
+        "security": [
+          {
+            "ServerSideSession": []
+          }
+        ],
+        "summary": "View a private photograph inline",
+        "tags": [
+          "instrument photos"
+        ]
+      }
+    },
+    "/api/v1/instruments/{instrument_id}/photos/{photo_id}/download": {
+      "get": {
+        "operationId": "download_api_v1_instruments__instrument_id__photos__photo_id__download_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instrument_id",
+            "required": true,
+            "schema": {
+              "title": "Instrument Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "path",
+            "name": "photo_id",
+            "required": true,
+            "schema": {
+              "title": "Photo Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Workshop access required"
+          },
+          "404": {
+            "description": "Instrument or photograph not found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "503": {
+            "description": "Photo storage or database unavailable"
+          }
+        },
+        "security": [
+          {
+            "ServerSideSession": []
+          }
+        ],
+        "summary": "Download a private photograph",
+        "tags": [
+          "instrument photos"
+        ]
+      }
+    },
+    "/api/v1/instruments/{instrument_id}/photos/{photo_id}/purge-approval": {
+      "post": {
+        "operationId": "approve_api_v1_instruments__instrument_id__photos__photo_id__purge_approval_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instrument_id",
+            "required": true,
+            "schema": {
+              "title": "Instrument Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "path",
+            "name": "photo_id",
+            "required": true,
+            "schema": {
+              "title": "Photo Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PurgeApproval"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhotoRetentionRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Workshop access required"
+          },
+          "404": {
+            "description": "Instrument or photograph not found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "503": {
+            "description": "Photo storage or database unavailable"
+          }
+        },
+        "security": [
+          {
+            "ServerSideSession": []
+          }
+        ],
+        "summary": "Approve a deleted photo after reviewing retention requirements",
+        "tags": [
+          "instrument photos"
+        ]
+      }
+    },
+    "/api/v1/instruments/{instrument_id}/photos/{photo_id}/restore": {
+      "post": {
+        "operationId": "restore_api_v1_instruments__instrument_id__photos__photo_id__restore_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instrument_id",
+            "required": true,
+            "schema": {
+              "title": "Instrument Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "path",
+            "name": "photo_id",
+            "required": true,
+            "schema": {
+              "title": "Photo Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhotoRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Workshop access required"
+          },
+          "404": {
+            "description": "Instrument or photograph not found"
+          },
+          "409": {
+            "description": "Photo cannot be restored"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "503": {
+            "description": "Photo storage or database unavailable"
+          }
+        },
+        "security": [
+          {
+            "ServerSideSession": []
+          }
+        ],
+        "summary": "Restore a photo within its recovery period as administrator",
+        "tags": [
+          "instrument photos"
+        ]
+      }
+    },
+    "/api/v1/instruments/{instrument_id}/photos/{photo_id}/retention": {
+      "get": {
+        "operationId": "read_retention_api_v1_instruments__instrument_id__photos__photo_id__retention_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instrument_id",
+            "required": true,
+            "schema": {
+              "title": "Instrument Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "path",
+            "name": "photo_id",
+            "required": true,
+            "schema": {
+              "title": "Photo Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhotoRetentionRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Workshop access required"
+          },
+          "404": {
+            "description": "Instrument or photograph not found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "503": {
+            "description": "Photo storage or database unavailable"
+          }
+        },
+        "security": [
+          {
+            "ServerSideSession": []
+          }
+        ],
+        "summary": "Inspect retention safeguards as administrator",
+        "tags": [
+          "instrument photos"
+        ]
+      }
+    },
+    "/api/v1/instruments/{instrument_id}/photos/{photo_id}/retention-hold": {
+      "delete": {
+        "operationId": "release_hold_api_v1_instruments__instrument_id__photos__photo_id__retention_hold_delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instrument_id",
+            "required": true,
+            "schema": {
+              "title": "Instrument Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "path",
+            "name": "photo_id",
+            "required": true,
+            "schema": {
+              "title": "Photo Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhotoRetentionRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Workshop access required"
+          },
+          "404": {
+            "description": "Instrument or photograph not found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "503": {
+            "description": "Photo storage or database unavailable"
+          }
+        },
+        "security": [
+          {
+            "ServerSideSession": []
+          }
+        ],
+        "summary": "Release a photo retention hold as administrator",
+        "tags": [
+          "instrument photos"
+        ]
+      },
+      "post": {
+        "operationId": "create_hold_api_v1_instruments__instrument_id__photos__photo_id__retention_hold_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instrument_id",
+            "required": true,
+            "schema": {
+              "title": "Instrument Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "path",
+            "name": "photo_id",
+            "required": true,
+            "schema": {
+              "title": "Photo Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RetentionHoldCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhotoRetentionRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Workshop access required"
+          },
+          "404": {
+            "description": "Instrument or photograph not found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "503": {
+            "description": "Photo storage or database unavailable"
+          }
+        },
+        "security": [
+          {
+            "ServerSideSession": []
+          }
+        ],
+        "summary": "Protect a photo against permanent deletion as administrator",
+        "tags": [
+          "instrument photos"
+        ]
+      }
+    },
+    "/api/v1/instruments/{instrument_id}/qr-code.svg": {
+      "get": {
+        "operationId": "get_qr_code_api_v1_instruments__instrument_id__qr_code_svg_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instrument_id",
+            "required": true,
+            "schema": {
+              "title": "Instrument Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "image/svg+xml": {}
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        },
+        "security": [
+          {
+            "ServerSideSession": []
+          }
+        ],
+        "summary": "Download a printable instrument QR code",
+        "tags": [
+          "instruments"
+        ]
+      }
+    },
+    "/api/v1/instruments/{instrument_id}/repair-orders": {
+      "post": {
+        "operationId": "create_repair_order_api_v1_instruments__instrument_id__repair_orders_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instrument_id",
+            "required": true,
+            "schema": {
+              "title": "Instrument Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RepairOrderCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RepairOrderRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Workshop access required"
+          },
+          "404": {
+            "description": "Instrument not found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "503": {
+            "description": "Database unavailable"
+          }
+        },
+        "security": [
+          {
+            "ServerSideSession": []
+          }
+        ],
+        "summary": "Record repair work for an instrument",
+        "tags": [
+          "repairs"
+        ]
+      }
+    },
+    "/api/v1/repair-documents/{document_id}/content": {
+      "get": {
+        "operationId": "download_document_api_v1_repair_documents__document_id__content_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "document_id",
+            "required": true,
+            "schema": {
+              "title": "Document Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/octet-stream": {}
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Workshop access required"
+          },
+          "404": {
+            "description": "Document not found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "503": {
+            "description": "Database unavailable"
+          }
+        },
+        "security": [
+          {
+            "ServerSideSession": []
+          }
+        ],
+        "summary": "Download a repair document as an attachment",
+        "tags": [
+          "repairs"
+        ]
+      }
+    },
+    "/api/v1/repair-orders": {
+      "post": {
+        "description": "Record a new order; the customer need not be the instrument's current owner.\n\nAcceptance defaults to the current UTC timestamp. Planned work has no\nperformed_at timestamp unless one is explicitly supplied. Customer and\ninstrument remain referenced independently of later ownership changes.\nSelecting template_id copies its description and optionally creates a service\nposition with quantity 1. Explicit description/price overrides affect only\nthis repair; template_unit_price=null suppresses the default service position.",
+        "operationId": "register_repair_order_api_v1_repair_orders_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RepairOrderRegister"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RepairOrderRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Workshop access required"
+          },
+          "404": {
+            "description": "Customer, instrument or repair template not found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "503": {
+            "description": "Database unavailable"
+          }
+        },
+        "security": [
+          {
+            "ServerSideSession": []
+          }
+        ],
+        "summary": "Accept a repair order for a customer and instrument",
+        "tags": [
+          "repairs"
+        ]
+      }
+    },
+    "/api/v1/repair-orders/{order_id}": {
+      "get": {
+        "operationId": "get_repair_order_api_v1_repair_orders__order_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "order_id",
+            "required": true,
+            "schema": {
+              "title": "Order Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RepairOrderDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Workshop access required"
+          },
+          "404": {
+            "description": "Repair order not found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "503": {
+            "description": "Database unavailable"
+          }
+        },
+        "security": [
+          {
+            "ServerSideSession": []
+          }
+        ],
+        "summary": "Read repair work and document metadata",
+        "tags": [
+          "repairs"
+        ]
+      }
+    },
+    "/api/v1/repair-orders/{order_id}/archive": {
+      "patch": {
+        "operationId": "archive_repair_order_api_v1_repair_orders__order_id__archive_patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "order_id",
+            "required": true,
+            "schema": {
+              "title": "Order Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ArchiveUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RepairOrderRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Workshop access required"
+          },
+          "404": {
+            "description": "Repair order not found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "503": {
+            "description": "Database unavailable"
+          }
+        },
+        "security": [
+          {
+            "ServerSideSession": []
+          }
+        ],
+        "summary": "Archive or restore a repair without deleting history",
+        "tags": [
+          "repairs"
+        ]
+      }
+    },
+    "/api/v1/repair-orders/{order_id}/documents": {
+      "post": {
+        "description": "Bound reads before persistence; never fetch external URLs or execute content.",
+        "operationId": "upload_document_api_v1_repair_orders__order_id__documents_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "order_id",
+            "required": true,
+            "schema": {
+              "title": "Order Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "filename",
+            "required": true,
+            "schema": {
+              "maxLength": 255,
+              "minLength": 1,
+              "title": "Filename",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/octet-stream": {
+              "schema": {
+                "format": "binary",
+                "type": "string"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RepairDocumentRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Workshop access required"
+          },
+          "404": {
+            "description": "Repair order not found"
+          },
+          "413": {
+            "description": "Document exceeds 5 MiB"
+          },
+          "415": {
+            "description": "Use application/octet-stream for the binary body"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "503": {
+            "description": "Database unavailable"
+          }
+        },
+        "security": [
+          {
+            "ServerSideSession": []
+          }
+        ],
+        "summary": "Store a repair document (binary body, at most 5 MiB)",
+        "tags": [
+          "repairs"
+        ]
+      }
+    },
+    "/api/v1/repair-templates": {
+      "get": {
+        "operationId": "list_templates_api_v1_repair_templates_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 100,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/RepairTemplateRead"
+                  },
+                  "title": "Response List Templates Api V1 Repair Templates Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Workshop access required"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "503": {
+            "description": "Database unavailable"
+          }
+        },
+        "security": [
+          {
+            "ServerSideSession": []
+          }
+        ],
+        "summary": "List repair templates in stable ID order",
+        "tags": [
+          "repair templates"
+        ]
+      },
+      "post": {
+        "operationId": "create_template_api_v1_repair_templates_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RepairTemplateCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RepairTemplateRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Workshop access required"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "503": {
+            "description": "Database unavailable"
+          }
+        },
+        "security": [
+          {
+            "ServerSideSession": []
+          }
+        ],
+        "summary": "Create a reusable repair template",
+        "tags": [
+          "repair templates"
+        ]
+      }
+    },
+    "/api/v1/repair-templates/{template_id}": {
+      "patch": {
+        "operationId": "update_template_api_v1_repair_templates__template_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "template_id",
+            "required": true,
+            "schema": {
+              "title": "Template Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RepairTemplateUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RepairTemplateRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Workshop access required"
+          },
+          "404": {
+            "description": "Repair template not found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "503": {
+            "description": "Database unavailable"
+          }
+        },
+        "security": [
+          {
+            "ServerSideSession": []
+          }
+        ],
+        "summary": "Change defaults for future repairs only",
+        "tags": [
+          "repair templates"
+        ]
+      }
+    },
+    "/api/v1/repairs": {
+      "get": {
+        "description": "Combine filters and order by ID for deterministic offset pagination.\n\nArchived orders remain accessible by ID and may be included explicitly.\nCount and page queries can observe different concurrent commits.",
+        "operationId": "list_repairs_api_v1_repairs_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/RepairStatus"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "in": "query",
+            "name": "customer_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Customer Id"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 100,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "include_archived",
+            "required": false,
+            "schema": {
+              "default": false,
+              "title": "Include Archived",
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/RepairOrderRead"
+                  },
+                  "title": "Response List Repairs Api V1 Repairs Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response",
+            "headers": {
+              "X-Total-Count": {
+                "description": "Matching repair count before pagination",
+                "schema": {
+                  "minimum": 0,
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Workshop access required"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "503": {
+            "description": "Database unavailable"
+          }
+        },
+        "security": [
+          {
+            "ServerSideSession": []
+          }
+        ],
+        "summary": "List repair orders with status and customer filters",
+        "tags": [
+          "repairs"
+        ]
+      },
+      "post": {
+        "description": "Record a new order; the customer need not be the instrument's current owner.\n\nAcceptance defaults to the current UTC timestamp. Planned work has no\nperformed_at timestamp unless one is explicitly supplied. Customer and\ninstrument remain referenced independently of later ownership changes.\nSelecting template_id copies its description and optionally creates a service\nposition with quantity 1. Explicit description/price overrides affect only\nthis repair; template_unit_price=null suppresses the default service position.",
+        "operationId": "register_repair_order_api_v1_repairs_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RepairOrderRegister"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RepairOrderRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Workshop access required"
+          },
+          "404": {
+            "description": "Customer, instrument or repair template not found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "503": {
+            "description": "Database unavailable"
+          }
+        },
+        "security": [
+          {
+            "ServerSideSession": []
+          }
+        ],
+        "summary": "Register repair intake for an existing customer and instrument",
+        "tags": [
+          "repairs"
+        ]
+      }
+    },
+    "/api/v1/repairs/{repair_id}": {
+      "get": {
+        "description": "Read current or archived orders using the existing detail projection.",
+        "operationId": "get_repair_api_v1_repairs__repair_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "repair_id",
+            "required": true,
+            "schema": {
+              "title": "Repair Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RepairOrderDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Workshop access required"
+          },
+          "404": {
+            "description": "Repair order not found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "503": {
+            "description": "Database unavailable"
+          }
+        },
+        "security": [
+          {
+            "ServerSideSession": []
+          }
+        ],
+        "summary": "Read a repair order and its document metadata",
+        "tags": [
+          "repairs"
+        ]
+      },
+      "patch": {
+        "description": "Preserve omitted fields; clear optional dates and notes with null.\n\nDescriptions cannot be null or blank. Empty patches and unchanged values\nreturn the current order without creating an update audit event.",
+        "operationId": "update_repair_api_v1_repairs__repair_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "repair_id",
+            "required": true,
+            "schema": {
+              "title": "Repair Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RepairOrderUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RepairOrderRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Workshop access required"
+          },
+          "404": {
+            "description": "Repair order not found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "503": {
+            "description": "Database unavailable"
+          }
+        },
+        "security": [
+          {
+            "ServerSideSession": []
+          }
+        ],
+        "summary": "Update a repair description, expected completion date or internal notes",
+        "tags": [
+          "repairs"
+        ]
+      }
+    },
+    "/api/v1/repairs/{repair_id}/estimates": {
+      "get": {
+        "operationId": "list_estimates_api_v1_repairs__repair_id__estimates_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "repair_id",
+            "required": true,
+            "schema": {
+              "title": "Repair Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 100,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/EstimateSummary"
+                  },
+                  "title": "Response List Estimates Api V1 Repairs  Repair Id  Estimates Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Workshop access required"
+          },
+          "404": {
+            "description": "Repair or estimate not found"
+          },
+          "409": {
+            "description": "Document state or repair prevents this operation"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "503": {
+            "description": "Database unavailable"
+          }
+        },
+        "security": [
+          {
+            "ServerSideSession": []
+          }
+        ],
+        "summary": "List estimate revisions with their approval facts",
+        "tags": [
+          "estimates"
+        ]
+      },
+      "post": {
+        "operationId": "create_api_v1_repairs__repair_id__estimates_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "repair_id",
+            "required": true,
+            "schema": {
+              "title": "Repair Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EstimateWrite"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EstimateRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Workshop access required"
+          },
+          "404": {
+            "description": "Repair or estimate not found"
+          },
+          "409": {
+            "description": "Document state or repair prevents this operation"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "503": {
+            "description": "Database unavailable"
+          }
+        },
+        "security": [
+          {
+            "ServerSideSession": []
+          }
+        ],
+        "summary": "Create a separate repair estimate revision",
+        "tags": [
+          "estimates"
+        ]
+      }
+    },
+    "/api/v1/repairs/{repair_id}/estimates/{estimate_id}": {
+      "get": {
+        "operationId": "get_api_v1_repairs__repair_id__estimates__estimate_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "repair_id",
+            "required": true,
+            "schema": {
+              "title": "Repair Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "path",
+            "name": "estimate_id",
+            "required": true,
+            "schema": {
+              "title": "Estimate Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EstimateRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Workshop access required"
+          },
+          "404": {
+            "description": "Repair or estimate not found"
+          },
+          "409": {
+            "description": "Document state or repair prevents this operation"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "503": {
+            "description": "Database unavailable"
+          }
+        },
+        "security": [
+          {
+            "ServerSideSession": []
+          }
+        ],
+        "summary": "Read an estimate snapshot and exact totals",
+        "tags": [
+          "estimates"
+        ]
+      },
+      "patch": {
+        "operationId": "edit_api_v1_repairs__repair_id__estimates__estimate_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "repair_id",
+            "required": true,
+            "schema": {
+              "title": "Repair Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "path",
+            "name": "estimate_id",
+            "required": true,
+            "schema": {
+              "title": "Estimate Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EstimateWrite"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EstimateRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Workshop access required"
+          },
+          "404": {
+            "description": "Repair or estimate not found"
+          },
+          "409": {
+            "description": "Document state or repair prevents this operation"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "503": {
+            "description": "Database unavailable"
+          }
+        },
+        "security": [
+          {
+            "ServerSideSession": []
+          }
+        ],
+        "summary": "Replace all positions of a draft estimate",
+        "tags": [
+          "estimates"
+        ]
+      }
+    },
+    "/api/v1/repairs/{repair_id}/estimates/{estimate_id}/approval": {
+      "post": {
+        "description": "Record a staff attestation, not an electronic signature or portal action.",
+        "operationId": "approve_api_v1_repairs__repair_id__estimates__estimate_id__approval_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "repair_id",
+            "required": true,
+            "schema": {
+              "title": "Repair Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "path",
+            "name": "estimate_id",
+            "required": true,
+            "schema": {
+              "title": "Estimate Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EstimateApproval"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EstimateRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Workshop access required"
+          },
+          "404": {
+            "description": "Repair or estimate not found"
+          },
+          "409": {
+            "description": "Document state or repair prevents this operation"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "503": {
+            "description": "Database unavailable"
+          }
+        },
+        "security": [
+          {
+            "ServerSideSession": []
+          }
+        ],
+        "summary": "Record customer approval of an issued estimate",
+        "tags": [
+          "estimates"
+        ]
+      }
+    },
+    "/api/v1/repairs/{repair_id}/estimates/{estimate_id}/status": {
+      "patch": {
+        "operationId": "change_status_api_v1_repairs__repair_id__estimates__estimate_id__status_patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "repair_id",
+            "required": true,
+            "schema": {
+              "title": "Repair Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "path",
+            "name": "estimate_id",
+            "required": true,
+            "schema": {
+              "title": "Estimate Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EstimateTransition"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EstimateRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Workshop access required"
+          },
+          "404": {
+            "description": "Repair or estimate not found"
+          },
+          "409": {
+            "description": "Document state or repair prevents this operation"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "503": {
+            "description": "Database unavailable"
+          }
+        },
+        "security": [
+          {
+            "ServerSideSession": []
+          }
+        ],
+        "summary": "Issue, reject or withdraw an estimate",
+        "tags": [
+          "estimates"
+        ]
+      }
+    },
+    "/api/v1/repairs/{repair_id}/history": {
+      "get": {
+        "description": "Order by UTC occurrence time and ID; include archived repairs.\n\nRelated-resource joins include older events without parent metadata. Stored\nparent identifiers retain the association if a child is later purged through\na controlled retention procedure. Audit retention still applies; unknown\nhistorical actors or missing expired events are never reconstructed.",
+        "operationId": "get_repair_history_api_v1_repairs__repair_id__history_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "repair_id",
+            "required": true,
+            "schema": {
+              "exclusiveMinimum": 0,
+              "title": "Repair Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 100,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/AuditEventRead"
+                  },
+                  "title": "Response Get Repair History Api V1 Repairs  Repair Id  History Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response",
+            "headers": {
+              "X-Total-Count": {
+                "description": "Retained matching events before pagination",
+                "schema": {
+                  "minimum": 0,
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Administrator required for audit history"
+          },
+          "404": {
+            "description": "Repair order not found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "503": {
+            "description": "Database unavailable"
+          }
+        },
+        "security": [
+          {
+            "ServerSideSession": []
+          }
+        ],
+        "summary": "Read retained repair audit history as administrator",
+        "tags": [
+          "repairs"
+        ]
+      }
+    },
+    "/api/v1/repairs/{repair_id}/items": {
+      "get": {
+        "operationId": "get_repair_items_api_v1_repairs__repair_id__items_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "repair_id",
+            "required": true,
+            "schema": {
+              "title": "Repair Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RepairItemsRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Workshop access required"
+          },
+          "404": {
+            "description": "Repair order not found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "503": {
+            "description": "Database unavailable"
+          }
+        },
+        "security": [
+          {
+            "ServerSideSession": []
+          }
+        ],
+        "summary": "Read repair services, materials and exact totals",
+        "tags": [
+          "repairs"
+        ]
+      },
+      "post": {
+        "operationId": "add_repair_item_api_v1_repairs__repair_id__items_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "repair_id",
+            "required": true,
+            "schema": {
+              "title": "Repair Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RepairItemCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RepairItemRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Workshop access required"
+          },
+          "404": {
+            "description": "Repair order not found"
+          },
+          "409": {
+            "description": "Repair is completed or cancelled"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "503": {
+            "description": "Database unavailable"
+          }
+        },
+        "security": [
+          {
+            "ServerSideSession": []
+          }
+        ],
+        "summary": "Add a service or material position to an editable repair",
+        "tags": [
+          "repairs"
+        ]
+      }
+    },
+    "/api/v1/repairs/{repair_id}/items/{item_id}": {
+      "patch": {
+        "description": "Preserve omitted fields; supplied item fields cannot be null.",
+        "operationId": "patch_repair_item_api_v1_repairs__repair_id__items__item_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "repair_id",
+            "required": true,
+            "schema": {
+              "title": "Repair Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "path",
+            "name": "item_id",
+            "required": true,
+            "schema": {
+              "title": "Item Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RepairItemUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RepairItemRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Workshop access required"
+          },
+          "404": {
+            "description": "Repair order or item not found"
+          },
+          "409": {
+            "description": "Repair is completed or cancelled"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "503": {
+            "description": "Database unavailable"
+          }
+        },
+        "security": [
+          {
+            "ServerSideSession": []
+          }
+        ],
+        "summary": "Update a repair position before completion",
+        "tags": [
+          "repairs"
+        ]
+      }
+    },
+    "/api/v1/repairs/{repair_id}/status": {
+      "patch": {
+        "description": "Timestamp actual changes; preserve the timestamp for idempotent retries.",
+        "operationId": "update_repair_status_api_v1_repairs__repair_id__status_patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "repair_id",
+            "required": true,
+            "schema": {
+              "title": "Repair Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RepairStatusUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RepairOrderRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Workshop access required"
+          },
+          "404": {
+            "description": "Repair order not found"
+          },
+          "409": {
+            "description": "Status transition is not permitted"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "503": {
+            "description": "Database unavailable"
+          }
+        },
+        "security": [
+          {
+            "ServerSideSession": []
+          }
+        ],
+        "summary": "Change repair status through the validated state machine",
+        "tags": [
+          "repairs"
+        ]
+      }
+    },
+    "/health/live": {
+      "get": {
+        "description": "Confirm that the application responds without checking the database.",
+        "operationId": "health_check_live_health_live_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "title": "Response Health Check Live Health Live Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Check application liveness",
+        "tags": [
+          "health"
+        ]
+      }
+    },
+    "/health/ready": {
+      "get": {
+        "description": "Check database connectivity without verifying the migration state.\n\nRaises:\n    HTTPException: With status 503 if the database query fails.",
+        "operationId": "health_check_readiness_health_ready_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "title": "Response Health Check Readiness Health Ready Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "503": {
+            "description": "Database connection unavailable"
+          }
+        },
+        "summary": "Check database readiness",
+        "tags": [
+          "health"
+        ]
+      }
+    },
+    "/i/{public_id}": {
+      "get": {
+        "description": "Keep printed links stable independently of the current record API route.",
+        "operationId": "resolve_instrument_i__public_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "public_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Public Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "307": {
+            "description": "Successful Response"
+          },
+          "404": {
+            "description": "Instrument not found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "ServerSideSession": []
+          }
+        ],
+        "summary": "Resolve a stable instrument link after staff authentication",
+        "tags": [
+          "instruments"
+        ]
+      }
+    }
+  }
+}

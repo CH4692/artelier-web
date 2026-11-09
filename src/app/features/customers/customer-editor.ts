@@ -1,4 +1,4 @@
-import { HttpErrorResponse } from '@angular/common/http';
+import { applyApiValidation } from '../../core/api/form-validation';
 import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
@@ -134,19 +134,7 @@ export class CustomerEditor {
         },
         error: (error: unknown) => {
           this.error.set(customerError(error));
-          if (
-            error instanceof HttpErrorResponse &&
-            error.status === 422 &&
-            Array.isArray(error.error?.detail)
-          ) {
-            for (const detail of error.error.detail) {
-              const field = Array.isArray(detail?.loc) ? detail.loc[detail.loc.length - 1] : null;
-              if (this.fields.includes(field))
-                this.form.controls[field as (typeof this.fields)[number]].setErrors({
-                  server: true,
-                });
-            }
-          }
+          applyApiValidation(this.form, error);
         },
       });
   }
