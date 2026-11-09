@@ -1,7 +1,8 @@
+import { Subject } from 'rxjs';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { provideRouter, Router } from '@angular/router';
+import { provideRouter, Router, NavigationStart, Event } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
 import { routes } from '../../app.routes';
 import { SessionState } from '../../core/auth/session-state';
@@ -54,6 +55,31 @@ describe('Instrument list', () => {
       timeout: 1500,
     });
     request().flush([]);
+  });
+  it('cancels a debounced search as soon as another navigation starts and permits later searches', async () => {
+    const harness = await RouterTestingHarness.create('/instruments');
+    request().flush([]);
+    const component = harness.routeDebugElement!.componentInstance as Instruments;
+    const router = TestBed.inject(Router);
+    const events = new Subject<Event>();
+    const eventSource = vi.spyOn(router, 'events', 'get').mockReturnValue(events);
+    const navigate = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+    vi.useFakeTimers();
+    try {
+      component.search.setValue('pending');
+      await vi.advanceTimersByTimeAsync(200);
+      events.next(new NavigationStart(42, '/instruments/8'));
+      await vi.advanceTimersByTimeAsync(500);
+      expect(navigate).not.toHaveBeenCalled();
+      component.search.setValue('next');
+      await vi.advanceTimersByTimeAsync(300);
+      expect(navigate).toHaveBeenCalledOnce();
+      expect(navigate.mock.calls[0][1]?.queryParams).toEqual({ q: 'next', offset: null });
+    } finally {
+      vi.useRealTimers();
+      eventSource.mockRestore();
+      navigate.mockRestore();
+    }
   });
   it('uses backend filters and pagination and identifies archived instruments', async () => {
     const harness = await RouterTestingHarness.create(

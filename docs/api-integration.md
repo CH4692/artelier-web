@@ -69,3 +69,5 @@ Remote GitHub Actions status is established only after pushing. No backend aggre
 ## CI metadata comparison
 
 The backend software release (`info.version`) derives from installed VCS package metadata. A shallow GitHub checkout can report `0.1.dev1+g3495621f8` for the same source that reports `0.20.0` in a tagged local checkout. The snapshot contract comparison excludes only this field and compares JSON objects independently of key order. All paths, operations, schemas, required fields, authentication definitions and the OpenAPI specification version remain checked. The committed snapshot and generated types are not rewritten or weakened. `npm run test:api-tooling` tests both the observed CI mismatch and rejection of real contract changes; both workflows run it before checking contracts.
+
+Pending customer/instrument search debounce timers are cancelled on `NavigationStart`, before components are destroyed. This prevents a delayed filter navigation from superseding an explicitly opened detail page. Deterministic timer tests verify both cancellation and subsequent searches; the real instrument workflow also exercises searching and opening a result.
