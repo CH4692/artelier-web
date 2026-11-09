@@ -1,4 +1,4 @@
-import { HttpErrorResponse } from '@angular/common/http';
+import { apiErrorMessage } from '../../core/api/api-error';
 import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -138,13 +138,10 @@ export class Login {
           void this.router.navigateByUrl(destination, { replaceUrl: true });
         },
         error: (error: unknown) => {
-          const status = error instanceof HttpErrorResponse ? error.status : 0;
           this.error.set(
-            status === 401
-              ? 'Email or password is incorrect.'
-              : status === 429
-                ? 'Too many sign-in attempts. Please wait and try again.'
-                : 'Sign-in could not be completed. Please try again.',
+            apiErrorMessage(error, {
+              unauthenticated: 'E-Mail-Adresse oder Passwort ist falsch.',
+            }),
           );
         },
       });

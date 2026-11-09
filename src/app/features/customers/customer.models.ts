@@ -1,40 +1,19 @@
-/** Mirrors the existing FastAPI CustomerRead/Create/Update and overview schemas. */
-export interface Customer {
-  id: number;
-  first_name: string;
-  last_name: string;
-  email: string | null;
-  phone: string | null;
-  is_archived: boolean;
-}
-export interface CustomerInput {
-  first_name: string;
-  last_name: string;
-  email: string | null;
-  phone: string | null;
-}
-export interface CustomerInstrument {
-  id: number;
-  type: 'violin' | 'viola' | 'cello' | 'double_bass' | 'bow';
-  body_length_mm: number | null;
-  bow_weight_g: number | null;
-  maker: string | null;
-  year_of_manufacture: number | null;
-  identification_number: string | null;
-  notes: string | null;
-  customer_id: number | null;
-  ownership: 'customer' | 'workshop' | 'unassigned';
-  is_archived: boolean;
-}
-export interface CustomerOverview {
+import type { ApiLoadState } from '../../core/api/load-state';
+import type { components } from '../../core/api/generated/schema';
+
+// Read responses include default/null fields; the UI deliberately sends complete editor values.
+export type Customer = Required<components['schemas']['CustomerRead']>;
+export type CustomerInput = Required<components['schemas']['CustomerCreate']>;
+export type CustomerInstrument = Required<components['schemas']['InstrumentRead']>;
+export type CustomerOverview = Omit<
+  components['schemas']['CustomerOverview'],
+  'customer' | 'instruments'
+> & {
   customer: Customer;
   instruments: CustomerInstrument[];
-}
+};
 export interface CustomerPage {
   customers: Customer[];
   total: number | null;
 }
-export type LoadState<T> =
-  | { status: 'loading' }
-  | { status: 'loaded'; data: T }
-  | { status: 'error'; message: string; notFound: boolean };
+export type LoadState<T> = ApiLoadState<T>;

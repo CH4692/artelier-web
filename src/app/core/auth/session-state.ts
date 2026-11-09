@@ -1,15 +1,9 @@
 import { computed, Injectable, signal } from '@angular/core';
 
-export type UserRole = 'admin' | 'employee' | 'customer';
-export interface SessionUser {
-  id: number;
-  email: string;
-  role: UserRole;
-  is_active: boolean;
-  customer_id: number | null;
-  created_at: string;
-  updated_at: string;
-}
+import type { components } from '../api/generated/schema';
+
+export type SessionUser = Required<components['schemas']['UserRead']>;
+export type UserRole = SessionUser['role'];
 type Session =
   | { status: 'loading'; user: null }
   | { status: 'unauthenticated'; user: null }
