@@ -24,14 +24,16 @@ import { customerError } from './customer-errors';
       aria-describedby="archive-description"
       (cancel)="onCancel($event)"
     >
-      <h2 id="archive-title">Kunde archivieren?</h2>
-      <p id="archive-description">
-        {{ customer().first_name }} {{ customer().last_name }} wird aus der aktiven Kundenliste
-        ausgeblendet. Daten und zugeordnete Instrumente bleiben erhalten.
-      </p>
-      @if (error()) {
-        <p class="field-error" role="alert">{{ error() }}</p>
-      }
+      <div class="dialog-body">
+        <h2 id="archive-title">Kunde archivieren?</h2>
+        <p id="archive-description">
+          {{ customer().first_name }} {{ customer().last_name }} wird aus der aktiven Kundenliste
+          ausgeblendet. Daten und zugeordnete Instrumente bleiben erhalten.
+        </p>
+        @if (error()) {
+          <p class="field-error" role="alert">{{ error() }}</p>
+        }
+      </div>
       <div class="actions">
         <button type="button" (click)="close()" [disabled]="pending()" autofocus>Abbrechen</button>
         <button
@@ -46,7 +48,22 @@ import { customerError } from './customer-errors';
     </dialog>
   `,
   styles: `
+    dialog[open] {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .dialog-body {
+      min-height: 0;
+      overflow: auto;
+      overflow-wrap: anywhere;
+      overscroll-behavior: contain;
+      padding: var(--space-1);
+    }
     .actions {
+      flex-shrink: 0;
+      padding-top: var(--space-3);
+      border-top: 1px solid var(--color-border);
       display: flex;
       flex-wrap: wrap;
       gap: var(--space-3);
@@ -75,7 +92,8 @@ export class ArchiveCustomer {
     }
   }
   onCancel(event: Event) {
-    if (this.pending()) event.preventDefault();
+    event.preventDefault();
+    this.close();
   }
   confirm() {
     if (this.pending() || !this.dialog().nativeElement.open) return;

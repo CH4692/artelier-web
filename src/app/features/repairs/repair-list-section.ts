@@ -1,3 +1,4 @@
+import { ScrollableTable } from '../../shared/ui/scrollable-table';
 import { DatePipe } from '@angular/common';
 import { Component, inject, input, signal } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
@@ -13,7 +14,7 @@ import { REPAIR_STATUSES } from './repair.copy';
 import { repairError } from './repair-errors';
 @Component({
   selector: 'app-repair-list-section',
-  imports: [DatePipe, RouterLink, ErrorMessage, LoadingIndicator, StatusBadge],
+  imports: [ScrollableTable, DatePipe, RouterLink, ErrorMessage, LoadingIndicator, StatusBadge],
   templateUrl: './repair-list-section.html',
   styleUrl: './repairs.scss',
 })

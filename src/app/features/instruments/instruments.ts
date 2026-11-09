@@ -1,3 +1,4 @@
+import { ScrollableTable } from '../../shared/ui/scrollable-table';
 import { Component, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
@@ -15,6 +16,7 @@ import { StatusBadge } from '../../shared/ui/status-badge';
 @Component({
   selector: 'app-instruments',
   imports: [
+    ScrollableTable,
     RouterLink,
     ReactiveFormsModule,
     PageHeader,

@@ -1,6 +1,6 @@
 # Playwright tests
 
-Playwright Test 1.65.0 is pinned in package-lock.json. This directory contains two explicitly separate profiles. Neither changes production application code.
+Playwright Test 1.65.0 is pinned in package-lock.json. This directory contains three explicitly separate profiles. Neither changes production application code.
 
 ## Real backend integration
 
@@ -8,7 +8,7 @@ Run `npm run e2e:integration`. For the fast Chromium PR subset, run `npm run e2e
 
 Prerequisites: the frontend Node/npm versions in `.nvmrc`/package.json; installed Playwright browsers (`npx playwright install chromium firefox webkit`); PostgreSQL server binaries (`initdb`, `pg_ctl`, `createdb`, `pg_config`); and a backend checkout with its Python 3.14 `.venv` installed using `uv sync --frozen`. By default the backend is `../atelier-api`. Override its directory with `E2E_BACKEND_DIR` or PostgreSQL binaries with `E2E_PG_BINDIR`. `initdb` must run as a normal user, not root.
 
-The runner creates its own SCRAM-authenticated PostgreSQL cluster under a unique temporary directory, with a generated database password and a unique database name ending `_test`. It does not accept DATABASE_URL, TEST_DATABASE_URL or a deployed API URL as test targets. It migrates only that fresh cluster, provisions generated accounts through the backend's existing bootstrap/administrator services, and starts the actual FastAPI application on random loopback ports. The production Angular bundle is built and served on `127.0.0.1:4173`, proxying only to the owned loopback API. An existing server on that port is not reused. Do not run both profiles concurrently on the same machine.
+The runner creates its own SCRAM-authenticated PostgreSQL cluster under a unique temporary directory, with a generated database password and a unique database name ending `_test`. It does not accept DATABASE_URL, TEST_DATABASE_URL or a deployed API URL as test targets. It migrates only that fresh cluster, provisions generated accounts through the backend's existing bootstrap/administrator services, and starts the actual FastAPI application on random loopback ports. The production Angular bundle is built and served on `127.0.0.1:4173`, proxying only to the owned loopback API. An existing server on that port is not reused. Do not run these profiles concurrently on the same machine.
 
 A second real API instance creates two-second absolute sessions for the expiration test. Polling waits for actual expiry rather than sleeping for an arbitrary duration. CSRF, Origin checks, password verification, cookie handling and role enforcement remain enabled. The dedicated test environment enables the existing customer portal login flag for negative workshop-role checks. Its existing login budgets are sized for the browser matrix (1000/account, 10000/IP per window); throttling code remains active. Testing default production throttling thresholds is not part of this suite.
 
@@ -39,3 +39,11 @@ The backend commit is pinned to the locally verified contract version; update th
 The implemented-feature inventory and tested/untested matrix are in [docs/e2e-coverage.csv](../docs/e2e-coverage.csv). Missing dashboard aggregates and frontend workflows are documented as gaps, not fabricated features.
 
 Configuration references: [Playwright configuration](https://playwright.dev/docs/test-configuration), [browser projects](https://playwright.dev/docs/test-projects), and [managed web servers](https://playwright.dev/docs/test-webserver). The implementation uses these documented mechanisms; no browser security flags are disabled.
+
+## Responsive and signature coverage
+
+`e2e/ui/responsive.spec.ts` adds desktop 1440×1000, laptop 1280×800, portrait tablet 768×1024 and landscape tablet 1024×768 stress cases in each browser project. It checks long values, compact navigation, form column changes, 44px touch targets, preserved failed submissions, short dialogs and keyboard-scrollable tables. Reduced-height viewport tests approximate keyboard obstruction; they do not open a physical tablet keyboard.
+
+Run `npm run e2e:signature` for the shared signature component. Its separate Angular host (`signature-host.ts`) is built into `dist/signature-e2e`, never into production routes. The host deliberately displays local draft test data; it has no API submission or persistence. Nine projects cover Chromium/Firefox/WebKit in desktop, portrait and landscape, including DPR 2 and resizing. Mouse tests run in every project. Chromium CDP verifies pen pressure and touch scrolling; native touchscreen taps run in Chromium/WebKit tablet projects. Firefox has no equivalent touchscreen automation and CDP pen dispatch is Chromium-only, so those spec files are selected only for capable projects, without skipped tests. Browser emulation does not certify physical hardware.
+
+CI runs Chromium signature projects on pull requests and all nine on main/schedule/manual dispatch. Reports use `playwright-report/signature` and `test-results/signature-results.json`. Run profiles sequentially because they share port 4173. See [the component contract](../src/app/shared/ui/signature-capture/README.md) and [responsive implementation notes](../docs/responsive-and-signature.md).

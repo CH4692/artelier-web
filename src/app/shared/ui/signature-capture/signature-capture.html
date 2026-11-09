@@ -1,0 +1,46 @@
+<fieldset [disabled]="disabled()" [attr.aria-busy]="drawing()">
+  <legend>{{ label() }}</legend>
+  <p [id]="inputId() + '-instructions'">
+    Zeichnen Sie mit Maus, Finger oder Stift im Feld. Außerhalb des Feldes können Sie die Seite
+    scrollen.
+  </p>
+  <div class="signature-surface">
+    <canvas
+      #canvas
+      role="img"
+      tabindex="0"
+      [attr.aria-label]="label()"
+      [attr.aria-describedby]="
+        inputId() + '-instructions ' + inputId() + '-alternative ' + inputId() + '-error'
+      "
+      [attr.aria-disabled]="disabled()"
+      (pointerdown)="start($event)"
+      (pointermove)="move($event)"
+      (pointerup)="finish($event)"
+      (pointercancel)="cancel($event)"
+      (lostpointercapture)="cancel($event)"
+      >Die Zeichenfläche ist nicht verfügbar. Bitte nutzen Sie die alternative Möglichkeit.</canvas
+    >
+  </div>
+  <p class="drawing-state" role="status">
+    {{
+      hasInk()
+        ? drawing()
+          ? 'Unterschrift wird gezeichnet.'
+          : 'Zeichnung vorhanden. Sie können sie übernehmen oder neu zeichnen.'
+        : 'Noch keine Unterschrift gezeichnet.'
+    }}
+  </p>
+  <p class="field-error" [id]="inputId() + '-error'" role="alert">{{ error() }}</p>
+  <div class="actions">
+    <button type="button" (click)="clear()" [disabled]="disabled() || !hasInk()">
+      Zeichnung löschen</button
+    ><button type="button" (click)="confirm()" [disabled]="disabled() || drawing()">
+      Zeichnung übernehmen
+    </button>
+  </div>
+  <p [id]="inputId() + '-alternative'">{{ alternativeInstructions() }}</p>
+  <button type="button" (click)="requestAlternative()" [disabled]="disabled()">
+    Andere Möglichkeit anfragen
+  </button>
+</fieldset>

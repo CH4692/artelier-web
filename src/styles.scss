@@ -6,6 +6,7 @@
   background: var(--color-background);
   font-synthesis: none;
   line-height: var(--leading-body);
+  scroll-padding-block: var(--space-5);
 }
 * {
   box-sizing: border-box;
@@ -24,7 +25,8 @@ textarea {
 }
 button,
 a {
-  -webkit-tap-highlight-color: transparent;
+  -webkit-tap-highlight-color: color-mix(in srgb, var(--color-accent) 25%, transparent);
+  touch-action: manipulation;
 }
 :focus-visible {
   outline: 3px solid var(--color-focus);
@@ -64,7 +66,7 @@ p {
   font-size: var(--text-sm);
 }
 .panel {
-  padding: var(--space-6);
+  padding: var(--panel-padding);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   background: var(--color-surface);
@@ -73,6 +75,10 @@ p {
 .button,
 button {
   min-height: var(--control-height);
+  min-width: var(--control-height);
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
   border: 1px solid var(--color-primary);
   border-radius: var(--radius-sm);
   background: var(--color-primary);
@@ -86,8 +92,14 @@ button {
   justify-content: center;
   text-decoration: none;
 }
-.button:hover,
-button:hover {
+@media (hover: hover) {
+  .button:hover,
+  button:hover {
+    background: var(--color-nav-hover);
+  }
+}
+button:active:not(:disabled),
+.button:active {
   background: var(--color-nav-hover);
 }
 button:disabled,
@@ -131,6 +143,9 @@ textarea:disabled {
 }
 .table-scroll {
   overflow-x: auto;
+  max-inline-size: 100%;
+  overscroll-behavior-inline: contain;
+  scrollbar-gutter: stable;
 }
 table {
   width: 100%;
@@ -150,8 +165,10 @@ th {
 }
 dialog {
   max-width: min(36rem, calc(100% - 2rem));
+  overflow-y: auto;
+  overscroll-behavior: contain;
   max-height: calc(100dvh - 2rem);
-  padding: var(--space-6);
+  padding: var(--panel-padding);
   color: var(--color-text);
   background: var(--color-surface);
   border: 1px solid var(--color-border);
@@ -169,4 +186,47 @@ dialog::backdrop {
     transition: none !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* Keep controls in normal document flow so reduced visual viewports can scroll to them. */
+input,
+select,
+textarea,
+button,
+a {
+  scroll-margin-block: var(--space-5);
+}
+textarea {
+  resize: vertical;
+  max-inline-size: 100%;
+}
+input,
+select,
+textarea {
+  font-size: 1rem;
+}
+fieldset {
+  min-inline-size: 0;
+}
+legend {
+  max-inline-size: 100%;
+  overflow-wrap: anywhere;
+}
+a {
+  min-inline-size: var(--control-height);
+  min-block-size: var(--control-height);
+}
+a:not(.brand) {
+  display: inline-flex;
+  align-items: center;
+  max-inline-size: 100%;
+  overflow-wrap: anywhere;
+}
+.table-scroll > table {
+  min-inline-size: 36rem;
+}
+
+/* WebKit native menu controls ignore min-height without an explicit block size. */
+select {
+  block-size: var(--control-height);
 }

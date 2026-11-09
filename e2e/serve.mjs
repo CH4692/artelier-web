@@ -2,7 +2,7 @@
 import http from 'node:http';
 import { readFileSync, existsSync, statSync } from 'node:fs';
 import { resolve, extname, sep } from 'node:path';
-const root = resolve('dist/artelier-web/browser');
+const root = resolve(process.env.E2E_APP_DIST || 'dist/artelier-web/browser');
 const runtime = process.env.E2E_RUNTIME
   ? JSON.parse(readFileSync(process.env.E2E_RUNTIME, 'utf8'))
   : null;
